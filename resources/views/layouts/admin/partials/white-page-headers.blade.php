@@ -1,0 +1,57 @@
+<style>
+	/* White title text on green page headers — background unchanged */
+	.cms-card__header,
+	.cms-card__header h1,
+	.cms-card__header h3,
+	.tst-header,
+	.tst-header h1,
+	.tst-header h3,
+	.tst-form-banner,
+	.tst-form-banner h3,
+	.contact-header,
+	.contact-header h1,
+	.contact-detail-header,
+	.contact-detail-header h1,
+	.page-header,
+	.page-header h1,
+	.page-form-container .section-banner,
+	.page-form-container .section-banner h3,
+	.header-settings-container .section-banner,
+	.header-settings-container .section-banner h3,
+	.home-about-container .section-banner,
+	.home-about-container .section-banner h3,
+	.slider-form-container .section-banner,
+	.slider-form-container .section-banner h3,
+	.banner-form-container .section-banner,
+	.banner-form-container .section-banner h3,
+	.video-form-container .section-banner,
+	.video-form-container .section-banner h3,
+	.video-admin .video-page-header,
+	.video-admin .video-page-header h1,
+	.shop-contact-header,
+	.shop-contact-header h1,
+	.testimonial-header,
+	.testimonial-header h1,
+	.testimonial-form-container .section-banner,
+	.testimonial-form-container .section-banner h3,
+	.section-banner h3 {
+		color: #ffffff !important;
+	}
+
+	.cms-card__header h1,
+	.cms-card__header h3,
+	.tst-header h1,
+	.tst-header h3,
+	.tst-form-banner h3,
+	.contact-header h1,
+	.contact-detail-header h1,
+	.page-header h1,
+	.page-form-container .section-banner h3,
+	.section-banner h3,
+	.video-admin .video-page-header h1,
+	.shop-contact-header h1,
+	.testimonial-header h1,
+	.testimonial-form-container .section-banner h3 {
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+	}
+</style>

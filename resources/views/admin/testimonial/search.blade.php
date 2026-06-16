@@ -3,9 +3,9 @@
     <td>{{ $testimonials->firstItem()+$key }}.</td>
     <td>
         @if($testimonial->image)
-        <img src="{{ asset('public/admin/assets/images/testimonials/'.$testimonial->image) }}" alt="{{ $testimonial->name }}">
+        <img src="{{ asset('admin/assets/images/testimonials/'.$testimonial->image) }}" alt="{{ $testimonial->name }}">
         @else
-        <img src="{{ asset('public/admin/assets/images/testimonials/no-photo1.jpg') }}" alt="No Image">
+        <img src="{{ asset('admin/assets/images/testimonials/no-photo1.jpg') }}" alt="No Image">
         @endif
     </td>
     <td>{!! $testimonial->name !!}</td>
@@ -50,7 +50,7 @@ $(document).ready(function() {
             text: "This testimonial will be deleted.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#EEB72D',
+            confirmButtonColor: '#1f7a1f',
             cancelButtonColor: '#6c757d',
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {

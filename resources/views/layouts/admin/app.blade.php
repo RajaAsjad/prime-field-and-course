@@ -296,6 +296,7 @@
     </style>
 
     @stack('css')
+    @include('layouts.admin.partials.white-page-headers')
 </head>
 
 <body class="hold-transition fixed skin-blue sidebar-mini">

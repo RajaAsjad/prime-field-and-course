@@ -12,12 +12,12 @@
 		overflow: hidden;
 	}
 	.page-header {
-		background: linear-gradient(135deg, var(--pg-pink) 0%, var(--pg-pink-deep) 45%, var(--pg-orange) 100%) !important;
-		color: #fff;
+		background: #ffffff !important;
+		color: var(--admin-text, #0d1a0d);
 		padding: 18px 30px;
 		border-radius: 12px 12px 0 0;
-		border-bottom: 2px solid rgba(190, 24, 93, 0.35);
-		box-shadow: 0 4px 20px rgba(236, 72, 153, 0.2);
+		border-bottom: 1px solid color-mix(in srgb, var(--pg-pink) 12%, transparent);
+		box-shadow: none;
 		text-align: center;
 		margin: 0 0 20px 0 !important;
 	}
@@ -27,7 +27,8 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+		color: var(--admin-text, #0d1a0d);
+		text-shadow: none;
 	}
 	.page-stats {
 		display: grid;
