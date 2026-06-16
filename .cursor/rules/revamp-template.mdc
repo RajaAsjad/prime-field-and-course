@@ -1,0 +1,52 @@
+---
+description: Revamp template workflow — follow when user sends a website URL to revamp
+globs:
+alwaysApply: true
+---
+
+# Website Revamp Template
+
+This is a **reusable Laravel revamp starter**, NOT a finished client site. When the user sends a website URL and asks to revamp it, customize the entire project to match that website.
+
+## Before Any Revamp
+
+1. Read `REVAMP.md` in project root for full workflow
+2. Read `config/site.php` — this is the single source of truth for brand, theme, pages, and features
+3. Visit/analyze the target URL the user provides
+
+## What to Customize Per Revamp
+
+| Area | Files |
+|------|-------|
+| Brand & config | `config/site.php`, `.env` (SITE_* vars) |
+| Navigation | `config/site.php` → `pages`, `routes/web.php` |
+| Public pages | `resources/views/website/*.blade.php` |
+| Layouts | `resources/views/layouts/website/` (already config-driven) |
+| Theme/CSS | `public/assets/website/css/site.css` + theme colors in config |
+| JS | `public/assets/website/js/site.js` |
+| Admin branding | Auto from `$site` config; adjust `features` flags for modules |
+| Admin sidebar | `resources/views/layouts/admin/sidebar.blade.php` |
+
+## Key Conventions
+
+- All layouts use `$site` config (shared via AppServiceProvider) — never hardcode brand names
+- Use `site('key')` helper in PHP, `$site['key']` in Blade
+- Public pages extend `layouts.website.master`
+- Admin pages extend `layouts.admin.app`
+- Add new pages: config → route → WebController method → blade view
+- Remove placeholder content and replace with real client content
+- Enable only the admin modules the client needs via `config/site.php` → `features`
+
+## Do NOT
+
+- Hardcode client-specific brand names in layouts (use config)
+- Leave Lectrolab/Lyllianna/Phoenix legacy references
+- Skip admin dashboard branding update
+- Forget to update `.env` SITE_* variables alongside config
+
+## Empty Template Defaults
+
+- Site name: "Your Website"
+- Pages: Home, About, Contact
+- Theme: dark mode, blue/cyan accent
+- Admin: matches site config automatically
