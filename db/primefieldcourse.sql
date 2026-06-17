@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 16, 2026 at 01:16 AM
+-- Generation Time: Jun 17, 2026 at 04:59 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -131,7 +131,10 @@ CREATE TABLE `contact_us` (
 
 INSERT INTO `contact_us` (`id`, `first_name`, `last_name`, `email`, `phone`, `address`, `message`, `status`, `deleted_at`, `created_at`, `updated_at`) VALUES
 (1, 'Tatiana', 'Patrick', 'qigetylova@mailinator.com', '+1 (104) 308-4146', 'Id et voluptatum co', 'Numquam quidem sit', '1', '2026-02-26 16:58:03', '2026-02-25 13:35:35', '2026-02-26 11:58:03'),
-(2, 'Solomon', 'Wooten', 'zodyw@mailinator.com', '+1 (867) 988-5696', 'Ezekiel Todd', 'Ducimus ut ullam fu', '1', NULL, '2026-04-16 18:44:01', '2026-04-16 18:44:01');
+(2, 'Solomon', 'Wooten', 'zodyw@mailinator.com', '+1 (867) 988-5696', 'Ezekiel Todd', 'Ducimus ut ullam fu', '1', '2026-06-15 23:57:42', '2026-04-16 18:44:01', '2026-06-15 18:57:42'),
+(3, 'Test', 'User', 'test@example.com', '555', 'New Golf Course Construction', 'Hello', '1', '2026-06-15 23:57:35', '2026-06-15 18:39:48', '2026-06-15 18:57:35'),
+(4, 'Sebastian', 'Wilder', 'mikom@mailinator.com', '+1 (245) 288-2424', 'New Golf Course Construction', 'Pariatur Et molesti', '1', '2026-06-15 23:57:39', '2026-06-15 18:40:49', '2026-06-15 18:57:39'),
+(5, 'Jane', 'Doe', 'jane.doe@example.com', '', 'New Athletic Field Construction', '', '1', '2026-06-15 23:57:44', '2026-06-15 18:41:20', '2026-06-15 18:57:44');
 
 -- --------------------------------------------------------
 
@@ -311,7 +314,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (159, '2026_03_11_194327_create_schedule_shop_contacts_table', 109),
 (160, '2026_02_24_201750_create_videos_table', 110),
 (161, '2026_05_06_000001_add_thumbnail_url_to_videos_table', 111),
-(162, '2026_05_06_120000_add_thumbnail_url_to_videos_table', 112);
+(162, '2026_05_06_120000_add_thumbnail_url_to_videos_table', 112),
+(163, '2026_06_16_000001_create_home_content_tables', 113);
 
 -- --------------------------------------------------------
 
@@ -727,7 +731,19 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `permission`, `deleted_at
 (253, 'homebgt-list', 'web', 'list', NULL, '2026-04-10 14:42:30', '2026-04-10 14:42:30'),
 (254, 'homebgt-create', 'web', 'create', NULL, '2026-04-10 14:42:30', '2026-04-10 14:42:30'),
 (255, 'homebgt-edit', 'web', 'edit', NULL, '2026-04-10 14:42:30', '2026-04-10 14:42:30'),
-(256, 'homebgt-delete', 'web', 'delete', NULL, '2026-04-10 14:42:31', '2026-04-10 14:42:31');
+(256, 'homebgt-delete', 'web', 'delete', NULL, '2026-04-10 14:42:31', '2026-04-10 14:42:31'),
+(257, 'service-list', 'web', 'list', NULL, '2026-06-15 18:58:24', '2026-06-15 18:58:24'),
+(258, 'service-create', 'web', 'create', NULL, '2026-06-15 18:58:24', '2026-06-15 18:58:24'),
+(259, 'service-edit', 'web', 'edit', NULL, '2026-06-15 18:58:24', '2026-06-15 18:58:24'),
+(260, 'service-delete', 'web', 'delete', NULL, '2026-06-15 18:58:24', '2026-06-15 18:58:24'),
+(261, 'process-list', 'web', 'list', NULL, '2026-06-15 18:58:25', '2026-06-15 18:58:25'),
+(262, 'process-create', 'web', 'create', NULL, '2026-06-15 18:58:25', '2026-06-15 18:58:25'),
+(263, 'process-edit', 'web', 'edit', NULL, '2026-06-15 18:58:25', '2026-06-15 18:58:25'),
+(264, 'process-delete', 'web', 'delete', NULL, '2026-06-15 18:58:25', '2026-06-15 18:58:25'),
+(265, 'portfolio-list', 'web', 'list', NULL, '2026-06-15 18:58:25', '2026-06-15 18:58:25'),
+(266, 'portfolio-create', 'web', 'create', NULL, '2026-06-15 18:58:25', '2026-06-15 18:58:25'),
+(267, 'portfolio-edit', 'web', 'edit', NULL, '2026-06-15 18:58:26', '2026-06-15 18:58:26'),
+(268, 'portfolio-delete', 'web', 'delete', NULL, '2026-06-15 18:58:26', '2026-06-15 18:58:26');
 
 -- --------------------------------------------------------
 
@@ -761,6 +777,66 @@ CREATE TABLE `photo_galleries` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `portfolio_items`
+--
+
+CREATE TABLE `portfolio_items` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `category_label` varchar(255) DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `subtitle` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `image_alt` varchar(255) DEFAULT NULL,
+  `sort_order` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `portfolio_items`
+--
+
+INSERT INTO `portfolio_items` (`id`, `slug`, `category_label`, `title`, `subtitle`, `image`, `image_alt`, `sort_order`, `status`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, 'ridgeview-country-club', 'Golf Course — New Build', 'Ridgeview Country Club', '18-hole championship course — Savannah, GA · 2023', 'port-1.jpg', 'Ridgeview Country Club championship golf course', 1, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27'),
+(2, 'westlake-high-school-stadium', 'Athletic Field — New Build', 'Westlake High School Stadium', 'Multi-sport complex, 3 fields — Austin, TX · 2023', 'port-2.jpg', 'Westlake High School athletic field complex', 2, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27'),
+(3, 'sunridge-golf-resort', 'Golf Course — Full Renovation', 'Sunridge Golf & Resort', '27-hole renovation + clubhouse — Scottsdale, AZ · 2024', 'port-3.jpg', 'Sunridge Golf Resort renovation', 3, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27'),
+(4, 'maplewood-recreation-complex', 'Municipal Complex — New Build', 'Maplewood Recreation Complex', '4-field soccer + football complex — Columbus, OH · 2024', 'port-4.jpg', 'Maplewood Recreation Complex', 4, 1, NULL, '2026-06-15 18:58:28', '2026-06-15 18:58:28');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `process_steps`
+--
+
+CREATE TABLE `process_steps` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `step_number` varchar(4) DEFAULT NULL,
+  `phase_label` varchar(255) DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `sort_order` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `process_steps`
+--
+
+INSERT INTO `process_steps` (`id`, `step_number`, `phase_label`, `title`, `description`, `sort_order`, `status`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, '01', 'Phase One', 'Site Assessment & Planning', 'We evaluate your land, soil conditions, drainage patterns, and project goals to build a detailed construction plan and honest budget estimate.', 1, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27'),
+(2, '02', 'Phase Two', 'Design & Engineering', 'Our licensed engineers and course architects develop detailed grading plans, drainage layouts, and irrigation schematics tailored to your site.', 2, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27'),
+(3, '03', 'Phase Three', 'Construction & Build', 'Our experienced crews execute every phase — earthwork, drainage, infrastructure, and surfacing — with precision equipment and rigorous quality control.', 3, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27'),
+(4, '04', 'Phase Four', 'Inspection & Handoff', 'Final inspections, punch-list completion, and a complete handoff package including as-built drawings, warranties, and maintenance recommendations.', 4, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27');
 
 -- --------------------------------------------------------
 
@@ -882,7 +958,31 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (253, 1),
 (254, 1),
 (255, 1),
-(256, 1);
+(256, 1),
+(257, 1),
+(257, 2),
+(258, 1),
+(258, 2),
+(259, 1),
+(259, 2),
+(260, 1),
+(260, 2),
+(261, 1),
+(261, 2),
+(262, 1),
+(262, 2),
+(263, 1),
+(263, 2),
+(264, 1),
+(264, 2),
+(265, 1),
+(265, 2),
+(266, 1),
+(266, 2),
+(267, 1),
+(267, 2),
+(268, 1),
+(268, 2);
 
 -- --------------------------------------------------------
 
@@ -919,6 +1019,37 @@ INSERT INTO `schedule_shop_contacts` (`id`, `title`, `heading`, `heading_2`, `de
 (2, 'Once I had a Dream..Available for download from Amazon and Apple Music', NULL, 'New Album “Frankly Perry” available for download and purchase very soon', NULL, NULL, '2', 'black-about-section-2', '1773365771_69b36a0b67c42.webp', '1773365771_69b36a0b67ef7.webp', NULL, 'https://www.amazon.com/music/player/albums/B08CYBJ1GV', 'Buy On Amazon', '1', NULL, '2026-03-12 20:36:11', '2026-03-12 20:36:11'),
 (3, 'By Request …Available for download from Amazon and Apple Music', NULL, NULL, NULL, NULL, '1', 'black-about-section', '1773366057_69b36b2911681.webp', '1773366057_69b36b2911835.webp', NULL, 'https://music.amazon.com/albums/B09J1XSPCY', 'Buy On Amazon', '1', NULL, '2026-03-12 20:40:57', '2026-03-12 20:40:57'),
 (4, 'Perry Grant Merchandise and Shop:', 'CD/DVD/MEDIA', NULL, 'Available for download from Amazon and Apple Music', NULL, '0', 'black-about-section-2', '1773366615_69b36d57286c6.webp', NULL, NULL, 'https://music.amazon.com/albums/B09J1XSPCY', 'Buy On Amazon', '1', NULL, '2026-03-12 20:50:15', '2026-03-12 20:50:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `services`
+--
+
+CREATE TABLE `services` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `tag` varchar(255) DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `bullets` text DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `icon` varchar(255) NOT NULL DEFAULT 'golf',
+  `sort_order` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `services`
+--
+
+INSERT INTO `services` (`id`, `slug`, `tag`, `title`, `description`, `bullets`, `image`, `icon`, `sort_order`, `status`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, 'golf-course-construction', 'Golf', 'Golf Course Construction', 'From raw land to opening day — we design and build championship-quality courses with precision grading, shaping, drainage, irrigation, bunkers, water features, and tournament-ready greens.', 'New Course Construction (9 & 18-hole)\nFairway Shaping & Earthwork\nGreen Construction & Drainage\nSand Bunker Design & Build\nCart Path & Infrastructure\nIrrigation System Installation', 'svc-golf.jpg', 'golf', 1, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27'),
+(2, 'athletic-field-construction', 'Athletics', 'Athletic Field Construction', 'Football, soccer, baseball, lacrosse, softball, and multi-sport complexes — built from the ground up with proper grading, drainage systems, field lighting, fencing, and spectator infrastructure.', 'Football & Soccer Field Construction\nBaseball & Softball Diamond Build\nSub-surface Drainage Engineering\nField Lighting Installation\nBleacher & Fencing Systems\nMulti-Sport Complex Development', 'svc-athletics.jpg', 'athletics', 2, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27'),
+(3, 'course-field-renovation', 'Renovation', 'Course & Field Renovation', 'Breathe new life into aging courses and underperforming fields. We restore drainage, reshape fairways, rebuild greens, and reconstruct fields to modern safety and performance standards — with minimal downtime.', 'Golf Course Redesign & Reshaping\nGreen Rebuild & Reconstruction\nDrainage System Overhaul\nAthletic Field Restoration\nInfield & Outfield Reconstruction\nADA Compliance Upgrades', 'svc-renovation.jpg', 'renovation', 3, 1, NULL, '2026-06-15 18:58:27', '2026-06-15 18:58:27');
 
 -- --------------------------------------------------------
 
@@ -1042,26 +1173,9 @@ CREATE TABLE `testimonials` (
 --
 
 INSERT INTO `testimonials` (`id`, `name`, `slug`, `designation`, `image`, `comment`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Joyce Dowd', 'joyce-dowd', NULL, '23-02-2026-180932.png', '<p>Perry is a gifted entertainer who relates to all age groups! he has a multitude of fans who thoroughly enjoy his entertaining ways! He is a gifted pianist,singer and cabaret entertainer as well as having a fabulous stage show! He gives 100% of himself to entertaining others and is an asset to anyone he works for Many of his fans book only to see him many book a year before too As a performer I would say that he is one of the best performing of cruise ships!</p>', 1, '2026-02-23 13:09:32', '2026-02-23 13:37:49', NULL),
-(2, 'Edwin Rojas', 'edwin-rojas', NULL, '23-02-2026-181045.png', '<p>IMPLE: There is NO FINER entertainer in any piano bar, on any cruise ship, in the world. NONE!<br /><br />have worked with Perry at Holland America Line on many cruises, including Grand Voyages at 30+ days and including a world cruise in 1998 with 100+ days with the same guests. Who did they love the best? PERRY. I also worked with Perry at Celebrity Cruises. Who had the highest revenue of any bar musician? PERRY.<br /><br />He\'s funny, a great talent, and a gem to work with.</p>', 1, '2026-02-23 13:10:45', '2026-02-23 13:10:45', NULL),
-(3, 'Aaron Mandelbaum', 'aaron-mandelbaum', NULL, '23-02-2026-181128.png', '<p>There are many items to consider when booking a great vacation. For my family, we often make sure we book a cruise that Perry is involved with. I have been on dozens of cruises and you see lots of amazing places but the best part is the people you meet. Perry is fantastic. He is funny and a terrific performer. He will be a highlight of your trip.<br /><br />I can\'t recommend him enough.</p>', 1, '2026-02-23 13:11:28', '2026-02-23 13:11:28', NULL),
-(4, 'Ellen O\'Byrne', 'ellen-obyrne', NULL, '23-02-2026-181201.png', '<p>Perry Grant is a highly engaging entertainer who consistently delights his audiences for several hours each evening. He plays the piano magnificently, sings beautifully, has fabulous rapport with his audiences and also can put on a wonderful stage show. He has a huge fan following among cruisers and people will often only book their cruise only if Perry Grant will be the onboard entertainer. I highly recommend Perry Grant!</p>', 1, '2026-02-23 13:12:01', '2026-02-23 13:12:01', NULL),
-(5, 'Elizabeth Minton', 'elizabeth-minton', NULL, '23-02-2026-181232.png', '<p>Perry is a fantastic entertainer. His knowledge of music is amazing and his ability to provide instrumental and vocal entertainment to large crowds of people in all age ranges and nationalities is unique.. He is very creative and keeps his audiences laughing with his chatter and conversations with the audience. I highly recommend him as the best entertainer on the high seas.</p>', 1, '2026-02-23 13:12:32', '2026-02-23 13:12:32', NULL),
-(6, 'Eric Oliver', 'eric-oliver', NULL, '23-02-2026-181307.png', '<p>Perry is an extraordinarily gifted performer and entertainer. He is always a pleasure to work with, and his attention to detail assures a splendid performance every time. He always leaves the audiences wanting more, loving him more with every show. I always look forward to the opportunity to play with Perry!</p>', 1, '2026-02-23 13:13:07', '2026-02-23 13:13:07', NULL),
-(7, 'Tom Jackson', 'tom-jackson', NULL, '23-02-2026-181335.png', '<p>Perry and I worked together on board the Celebrity Constellation back in 2008. At the time I was the musical director and this meant I was in direct contact with Perry during this time, in which case Perry proved to be an integral member of our entertainment team.<br /><br />Perry was well liked by all of the guests on board, and he constantly performed to capacity crowds in Michael\'s Club. Worth noting is the fact that many guests specifically booked their cruises, knowing that Perry was performing on board.<br /><br />If you are looking for an entertainer that delivers, Perry is certainly an act that I would recommend. Sincerely Yours.</p>', 1, '2026-02-23 13:13:35', '2026-02-23 13:31:16', '2026-02-23 13:31:16'),
-(8, 'Jeffrey Gabel', 'jeffrey-gabel', NULL, '23-02-2026-181408.png', '<p>Perry is one of the most entertaining club singers I\'ve ever seen in my long career. His fans adore him so much they follow him from cruise to cruise all around the world.</p>', 1, '2026-02-23 13:14:08', '2026-02-23 13:14:08', NULL),
-(9, 'Julie Williams', 'julie-williams', NULL, '23-02-2026-181522.png', '<p class=\"testimonial-text mt-2\">Outstanding performer, who touches everyone in the audiences hearts for sure! Grand Entertainer/musician/singer!</p>', 1, '2026-02-23 13:15:22', '2026-02-23 13:15:22', NULL),
-(10, 'Norman Popa', 'norman-popa', NULL, '23-02-2026-181552.png', '<p>Perry was a great entertainer who was outstanding and filled Micheal\'s Club every single night and was loved by all those in attendance.</p>', 1, '2026-02-23 13:15:52', '2026-02-23 13:15:52', NULL),
-(11, 'Michael Pye', 'michael-pye', NULL, '23-02-2026-181623.png', '<p>Perry is a consummate professional, extremely hard working and popular with all who meet him. This combination of his exceptional musical and entertainment skills with his general \"joie de vivre\" and his continual quest to research and learn new materials has meant he has been wowing and delighting his audiences throughout his international career. An entertainer not to be missed!</p>', 1, '2026-02-23 13:16:23', '2026-02-23 13:16:23', NULL),
-(12, 'Dana Leslie', 'dana-leslie', NULL, '23-02-2026-181654.png', '<p>Perry Grant is a true showman! He is a real treasure for Celebrity Cruises, not only for his wonderful musical talent, but for his professionalism, courtesy and integrity as well! Perry is an absolute delight as he engages his audiences from performing in the grand theatres to intimate cabaret settings on various vessels. When out and about around the ship, you can always count on Perry to be smiling and friendly! I loved working alongside Perry on the Celebrity Constellation, and now I can\'t wait to bring my group on board the Celebrity Eclipse to see Perry perform in all of his glory! His show is NOT to be missed!</p>', 1, '2026-02-23 13:16:54', '2026-02-23 13:16:54', NULL),
-(13, 'Cliff Mason', 'cliff-mason', NULL, '23-02-2026-181727.png', '<p>Perry is an exceptionally talented performer who captivates and delights audiences with his flamboyant showbiz style, which was already firmly established when we improvised jazz together as teenagers. It has been a pleasure to follow his development as a first rate entertainer and to see the huge following of supporters who enjoy his shows and keep coming back for more - perhaps the best measure of success a performer can ask for.</p>', 1, '2026-02-23 13:17:27', '2026-02-23 13:17:27', NULL),
-(14, 'Donna Marks', 'donna-marks', NULL, '23-02-2026-182028.png', '<p>All though your form does not have the correct way for me to talk about Perry Grant, I will do with what was presented to me. I have never hired him, worked with him or done business with him, he has entertained me to a point I feel I have to make a recommendation!<br /><br />Perry is an excellent entertainer that I have had the pleasure to meet and enjoy for the last 5 years or so whenever I go on celebrity cruise ships, he has a talent that is hard to compare. He attracts a crowd like I\'ve never seen and it seems we follow him wherever he goes! It\'s called being \"perrified\" I think you have to be there to understand, but he is one in a million, his music is from the past and sublime, his comedy is strange and wonderful and his heart is as big as the moon.<br /><br />I can\'t wait to see him again wherever that may be, on land or sea, but wherever it\'s a treat! Thank you for all the happy times Perry!</p>', 1, '2026-02-23 13:20:28', '2026-02-23 13:20:28', NULL),
-(15, 'Stasia Meyers', 'stasia-meyers', NULL, '23-02-2026-182101.png', '<p>Perry Grant is a most remarkable entertainer. I\'ve had the distinct pleasure of having sailed on several cruises with this legendary performer. Each evening he presides over the piano bar/lounge, singing, playing the piano and generally keeping us all laughing with his unique sense of humor. I\'ve never experienced an entertainer who so cleverly connects with his audience. I say \"audience\" but truly, by the end of the cruise, he has formed friendships with so many of those lucky enough to have secured a seat each evening.<br /><br />Perry has a seemingly endless \"bag of tricks\" to keep his following engaged, to bring them into his sphere and literally to keep all laughing with him and at ourselves. His appeal spans all age groups, from octogenarians down to adolescents, and no matter where one is from, he can \"speak\" the language. He simply enjoys entertaining all ages and all ages gravitate towards him. It is amazing to witness this, night after night. To say that he is a welcoming person is not to do justice to his endearing personality. A warm and sweet man can be found under those crazy hats he will suddenly don. All feel happy to be in the room and speaking for many, I choose only cruises where Perry will be on board. Any venue would do well to have Perry Grant as entertainer. A true professional!</p>', 1, '2026-02-23 13:21:01', '2026-02-23 13:21:01', NULL),
-(16, 'Gabriele Miller Urban', 'gabriele-miller-urban', NULL, '23-02-2026-182623.png', '<p>I would like to give Perry a different recommendation. When I met Perry for the first time on Holland America Line he played his piano just around the corner from the Casino and his crowed in there were in hysteric, because the way he can entertain is never the same. Perry is a very creative person starts with his outfits and I did wonder where can I find this clothes? Perry is truly a fine person fantasic to have him around and a asset to any organisation.</p>', 1, '2026-02-23 13:26:23', '2026-02-23 13:26:23', NULL),
-(17, 'Michael Faber', 'michael-faber', NULL, '23-02-2026-182654.png', '<p>I have known Perry Grant for almost 15 years... both as an entertainer (at which he is incredible) but more importantly as a friend!! Perry is one of the most decent and hard working people I have ever known. His work ethic and genuinely always wanting to please his audience is nothing less than incredible. I would not only highly, but most strongly, recommend Perry Grant to anyone who only want the very best possible!</p>', 1, '2026-02-23 13:26:54', '2026-02-23 13:26:54', NULL),
-(18, 'Tom Jackson', 'tom-jackson', NULL, '23-02-2026-182739.png', '<p>Perry and I worked together on board the Celebrity Constellation back in 2008. At the time I was the musical director and this meant I was in direct contact with Perry during this time, in which case Perry proved to be an integral member of our entertainment team.<br />Perry was well liked by all of the guests on board, and he constantly performed to capacity crowds in Michael\'s Club. Worth noting is the fact that many guests specifically booked their cruises, knowing that Perry was performing on board.<br />If you are looking for an entertainer that delivers, Perry is certainly an act that I would recommend. Sincerely yours,</p>', 1, '2026-02-23 13:27:39', '2026-02-23 13:27:39', NULL),
-(19, 'Randi Kline', 'randi-kline', NULL, '23-02-2026-182921.jpg', '<p>I had the pleasure of working with Perry over the course of several contracts with Celebrity Cruises. He was a consummate professional and took immense pride in pleasing his audience. Perry was able to connect intimately with his audience in both the smaller club venues as well as in large theater venues. It was truly a pleasure to work with Perry and to witness the joy he brought to our guests.</p>', 1, '2026-02-23 13:29:21', '2026-02-23 13:29:21', NULL),
-(20, 'MARK PRESTON', 'mark-preston', NULL, '23-02-2026-183001.jpg', '<p>In all my 45 plus years in this industry, I have never seen someone control a room like Perry Grant. From the moment he begins, till the last note is sung....he\'s got the room in the palm of his hand. real pro</p>', 1, '2026-02-23 13:30:01', '2026-02-26 14:06:57', NULL);
+(1, 'Robert Caldwell', 'robert-caldwell', 'General Manager — Ridgeview Country Club', 'testimonial-1.jpg', 'Prime Field delivered our 18-hole course six weeks ahead of schedule. The grading precision and drainage engineering is simply world-class. Our members can\'t stop talking about it.', 1, '2026-06-15 18:58:28', '2026-06-15 18:58:28', NULL),
+(2, 'Sandra Torres', 'sandra-torres', 'Athletic Director — Westlake ISD', 'testimonial-2.jpg', 'Our student athletes now compete on a field that rivals professional facilities. Prime Field\'s team was transparent, professional, and incredibly skilled throughout every phase of construction.', 1, '2026-06-15 18:58:28', '2026-06-15 18:58:28', NULL),
+(3, 'James Whitfield', 'james-whitfield', 'Director of Parks — Maplewood County', 'testimonial-3.jpg', 'We\'ve partnered with Prime Field on four consecutive county projects. Their drainage engineering and earthwork quality is unmatched. Three years later, the fields still perform like day one.', 1, '2026-06-15 18:58:28', '2026-06-15 18:58:28', NULL);
 
 -- --------------------------------------------------------
 
@@ -1454,6 +1568,18 @@ ALTER TABLE `photo_galleries`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `portfolio_items`
+--
+ALTER TABLE `portfolio_items`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `process_steps`
+--
+ALTER TABLE `process_steps`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `roles`
 --
 ALTER TABLE `roles`
@@ -1471,6 +1597,12 @@ ALTER TABLE `role_has_permissions`
 -- Indexes for table `schedule_shop_contacts`
 --
 ALTER TABLE `schedule_shop_contacts`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `services`
+--
+ALTER TABLE `services`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1536,7 +1668,7 @@ ALTER TABLE `brands`
 -- AUTO_INCREMENT for table `contact_us`
 --
 ALTER TABLE `contact_us`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -1560,7 +1692,7 @@ ALTER TABLE `latest_news`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=163;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=164;
 
 --
 -- AUTO_INCREMENT for table `pages`
@@ -1578,7 +1710,7 @@ ALTER TABLE `page_settings`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=257;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=269;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -1593,6 +1725,18 @@ ALTER TABLE `photo_galleries`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `portfolio_items`
+--
+ALTER TABLE `portfolio_items`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `process_steps`
+--
+ALTER TABLE `process_steps`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
@@ -1603,6 +1747,12 @@ ALTER TABLE `roles`
 --
 ALTER TABLE `schedule_shop_contacts`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `services`
+--
+ALTER TABLE `services`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -1620,7 +1770,7 @@ ALTER TABLE `shop_contacts`
 -- AUTO_INCREMENT for table `testimonials`
 --
 ALTER TABLE `testimonials`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
