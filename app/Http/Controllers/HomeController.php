@@ -12,6 +12,9 @@ use App\Models\ShopContact;
 use App\Models\PhotoGallery;
 use App\Models\Video;
 use App\Models\Audio;
+use App\Models\Service;
+use App\Models\PortfolioItem;
+use App\Models\ProcessStep;
 class HomeController extends Controller
 {
     public function __construct()
@@ -43,18 +46,27 @@ class HomeController extends Controller
 
             $videoTotal = Video::count(); 
 
-            $audioTotal = Audio::count(); 
+            $audioTotal = Audio::count();
+
+            $servicesTotal = Service::count();
+            $portfolioTotal = PortfolioItem::count();
+            $processTotal = ProcessStep::count();
+            $activeTestimonialsTotal = Testimonial::where('status', 1)->count();
 
             return view('admin.dashboard.dashboard', compact(
                 'page_title',
                 'slidersTotal', 
                 'bannersTotal', 
-                'testimonialsTotal', 
+                'testimonialsTotal',
+                'activeTestimonialsTotal',
                 'contactUsTotal', 
                 'shopContactTotal', 
                 'galleryTotal', 
                 'videoTotal', 
-                'audioTotal', 
+                'audioTotal',
+                'servicesTotal',
+                'portfolioTotal',
+                'processTotal',
             ));
         }
 

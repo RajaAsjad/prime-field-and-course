@@ -357,6 +357,11 @@ img.existing-photo {
     background-color: var(--admin-shell);
 }
 
+.skin-blue .main-sidebar,
+.skin-blue .left-side {
+    background-color: var(--admin-shell) !important;
+}
+
 .skin-blue .sidebar-menu>li:hover>a,
 .skin-blue .sidebar-menu>li.active>a {
     color: #fff;

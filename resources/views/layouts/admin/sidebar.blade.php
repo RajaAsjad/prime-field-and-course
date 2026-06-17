@@ -1,4 +1,4 @@
-<aside class="main-sidebar" style="margin-top: 55px;">
+<aside class="main-sidebar">
     <section class="sidebar">
         <ul class="sidebar-menu">
             <li class="treeview">

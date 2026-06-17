@@ -6,16 +6,30 @@
         <link href="{{ $site['theme']['google_fonts'] }}" rel="stylesheet">
     @endif
     <style>
+        body.skin-blue.fixed .content-wrapper {
+            background: var(--dash-surface) !important;
+            min-height: 100vh;
+            margin-top: 0 !important;
+            padding: 50px 0 0 !important;
+        }
+
         .pg-dash {
-            min-height: calc(100vh - 100px);
-            background: linear-gradient(180deg, var(--dash-surface) 0%, var(--dash-surface-mid) 100%);
-            padding: 0 1.5rem 2.5rem;
+            min-height: calc(100vh - 50px);
+            background: var(--dash-surface);
+            padding: 0.75rem 1rem 1.25rem;
+            margin: 0;
+        }
+
+        .pg-dash.content {
+            padding: 0.75rem 1rem 1.25rem !important;
+            margin: 0 !important;
+            min-height: calc(100vh - 50px);
         }
 
         .pg-dash__banner {
             width: 100%;
-            margin: 15px auto 2.5rem;
-            padding: 3.5rem 2rem;
+            margin: 0 0 1.25rem;
+            padding: 2.5rem 1.5rem;
             background: #ffffff;
             border-radius: 16px;
             border: 1px solid color-mix(in srgb, var(--dash-primary) 15%, transparent);
@@ -79,12 +93,14 @@
         }
 
         .pg-dash__grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
         }
 
         .pg-dash__card {
+            flex: 1 1 160px;
+            min-width: min(100%, 160px);
             background: #fff;
             border-radius: 16px;
             padding: 1.75rem 1.5rem;
@@ -101,9 +117,12 @@
             animation: cardFadeIn 0.55s ease forwards;
         }
 
-        .pg-dash__card:nth-child(1) { animation-delay: 0.08s; }
-        .pg-dash__card:nth-child(2) { animation-delay: 0.15s; }
-        .pg-dash__card:nth-child(3) { animation-delay: 0.22s; }
+        .pg-dash__card:nth-child(1) { animation-delay: 0.05s; }
+        .pg-dash__card:nth-child(2) { animation-delay: 0.1s; }
+        .pg-dash__card:nth-child(3) { animation-delay: 0.15s; }
+        .pg-dash__card:nth-child(4) { animation-delay: 0.2s; }
+        .pg-dash__card:nth-child(5) { animation-delay: 0.25s; }
+        .pg-dash__card:nth-child(6) { animation-delay: 0.3s; }
 
         @keyframes cardFadeIn {
             to { opacity: 1; transform: translateY(0); }
@@ -216,8 +235,12 @@
         }
 
         @media (max-width: 576px) {
-            .pg-dash { padding: 0 1rem 1.5rem; }
-            .pg-dash__banner { padding: 2rem 1.25rem; margin-bottom: 1.5rem; }
+            .pg-dash,
+            .pg-dash.content {
+                padding: 0.5rem 0.75rem 1rem !important;
+            }
+
+            .pg-dash__banner { padding: 1.75rem 1rem; margin-bottom: 1rem; }
             .pg-dash__card { padding: 1.25rem; }
             .pg-dash__card-value { font-size: 1.65rem; }
         }
@@ -228,8 +251,11 @@
     <section class="content pg-dash">
         @php
             $contactUsIndex = Route::has('contactus.index') ? route('contactus.index') : '#';
-            $videoIndex = Route::has('video.index') ? route('video.index') : '#';
             $settingsIndex = Route::has('page.index') ? route('page.index') : '#';
+            $serviceIndex = Route::has('service.index') ? route('service.index') : '#';
+            $portfolioIndex = Route::has('portfolio.index') ? route('portfolio.index') : '#';
+            $processIndex = Route::has('process.index') ? route('process.index') : '#';
+            $testimonialIndex = Route::has('testimonial.index') ? route('testimonial.index') : '#';
             $welcomeName = $site['admin']['welcome_message'] ?: ($site['short_name'] ?? $site['name'] ?? 'Admin');
         @endphp
 
@@ -251,19 +277,45 @@
         </div>
 
         <div class="pg-dash__grid">
+            @can('contactus-list')
             <a href="{{ $contactUsIndex }}" class="pg-dash__card">
                 <div class="pg-dash__card-icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
                 <div class="pg-dash__card-value">{{ $contactUsTotal ?? 0 }}</div>
                 <div class="pg-dash__card-label">Contact Messages</div>
             </a>
+            @endcan
 
-            @if (!empty($site['features']['video_gallery']))
-                <a href="{{ $videoIndex }}" class="pg-dash__card">
-                    <div class="pg-dash__card-icon"><i class="fa fa-video-camera" aria-hidden="true"></i></div>
-                    <div class="pg-dash__card-value">{{ $videoTotal ?? 0 }}</div>
-                    <div class="pg-dash__card-label">Videos</div>
-                </a>
-            @endif
+            @can('service-list')
+            <a href="{{ $serviceIndex }}" class="pg-dash__card">
+                <div class="pg-dash__card-icon"><i class="fa fa-wrench" aria-hidden="true"></i></div>
+                <div class="pg-dash__card-value">{{ $servicesTotal ?? 0 }}</div>
+                <div class="pg-dash__card-label">Services</div>
+            </a>
+            @endcan
+
+            @can('portfolio-list')
+            <a href="{{ $portfolioIndex }}" class="pg-dash__card">
+                <div class="pg-dash__card-icon"><i class="fa fa-picture-o" aria-hidden="true"></i></div>
+                <div class="pg-dash__card-value">{{ $portfolioTotal ?? 0 }}</div>
+                <div class="pg-dash__card-label">Portfolio Projects</div>
+            </a>
+            @endcan
+
+            @can('process-list')
+            <a href="{{ $processIndex }}" class="pg-dash__card">
+                <div class="pg-dash__card-icon"><i class="fa fa-list-ol" aria-hidden="true"></i></div>
+                <div class="pg-dash__card-value">{{ $processTotal ?? 0 }}</div>
+                <div class="pg-dash__card-label">How We Work Steps</div>
+            </a>
+            @endcan
+
+            @can('testimonial-list')
+            <a href="{{ $testimonialIndex }}" class="pg-dash__card">
+                <div class="pg-dash__card-icon"><i class="fa fa-quote-left" aria-hidden="true"></i></div>
+                <div class="pg-dash__card-value">{{ $activeTestimonialsTotal ?? $testimonialsTotal ?? 0 }}</div>
+                <div class="pg-dash__card-label">Active Testimonials</div>
+            </a>
+            @endcan
         </div>
     </section>
 @endsection

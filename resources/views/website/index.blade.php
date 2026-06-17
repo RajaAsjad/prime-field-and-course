@@ -401,7 +401,7 @@
         <blockquote class="test-quote">"{{ $testimonial->comment }}"</blockquote>
         <div class="test-author">
           <div class="test-avatar">
-            <img src="{{ $testimonial->image_url }}" alt="Portrait of {{ $testimonial->name }}" width="50" height="50" loading="lazy"/>
+            <img src="{{ asset('admin/assets/images/testimonials/' . $testimonial->image) }}" alt="Portrait of {{ $testimonial->name }}" width="50" height="50" loading="lazy"/>
           </div>
           <div>
             <div class="test-name">{{ $testimonial->name }}</div>

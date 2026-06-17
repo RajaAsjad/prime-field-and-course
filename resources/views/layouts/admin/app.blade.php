@@ -72,23 +72,78 @@
         }
 
         .main-sidebar {
-            margin-top: 150px !important;
-            height: calc(100vh - 150px) !important;
+            margin-top: 50px !important;
+            height: calc(100vh - 50px) !important;
+            background-color: var(--admin-shell) !important;
             overflow: hidden !important;
-            display: flex !important;
-            flex-direction: column !important;
+            padding-top: 88px !important;
+            transition: padding-top 0.3s ease-in-out, width 0.3s ease-in-out;
+        }
+
+        .sidebar-mini.sidebar-collapse .main-sidebar {
+            padding-top: 0 !important;
+            width: 50px !important;
+            min-width: 50px !important;
+            max-width: 50px !important;
+            overflow: hidden !important;
+        }
+
+        @media (min-width: 768px) {
+            body.sidebar-mini.sidebar-collapse .content-wrapper,
+            body.sidebar-mini.sidebar-collapse .right-side {
+                margin-left: 50px !important;
+            }
+
+            body.sidebar-mini.sidebar-collapse .main-header .navbar {
+                margin-left: 50px !important;
+            }
+
+            body.sidebar-mini:not(.sidebar-collapse) .content-wrapper,
+            body.sidebar-mini:not(.sidebar-collapse) .right-side {
+                margin-left: 230px !important;
+            }
+
+            body.sidebar-mini:not(.sidebar-collapse) .main-header .navbar {
+                margin-left: 0 !important;
+            }
+        }
+
+        .skin-blue .main-sidebar,
+        .skin-blue .left-side,
+        .skin-blue .main-sidebar .sidebar {
+            background-color: var(--admin-shell) !important;
+        }
+
+        .skin-blue .main-header {
+            background-color: var(--admin-shell) !important;
+        }
+
+        .skin-blue .main-header .navbar,
+        .skin-blue .main-header .logo,
+        .skin-blue .main-header .logo:hover {
+            background-color: var(--admin-shell) !important;
+        }
+
+        body.skin-blue.fixed .content-wrapper {
+            margin-top: 0 !important;
+            padding-top: 50px !important;
+        }
+
+        body.sidebar-mini.sidebar-collapse .admin-header .header-logo-link {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @media (min-width: 768px) {
+            body.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span,
+            body.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+                display: none !important;
+            }
         }
 
         .sidebar-menu>li {
             padding: 2px !important;
-        }
-
-        img#header-logo {
-            width: 210px;
-            position: absolute;
-            left: 10px;
-            top: 100%;
-            height: 80px;
         }
 
         .skin-blue .main-sidebar .sidebar-menu>li>a,
@@ -384,6 +439,25 @@
                     $sidebar.parent().replaceWith($sidebar);
                 }
             }, 100);
+
+            // Sidebar opens only via toggle button — disable AdminLTE hover expand
+            if ($.AdminLTE && $.AdminLTE.pushMenu) {
+                $.AdminLTE.pushMenu.expandOnHover = function() {};
+            }
+            $('.main-sidebar').off('mouseenter mouseleave');
+
+            function syncAdminSidebarLayout() {
+                var collapsed = $('body').hasClass('sidebar-collapse');
+                var offset = collapsed ? '50px' : '230px';
+                if ($(window).width() > ($.AdminLTE.options.screenSizes.sm - 1)) {
+                    $('.content-wrapper, .right-side').css('margin-left', offset);
+                    $('.main-header .navbar').css('margin-left', collapsed ? '50px' : '0');
+                }
+            }
+
+            $(document).on('expanded.pushMenu collapsed.pushMenu', syncAdminSidebarLayout);
+            $(window).on('resize', syncAdminSidebarLayout);
+            syncAdminSidebarLayout();
         });
     })();
 </script>
