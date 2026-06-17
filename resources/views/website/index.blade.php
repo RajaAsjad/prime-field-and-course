@@ -127,29 +127,42 @@
 ═══════════════════════════════════════════════════ -->
 <div class="logo-bar" aria-label="Certifications and associations" role="complementary">
   <div class="container logo-bar-inner">
-    <span class="logo-bar-label">Trusted &amp; Certified</span>
-    <div class="trust-logos">
-      <span class="trust-logo-item">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        ASBA Member
-      </span>
-      <span class="trust-logo-item">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        35+ Yrs Experience
-      </span>
-      <span class="trust-logo-item">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        Licensed & Insured
-      </span>
-      <span class="trust-logo-item">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-        GCSAA Partner
-      </span>
-      <span class="trust-logo-item">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Nationwide Coverage
-      </span>
-    </div>
+    <p class="logo-bar-label">
+      <span class="logo-bar-label__dot" aria-hidden="true"></span>
+      Trusted &amp; Certified
+    </p>
+    <ul class="trust-logos" role="list">
+      <li class="trust-logo-item">
+        <span class="trust-logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </span>
+        <span class="trust-logo-text">ASBA Member</span>
+      </li>
+      <li class="trust-logo-item">
+        <span class="trust-logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </span>
+        <span class="trust-logo-text">35+ Years Experience</span>
+      </li>
+      <li class="trust-logo-item">
+        <span class="trust-logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </span>
+        <span class="trust-logo-text">Licensed &amp; Insured</span>
+      </li>
+      <li class="trust-logo-item">
+        <span class="trust-logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        </span>
+        <span class="trust-logo-text">GCSAA Partner</span>
+      </li>
+      <li class="trust-logo-item">
+        <span class="trust-logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
+        <span class="trust-logo-text">Nationwide Coverage</span>
+      </li>
+    </ul>
   </div>
 </div>
 

@@ -6,7 +6,15 @@
     <div class="admin-auth-portal">
         <div class="admin-auth-card">
             <header class="admin-auth-card__header">
-                <span class="admin-auth-card__mark" aria-hidden="true">{{ $site['short_name'] ?? 'AD' }}</span>
+                @if (!empty($home_page_data['header_logo']))
+                    <img
+                        class="admin-auth-card__logo"
+                        src="{{ asset('admin/assets/images/page/' . $home_page_data['header_logo']) }}"
+                        alt="{{ $site['name'] ?? 'Admin' }}"
+                    >
+                @else
+                    <span class="admin-auth-card__mark" aria-hidden="true">{{ $site['short_name'] ?? 'AD' }}</span>
+                @endif
                 <div class="admin-auth-card__titles">
                     <h1 class="admin-auth-card__name">{{ $site['name'] ?? 'Admin' }}</h1>
                     <p class="admin-auth-card__panel">{{ $site['admin']['panel_title'] ?? 'Admin Panel' }}</p>
