@@ -127,10 +127,7 @@
 ═══════════════════════════════════════════════════ -->
 <div class="logo-bar" aria-label="Certifications and associations" role="complementary">
   <div class="container logo-bar-inner">
-    <p class="logo-bar-label">
-      <span class="logo-bar-label__dot" aria-hidden="true"></span>
-      Trusted &amp; Certified
-    </p>
+    <p class="logo-bar-label">Trusted &amp; Certified</p>
     <ul class="trust-logos" role="list">
       <li class="trust-logo-item">
         <span class="trust-logo-icon" aria-hidden="true">
