@@ -88,22 +88,41 @@ document.querySelectorAll('.trust-num[data-count]').forEach(el => {
   countObs.observe(el);
 });
 
-/* â”€â”€ Active nav link tracking â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-const sections  = document.querySelectorAll('section[id], div[id]');
-const navAnchors = document.querySelectorAll('.nav-links a');
+/* ── Active nav link tracking ── */
+const navAnchors = document.querySelectorAll('.nav-links a, .drawer-link');
+const navSectionIds = [...new Set(
+  [...navAnchors]
+    .map(a => (a.hash || '').replace(/^#/, ''))
+    .filter(Boolean)
+)];
+const navSections = navSectionIds
+  .map(id => document.getElementById(id))
+  .filter(Boolean);
 
 const setActiveNav = (id) => {
   navAnchors.forEach(a => {
-    a.classList.toggle('is-active', a.getAttribute('href') === `#${id}`);
+    const linkId = (a.hash || '').replace(/^#/, '');
+    a.classList.toggle('is-active', linkId === id);
   });
 };
 
-const secObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) setActiveNav(e.target.id);
+if (navSections.length) {
+  const secObs = new IntersectionObserver(entries => {
+    const visible = entries.filter(e => e.isIntersecting);
+    if (!visible.length) return;
+    const best = visible.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    setActiveNav(best.target.id);
+  }, {
+    threshold: [0.15, 0.35, 0.55, 0.75],
+    rootMargin: '-15% 0px -50% 0px',
   });
-}, {threshold: 0.45});
-sections.forEach(s => secObs.observe(s));
+  navSections.forEach(s => secObs.observe(s));
+
+  const hashId = window.location.hash.replace(/^#/, '');
+  if (hashId && navSectionIds.includes(hashId)) {
+    setActiveNav(hashId);
+  }
+}
 
 /* Custom select dropdowns */
 function initCustomSelect(wrap) {
