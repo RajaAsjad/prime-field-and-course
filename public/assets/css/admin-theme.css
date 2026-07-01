@@ -1,0 +1,140 @@
+/**
+ * Admin panel theme overrides — Prime Field & Course brand colors.
+ * Loaded after Cuba admin CSS to replace default purple (#7366FF).
+ */
+:root,
+[data-bs-theme="light"] {
+  --g-600: #1a5c28;
+  --g-700: #1a4020;
+  --g-900: #0d1e10;
+  --au-500: #c8a84b;
+
+  --theme-default: #1a5c28;
+  --rgb-primary: rgb(26, 92, 40);
+  --light-shade-primary: #eef5ef;
+  --primary-70: rgba(26, 92, 40, 0.7);
+  --light-bg-primary: rgba(26, 92, 40, 0.08);
+  --view-border-marker: #c5dcc9;
+  --balance-profile-bg: #e4ede6;
+
+  --bs-primary: #1a5c28;
+  --bs-primary-rgb: 26, 92, 40;
+  --bs-link-color: #1a5c28;
+  --bs-link-hover-color: #0d1e10;
+
+  --bs-success: #1a5c28;
+  --bs-success-rgb: 26, 92, 40;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--g-600) !important;
+  border-color: var(--g-600) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.btn-primary.show {
+  background-color: var(--g-700) !important;
+  border-color: var(--g-700) !important;
+}
+
+.btn-outline-primary {
+  color: var(--g-600) !important;
+  border-color: var(--g-600) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--g-600) !important;
+  border-color: var(--g-600) !important;
+  color: #fff !important;
+}
+
+/* Breadcrumb */
+.breadcrumb-item.active {
+  color: var(--g-600) !important;
+}
+
+.breadcrumb-item a:hover {
+  color: var(--g-600) !important;
+}
+
+/* Alerts */
+.alert-success {
+  --bs-alert-color: var(--g-900);
+  --bs-alert-bg: #e8f3eb;
+  --bs-alert-border-color: #b8d4be;
+}
+
+.alert-primary {
+  --bs-alert-color: var(--g-900);
+  --bs-alert-bg: #eef5ef;
+  --bs-alert-border-color: #b8d4be;
+}
+
+/* Form focus */
+.form-control:focus,
+.form-select:focus {
+  border-color: rgba(26, 92, 40, 0.45) !important;
+  box-shadow: 0 0 0 0.2rem rgba(26, 92, 40, 0.15) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--g-600) !important;
+  border-color: var(--g-600) !important;
+}
+
+/* Pagination */
+.page-item.active .page-link {
+  background-color: var(--g-600) !important;
+  border-color: var(--g-600) !important;
+}
+
+.page-link {
+  color: var(--g-600) !important;
+}
+
+.page-link:hover {
+  color: var(--g-700) !important;
+}
+
+/* Sidebar active / hover accents */
+.sidebar-wrapper .sidebar-link.active,
+.sidebar-wrapper .sidebar-link:hover,
+.sidebar-wrapper .sidebar-submenu li a.active,
+.sidebar-wrapper .sidebar-submenu li a:hover {
+  color: var(--g-600) !important;
+}
+
+.sidebar-wrapper .sidebar-list .sidebar-link.active .theme-icons i,
+.sidebar-wrapper .sidebar-list .sidebar-link:hover .theme-icons i {
+  color: var(--g-600) !important;
+}
+
+/* Widget / stat cards using .primary */
+.widget-round.primary .bg-round svg {
+  fill: var(--g-600) !important;
+}
+
+/* Text & background utilities tied to theme */
+.text-primary {
+  color: var(--g-600) !important;
+}
+
+.bg-primary {
+  background-color: var(--g-600) !important;
+}
+
+.border-primary {
+  border-color: var(--g-600) !important;
+}
+
+/* Scroll-to-top button */
+.tap-top {
+  background: var(--g-600) !important;
+  box-shadow: 0 0 10px rgba(26, 92, 40, 0.45) !important;
+}
