@@ -26,6 +26,7 @@ class GolfOddsService
         $sportsbooks = array_keys(config('sportsdata.sportsbooks', []));
         $empty = [
             'tournament' => null,
+            'weather' => null,
             'sportsbooks' => $sportsbooks,
             'players' => [],
             'is_live' => false,
@@ -44,6 +45,7 @@ class GolfOddsService
             }
 
             $formattedTournament = $this->formatTournament($tournament);
+            $weather = $this->fetchTournamentWeather($tournament);
             $tournamentId = (int) $tournament['TournamentID'];
             $isLive = (bool) ($tournament['IsInProgress'] ?? false);
             $leaderboard = $this->fetchLeaderboardScores($tournamentId, $isLive);
@@ -55,6 +57,7 @@ class GolfOddsService
 
                 return [
                     'tournament' => $formattedTournament,
+                    'weather' => $weather,
                     'sportsbooks' => $sportsbooks,
                     'players' => $this->buildLiveScoreRows($leaderboard, collect(), $tournament),
                     'is_live' => $isLive,
@@ -67,6 +70,7 @@ class GolfOddsService
             if ($oddsRows->isEmpty() && $leaderboard === []) {
                 return [
                     'tournament' => $formattedTournament,
+                    'weather' => $weather,
                     'sportsbooks' => $sportsbooks,
                     'players' => [],
                     'is_live' => $isLive,
@@ -82,6 +86,7 @@ class GolfOddsService
 
             return [
                 'tournament' => $formattedTournament,
+                'weather' => $weather,
                 'sportsbooks' => $sportsbooks,
                 'players' => $players,
                 'is_live' => $isLive,
@@ -552,7 +557,7 @@ class GolfOddsService
 
     /**
      * @param  array<string, mixed>  $tournament
-     * @return array{id: int, name: string, start_date: ?string, end_date: ?string, is_in_progress: bool}
+     * @return array{id: int, name: string, start_date: ?string, end_date: ?string, is_in_progress: bool, venue: string, location: string, city: string, state: string}
      */
     private function formatTournament(array $tournament): array
     {
@@ -562,7 +567,121 @@ class GolfOddsService
             'start_date' => isset($tournament['StartDate']) ? substr((string) $tournament['StartDate'], 0, 10) : null,
             'end_date' => isset($tournament['EndDate']) ? substr((string) $tournament['EndDate'], 0, 10) : null,
             'is_in_progress' => (bool) ($tournament['IsInProgress'] ?? false),
+            'venue' => (string) ($tournament['Venue'] ?? ''),
+            'location' => (string) ($tournament['Location'] ?? ''),
+            'city' => (string) ($tournament['City'] ?? ''),
+            'state' => (string) ($tournament['State'] ?? ''),
         ];
+    }
+
+    /**
+     * @return array{location: string, venue: string, temperature: int, condition: string, icon: string, wind_mph: int, humidity: ?int}|null
+     */
+    private function fetchTournamentWeather(array $tournament): ?array
+    {
+        $searchQuery = $this->weatherSearchQuery($tournament);
+
+        if ($searchQuery === null) {
+            return null;
+        }
+
+        return Cache::remember(
+            'sportsdata:weather:' . md5($searchQuery),
+            1800,
+            function () use ($searchQuery, $tournament) {
+                try {
+                    $geoResponse = Http::timeout(10)->get('https://geocoding-api.open-meteo.com/v1/search', array_filter([
+                        'name' => $searchQuery,
+                        'count' => 1,
+                        'language' => 'en',
+                        'format' => 'json',
+                        'country_code' => strtoupper((string) ($tournament['Country'] ?? '')) === 'USA' ? 'US' : null,
+                    ]));
+
+                    if (! $geoResponse->successful()) {
+                        return null;
+                    }
+
+                    $result = $geoResponse->json('results.0');
+
+                    if (! is_array($result)) {
+                        return null;
+                    }
+
+                    $forecastResponse = Http::timeout(10)->get('https://api.open-meteo.com/v1/forecast', [
+                        'latitude' => $result['latitude'],
+                        'longitude' => $result['longitude'],
+                        'current' => 'temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m',
+                        'temperature_unit' => 'fahrenheit',
+                        'wind_speed_unit' => 'mph',
+                        'timezone' => 'auto',
+                    ]);
+
+                    if (! $forecastResponse->successful()) {
+                        return null;
+                    }
+
+                    $current = $forecastResponse->json('current');
+
+                    if (! is_array($current)) {
+                        return null;
+                    }
+
+                    $condition = $this->weatherConditionFromCode((int) ($current['weather_code'] ?? 0));
+
+                    return [
+                        'location' => (string) ($tournament['Location'] ?: ($result['name'] ?? $searchQuery)),
+                        'venue' => (string) ($tournament['Venue'] ?? ''),
+                        'temperature' => (int) round((float) ($current['temperature_2m'] ?? 0)),
+                        'condition' => $condition['label'],
+                        'icon' => $condition['icon'],
+                        'wind_mph' => (int) round((float) ($current['wind_speed_10m'] ?? 0)),
+                        'humidity' => isset($current['relative_humidity_2m'])
+                            ? (int) $current['relative_humidity_2m']
+                            : null,
+                    ];
+                } catch (\Throwable $exception) {
+                    Log::warning('Tournament weather lookup failed', ['message' => $exception->getMessage()]);
+
+                    return null;
+                }
+            }
+        );
+    }
+
+    private function weatherSearchQuery(array $tournament): ?string
+    {
+        $city = trim((string) ($tournament['City'] ?? ''));
+
+        if ($city !== '') {
+            return $city;
+        }
+
+        $location = trim((string) ($tournament['Location'] ?? ''));
+
+        if ($location === '') {
+            return null;
+        }
+
+        $parts = array_map('trim', explode(',', $location));
+
+        return $parts[0] !== '' ? $parts[0] : $location;
+    }
+
+    /**
+     * @return array{label: string, icon: string}
+     */
+    private function weatherConditionFromCode(int $code): array
+    {
+        return match (true) {
+            $code === 0 => ['label' => 'Clear', 'icon' => 'clear'],
+            in_array($code, [1, 2, 3], true) => ['label' => 'Partly Cloudy', 'icon' => 'partly-cloudy'],
+            in_array($code, [45, 48], true) => ['label' => 'Foggy', 'icon' => 'fog'],
+            in_array($code, [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82], true) => ['label' => 'Rain', 'icon' => 'rain'],
+            in_array($code, [71, 73, 75, 77, 85, 86], true) => ['label' => 'Snow', 'icon' => 'snow'],
+            in_array($code, [95, 96, 99], true) => ['label' => 'Thunderstorm', 'icon' => 'storm'],
+            default => ['label' => 'Cloudy', 'icon' => 'cloudy'],
+        };
     }
 
     private function normalizeSportsbook(string $name): ?string

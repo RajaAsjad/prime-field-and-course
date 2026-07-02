@@ -196,21 +196,46 @@
             Data</div>
           <h2 class="h-section">Compare <em>Live Odds</em></h2>
           <p class="body-lg" id="live-odds-desc">Best available odds across top sportsbooks. Green highlights best value. Auto-refreshes every {{ $oddsRefreshSeconds ?? 60 }} seconds.</p>
-          @if (!empty($liveOdds['tournament']['name']))
-            <p class="body-lg" id="live-odds-tournament" style="margin-top:8px;font-size:.92rem;color:#5a6b5e;">
-              {{ $liveOdds['tournament']['name'] }}
-              @if (!empty($liveOdds['tournament']['start_date']))
-                &middot; {{ \Carbon\Carbon::parse($liveOdds['tournament']['start_date'])->format('M j') }}
-                @if (!empty($liveOdds['tournament']['end_date']))
-                  &ndash; {{ \Carbon\Carbon::parse($liveOdds['tournament']['end_date'])->format('M j, Y') }}
-                @endif
-              @endif
-              @if (!empty($liveOdds['tournament']['is_in_progress']))
-                &middot; <span style="color:var(--g-600);font-weight:700;">Live</span>
-              @endif
-            </p>
-          @endif
         </div>
+        @if (!empty($liveOdds['tournament']['name']))
+          <div class="tournament-meta rev">
+            <div class="tournament-meta__inner">
+              <p class="body-lg tournament-meta__event" id="live-odds-tournament">
+                {{ $liveOdds['tournament']['name'] }}
+                @if (!empty($liveOdds['tournament']['start_date']))
+                  &middot; {{ \Carbon\Carbon::parse($liveOdds['tournament']['start_date'])->format('M j') }}
+                  @if (!empty($liveOdds['tournament']['end_date']))
+                    &ndash; {{ \Carbon\Carbon::parse($liveOdds['tournament']['end_date'])->format('M j, Y') }}
+                  @endif
+                @endif
+                @if (!empty($liveOdds['tournament']['is_in_progress']))
+                  &middot; <span class="tournament-meta__live">Live</span>
+                @endif
+              </p>
+              <div id="tournament-weather" class="tournament-weather">
+                @if (!empty($liveOdds['weather']))
+                  <div class="tournament-weather__icon tournament-weather__icon--{{ $liveOdds['weather']['icon'] }}" aria-hidden="true"></div>
+                  <div class="tournament-weather__body">
+                    <div class="tournament-weather__temp">{{ $liveOdds['weather']['temperature'] }}&deg;F</div>
+                    <div class="tournament-weather__condition">{{ $liveOdds['weather']['condition'] }}</div>
+                    <div class="tournament-weather__meta">
+                      {{ $liveOdds['weather']['location'] }}
+                      @if (!empty($liveOdds['weather']['venue']))
+                        &middot; {{ $liveOdds['weather']['venue'] }}
+                      @endif
+                      &middot; Wind {{ $liveOdds['weather']['wind_mph'] }} mph
+                      @if (!empty($liveOdds['weather']['humidity']))
+                        &middot; {{ $liveOdds['weather']['humidity'] }}% humidity
+                      @endif
+                    </div>
+                  </div>
+                @else
+                  <span class="tournament-weather__loading">Loading course weather…</span>
+                @endif
+              </div>
+            </div>
+          </div>
+        @endif
         <div class="rev">
           <div class="table-wrap">
             <table class="odds-tbl" id="live-odds-table"
@@ -469,6 +494,157 @@
     </section>
 
   </main>
+
+@push('styles')
+  <style>
+    #running-odds .tournament-meta {
+      width: 100%;
+      margin: -28px 0 24px;
+      text-align: left
+    }
+
+    #running-odds .tournament-meta__inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px 24px;
+      width: 100%;
+      padding: 16px 20px;
+      background: #f7faf8;
+      border: 1.5px solid var(--bdr);
+      border-radius: var(--r-lg);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .04)
+    }
+
+    #running-odds .tournament-meta__event {
+      flex: 1 1 260px;
+      margin: 0;
+      font-size: .92rem;
+      color: #5a6b5e;
+      line-height: 1.5
+    }
+
+    #running-odds .tournament-meta__live {
+      color: var(--g-600);
+      font-weight: 700
+    }
+
+    #running-odds .tournament-weather {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 0 1 360px;
+      min-width: min(100%, 280px);
+      padding: 12px 14px;
+      background: #fff;
+      border: 1.5px solid var(--bdr);
+      border-radius: 10px
+    }
+
+    #running-odds .tournament-weather__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #edf7f0, #d4eddb);
+      position: relative;
+      flex-shrink: 0
+    }
+
+    #running-odds .tournament-weather__icon::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 22px;
+      height: 22px
+    }
+
+    #running-odds .tournament-weather__icon--clear::after {
+      content: '☀';
+      font-size: 1.2rem;
+      line-height: 22px;
+      text-align: center;
+      width: 22px
+    }
+
+    #running-odds .tournament-weather__icon--partly-cloudy::after {
+      content: '⛅';
+      font-size: 1.1rem;
+      line-height: 22px;
+      text-align: center;
+      width: 22px
+    }
+
+    #running-odds .tournament-weather__icon--cloudy::after,
+    #running-odds .tournament-weather__icon--fog::after {
+      content: '☁';
+      font-size: 1.1rem;
+      line-height: 22px;
+      text-align: center;
+      width: 22px
+    }
+
+    #running-odds .tournament-weather__icon--rain::after,
+    #running-odds .tournament-weather__icon--storm::after {
+      content: '🌧';
+      font-size: 1rem;
+      line-height: 22px;
+      text-align: center;
+      width: 22px
+    }
+
+    #running-odds .tournament-weather__icon--snow::after {
+      content: '❄';
+      font-size: 1rem;
+      line-height: 22px;
+      text-align: center;
+      width: 22px
+    }
+
+    #running-odds .tournament-weather__body {
+      min-width: 0
+    }
+
+    #running-odds .tournament-weather__temp {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--tx-h);
+      line-height: 1.2
+    }
+
+    #running-odds .tournament-weather__condition {
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--g-600);
+      margin-top: 2px
+    }
+
+    #running-odds .tournament-weather__meta,
+    #running-odds .tournament-weather__loading {
+      font-size: .72rem;
+      color: #7a8a7e;
+      line-height: 1.45;
+      margin-top: 4px
+    }
+
+    @media (max-width: 768px) {
+      #running-odds .tournament-meta__inner {
+        flex-direction: column;
+        align-items: stretch
+      }
+
+      #running-odds .tournament-meta__event {
+        text-align: center
+      }
+
+      #running-odds .tournament-weather {
+        flex: 1 1 auto;
+        width: 100%
+      }
+    }
+  </style>
+@endpush
 
 @push('scripts')
   <script src="{{ asset('assets/js/live-odds.js') }}?v={{ filemtime(public_path('assets/js/live-odds.js')) }}"></script>

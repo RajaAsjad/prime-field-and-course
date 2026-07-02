@@ -2,6 +2,7 @@
   const table = document.getElementById('live-odds-table');
   const updatedEl = document.getElementById('live-odds-updated');
   const tournamentEl = document.getElementById('live-odds-tournament');
+  const weatherEl = document.getElementById('tournament-weather');
   const descEl = document.getElementById('live-odds-desc');
 
   if (!table) {
@@ -59,6 +60,36 @@
     }
 
     tournamentEl.innerHTML = html;
+  };
+
+  const renderWeather = (weather) => {
+    if (!weatherEl) {
+      return;
+    }
+
+    if (!weather) {
+      weatherEl.innerHTML = '<span class="tournament-weather__loading">Weather unavailable for this venue.</span>';
+
+      return;
+    }
+
+    const venue = weather.venue
+      ? ` &middot; ${escapeHtml(weather.venue)}`
+      : '';
+    const humidity = weather.humidity
+      ? ` &middot; ${escapeHtml(weather.humidity)}% humidity`
+      : '';
+
+    weatherEl.innerHTML = `
+      <div class="tournament-weather__icon tournament-weather__icon--${escapeHtml(weather.icon)}" aria-hidden="true"></div>
+      <div class="tournament-weather__body">
+        <div class="tournament-weather__temp">${escapeHtml(weather.temperature)}&deg;F</div>
+        <div class="tournament-weather__condition">${escapeHtml(weather.condition)}</div>
+        <div class="tournament-weather__meta">
+          ${escapeHtml(weather.location)}${venue}
+          &middot; Wind ${escapeHtml(weather.wind_mph)} mph${humidity}
+        </div>
+      </div>`;
   };
 
   const renderDescription = (isLive, refreshSeconds) => {
@@ -209,6 +240,7 @@
       }
 
       renderTournament(data.tournament);
+      renderWeather(data.weather);
       renderDescription(data.is_live, data.refresh_seconds);
       renderTable(data);
       renderUpdated(data.updated_at, data.is_live);
