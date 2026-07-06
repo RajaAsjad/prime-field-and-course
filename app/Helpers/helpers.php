@@ -26,7 +26,7 @@ if (! function_exists('isRole')) {
 
         if (!$userRole) return false;
 
-        // If role passed is numeric → check id
+
         if (is_numeric($role)) {
             return $userRole->id == $role;
         }
