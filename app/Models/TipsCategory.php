@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+class TipsCategory extends Model
+{
+    protected $table = 'tips_category';
+
+    protected $fillable = [
+        'slug',
+        'title',
+        'description',
+        'image_url',
+    ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (TipsCategory $category) {
+            if ($category->isDirty('title') || blank($category->slug)) {
+                $category->slug = static::generateUniqueSlug($category->title, $category->id);
+            }
+        });
+
+        static::deleting(function (TipsCategory $category) {
+            $category->deleteStoredImage();
+        });
+    }
+
+    public static function generateUniqueSlug(string $title, ?int $ignoreId = null): string
+    {
+        $baseSlug = Str::slug($title) ?: 'category';
+        $slug = $baseSlug;
+        $counter = 2;
+
+        while (
+            static::query()
+                ->where('slug', $slug)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $slug = $baseSlug.'-'.$counter;
+            $counter++;
+        }
+
+        return $slug;
+    }
+
+    public function imageUrl(): ?string
+    {
+        if (! $this->image_url) {
+            return null;
+        }
+
+        if (str_starts_with($this->image_url, 'http://') || str_starts_with($this->image_url, 'https://')) {
+            return $this->image_url;
+        }
+
+        return Storage::disk('public')->url($this->image_url);
+    }
+
+    public function deleteStoredImage(): void
+    {
+        if (! $this->image_url || ! str_starts_with($this->image_url, 'tips-categories/')) {
+            return;
+        }
+
+        if (Storage::disk('public')->exists($this->image_url)) {
+            Storage::disk('public')->delete($this->image_url);
+        }
+    }
+
+    public function tips()
+    {
+        return $this->hasMany(Tip::class, 'tips_category_id');
+    }
+}

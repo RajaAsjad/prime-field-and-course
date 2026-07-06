@@ -1,5 +1,25 @@
 @php
     $modules = dynamic_sidebar();
+
+    $isRouteActive = function (string $routeName): bool {
+        $pattern = str_ends_with($routeName, '.index')
+            ? preg_replace('/\.index$/', '.*', $routeName)
+            : (str_ends_with($routeName, '.edit')
+                ? preg_replace('/\.edit$/', '.*', $routeName)
+                : $routeName);
+
+        return str_contains($pattern, '*')
+            ? request()->routeIs($pattern)
+            : request()->routeIs($routeName);
+    };
+
+    $routePath = function (string $routeName): string {
+        if (! Route::has($routeName)) {
+            return '#';
+        }
+
+        return parse_url(route($routeName), PHP_URL_PATH) ?: '#';
+    };
 @endphp
 
 <div class="sidebar-wrapper" data-sidebar-layout="stroke-svg">
@@ -26,21 +46,16 @@
                 @foreach ($modules as $module)
                     @php
                         $hasChildren = $module->children && $module->children->count() > 0;
-                        $activePattern = str_ends_with($module->route_name, '.index')
-                            ? preg_replace('/\.index$/', '.*', $module->route_name)
-                            : (str_ends_with($module->route_name, '.edit')
-                                ? preg_replace('/\.edit$/', '.*', $module->route_name)
-                                : $module->route_name);
-                        $isActive = str_contains($activePattern, '*')
-                            ? request()->routeIs($activePattern)
-                            : request()->routeIs($module->route_name);
+                        $isActive = $hasChildren
+                            ? $module->children->contains(fn ($child) => $isRouteActive($child->route_name))
+                            : $isRouteActive($module->route_name);
                     @endphp
 
-                    <li class="sidebar-list">
+                    <li class="sidebar-list {{ $isActive && $hasChildren ? 'active' : '' }}">
                         <a
-                            href="{{ $hasChildren ? '#' : (Route::has($module->route_name) ? route($module->route_name) : '#') }}"
+                            href="{{ $hasChildren ? '#' : $routePath($module->route_name) }}"
                             class="sidebar-link sidebar-title {{ $hasChildren ? '' : 'link-nav' }} {{ $isActive ? 'active' : '' }}"
-                            @if ($hasChildren) aria-expanded="false" @endif
+                            @if ($hasChildren) aria-expanded="{{ $isActive ? 'true' : 'false' }}" @endif
                         >
                             <span class="theme-icons">
                                 <i class="{{ $module->icon }}"></i>
@@ -50,16 +65,22 @@
 
                             @if ($hasChildren)
                                 <div class="according-menu">
-                                    <i class="fa-solid fa-angle-right"></i>
+                                    <i class="fa-solid fa-angle-{{ $isActive ? 'down' : 'right' }}"></i>
                                 </div>
                             @endif
                         </a>
 
                         @if ($hasChildren)
-                            <ul class="sidebar-submenu">
+                            <ul class="sidebar-submenu" @if ($isActive) style="display: block;" @endif>
                                 @foreach ($module->children as $child)
+                                    @php
+                                        $childIsActive = $isRouteActive($child->route_name);
+                                    @endphp
                                     <li>
-                                        <a href="{{ Route::has($child->route_name) ? route($child->route_name) : '#' }}">
+                                        <a
+                                            href="{{ $routePath($child->route_name) }}"
+                                            class="{{ $childIsActive ? 'active' : '' }}"
+                                        >
                                             {{ $child->name }}
                                         </a>
                                     </li>

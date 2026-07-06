@@ -15,7 +15,7 @@ class UpdateTipRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'slogan' => ['nullable', 'string', 'max:255'],
+            'tips_category_id' => ['required', 'integer', 'exists:tips_category,id'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'description' => ['nullable', 'string'],
             'status' => ['required', 'in:0,1'],

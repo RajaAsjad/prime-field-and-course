@@ -2,13 +2,18 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RotoballerNewsController;
+use App\Http\Controllers\TipController;
 use Illuminate\Support\Facades\Route;
 
 
 
 // web routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/tips/{tip:slug}', [TipController::class, 'show'])->name('tips.show');
+Route::get('/news/{newsId}', [RotoballerNewsController::class, 'show'])->name('news.show');
 Route::get('/api/live-odds', [HomeController::class, 'liveOdds'])->name('api.live-odds');
+Route::get('/api/rotoballer-news', [HomeController::class, 'rotoballerNews'])->name('api.rotoballer-news');
 
 
 

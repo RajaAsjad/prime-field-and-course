@@ -6,40 +6,43 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class Tip extends Model
+class Promo extends Model
 {
     protected $fillable = [
         'slug',
         'title',
-        'tips_category_id',
-        'image',
         'description',
+        'image_url',
+        'price',
+        'discount_price',
         'status',
     ];
 
     protected function casts(): array
     {
         return [
+            'price' => 'decimal:2',
+            'discount_price' => 'decimal:2',
             'status' => 'boolean',
         ];
     }
 
     protected static function booted(): void
     {
-        static::saving(function (Tip $tip) {
-            if ($tip->isDirty('title') || blank($tip->slug)) {
-                $tip->slug = static::generateUniqueSlug($tip->title, $tip->id);
+        static::saving(function (Promo $promo) {
+            if ($promo->isDirty('title') || blank($promo->slug)) {
+                $promo->slug = static::generateUniqueSlug($promo->title, $promo->id);
             }
         });
 
-        static::deleting(function (Tip $tip) {
-            $tip->deleteStoredImage();
+        static::deleting(function (Promo $promo) {
+            $promo->deleteStoredImage();
         });
     }
 
     public static function generateUniqueSlug(string $title, ?int $ignoreId = null): string
     {
-        $baseSlug = Str::slug($title) ?: 'tip';
+        $baseSlug = Str::slug($title) ?: 'promo';
         $slug = $baseSlug;
         $counter = 2;
 
@@ -58,35 +61,30 @@ class Tip extends Model
 
     public function imageUrl(): ?string
     {
-        if (! $this->image) {
+        if (! $this->image_url) {
             return null;
         }
 
-        if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
-            return $this->image;
+        if (str_starts_with($this->image_url, 'http://') || str_starts_with($this->image_url, 'https://')) {
+            return $this->image_url;
         }
 
-        return Storage::disk('public')->url($this->image);
+        return Storage::disk('public')->url($this->image_url);
     }
 
     public function deleteStoredImage(): void
     {
-        if (! $this->image || ! str_starts_with($this->image, 'tips/')) {
+        if (! $this->image_url || ! str_starts_with($this->image_url, 'promos/')) {
             return;
         }
 
-        if (Storage::disk('public')->exists($this->image)) {
-            Storage::disk('public')->delete($this->image);
+        if (Storage::disk('public')->exists($this->image_url)) {
+            Storage::disk('public')->delete($this->image_url);
         }
     }
 
     public function statusLabel(): string
     {
         return $this->status ? 'Active' : 'Inactive';
-    }
-
-    public function tipsCategory()
-    {
-        return $this->belongsTo(TipsCategory::class, 'tips_category_id');
     }
 }

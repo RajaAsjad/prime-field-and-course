@@ -1,11 +1,11 @@
 @extends('layouts.admin.master')
 
-@section('title', 'Tips')
+@section('title', 'Tips Categories')
 
 @section('content')
   <style>
-    .tip-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
-    .tip-thumb-placeholder {
+    .category-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
+    .category-thumb-placeholder {
       width: 56px;
       height: 56px;
       border-radius: 8px;
@@ -40,11 +40,11 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header pb-0 d-flex flex-wrap align-items-center justify-content-between gap-2">
-            <h5 class="mb-0">All Tips</h5>
-            <a href="{{ route('admin.tips.create') }}" class="btn btn-primary btn-sm">Create Tip</a>
+            <h5 class="mb-0">All Tips Categories</h5>
+            <a href="{{ route('admin.tips-categories.create') }}" class="btn btn-primary btn-sm">Create Category</a>
           </div>
           <div class="card-body pt-3">
-            <form method="GET" action="{{ route('admin.tips.index') }}" class="row g-2 mb-3">
+            <form method="GET" action="{{ route('admin.tips-categories.index') }}" class="row g-2 mb-3">
               <div class="col-md-6 col-lg-4">
                 <input
                   type="text"
@@ -59,7 +59,7 @@
               </div>
               @if ($search !== '')
                 <div class="col-auto">
-                  <a href="{{ route('admin.tips.index') }}" class="btn btn-light btn-sm">Clear</a>
+                  <a href="{{ route('admin.tips-categories.index') }}" class="btn btn-light btn-sm">Clear</a>
                 </div>
               @endif
             </form>
@@ -71,43 +71,35 @@
                     <th><span class="c-o-light f-w-600">Image</span></th>
                     <th><span class="c-o-light f-w-600">Title</span></th>
                     <th><span class="c-o-light f-w-600">Slug</span></th>
-                    <th><span class="c-o-light f-w-600">Category</span></th>
-                    <th><span class="c-o-light f-w-600">Status</span></th>
+                    <th><span class="c-o-light f-w-600">Description</span></th>
                     <th><span class="c-o-light f-w-600">Created Date</span></th>
                     <th><span class="c-o-light f-w-600">Actions</span></th>
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse ($tips as $tip)
+                  @forelse ($categories as $category)
                     <tr>
                       <td>
-                        @if ($tip->imageUrl())
-                          <img src="{{ $tip->imageUrl() }}" alt="{{ $tip->title }}" class="tip-thumb">
+                        @if ($category->imageUrl())
+                          <img src="{{ $category->imageUrl() }}" alt="{{ $category->title }}" class="category-thumb">
                         @else
-                          <div class="tip-thumb-placeholder">No<br>Image</div>
+                          <div class="category-thumb-placeholder">No<br>Image</div>
                         @endif
                       </td>
-                      <td>{{ $tip->title }}</td>
-                      <td><code>{{ $tip->slug }}</code></td>
-                      <td>{{ $tip->tipsCategory?->title ?: '—' }}</td>
-                      <td>
-                        @if ($tip->status)
-                          <span class="badge bg-success">Active</span>
-                        @else
-                          <span class="badge bg-secondary">Inactive</span>
-                        @endif
-                      </td>
-                      <td>{{ $tip->created_at?->format('d M Y, H:i A') }}</td>
+                      <td>{{ $category->title }}</td>
+                      <td><code>{{ $category->slug }}</code></td>
+                      <td>{{ Str::limit($category->description, 60) ?: '—' }}</td>
+                      <td>{{ $category->created_at?->format('d M Y, H:i A') }}</td>
                       <td>
                         <div class="d-flex flex-wrap gap-2">
-                          <a href="{{ route('admin.tips.edit', $tip) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                          <a href="{{ route('admin.tips-categories.edit', $category) }}" class="btn btn-outline-primary btn-sm">Edit</a>
                           <button
                             type="button"
                             class="btn btn-outline-danger btn-sm"
                             data-bs-toggle="modal"
-                            data-bs-target="#deleteTipModal"
-                            data-tip-title="{{ $tip->title }}"
-                            data-delete-url="{{ route('admin.tips.destroy', $tip) }}"
+                            data-bs-target="#deleteCategoryModal"
+                            data-category-title="{{ $category->title }}"
+                            data-delete-url="{{ route('admin.tips-categories.destroy', $category) }}"
                           >
                             Delete
                           </button>
@@ -116,16 +108,16 @@
                     </tr>
                   @empty
                     <tr>
-                      <td colspan="7" class="text-center py-4">No tips found.</td>
+                      <td colspan="6" class="text-center py-4">No tips categories found.</td>
                     </tr>
                   @endforelse
                 </tbody>
               </table>
             </div>
 
-            @if ($tips->hasPages())
+            @if ($categories->hasPages())
               <div class="pt-3">
-                {{ $tips->links() }}
+                {{ $categories->links() }}
               </div>
             @endif
           </div>
@@ -134,19 +126,19 @@
     </div>
   </div>
 
-  <div class="modal fade" id="deleteTipModal" tabindex="-1" aria-labelledby="deleteTipModalLabel" aria-hidden="true">
+  <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="deleteTipModalLabel">Delete Tip</h5>
+          <h5 class="modal-title" id="deleteCategoryModalLabel">Delete Category</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p class="mb-0">Are you sure you want to delete <strong id="delete-tip-title"></strong>? This action cannot be undone.</p>
+          <p class="mb-0">Are you sure you want to delete <strong id="delete-category-title"></strong>? This action cannot be undone.</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-          <form id="delete-tip-form" method="POST">
+          <form id="delete-category-form" method="POST">
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-danger">Delete</button>
@@ -157,13 +149,13 @@
   </div>
 
   <script>
-    document.getElementById('deleteTipModal')?.addEventListener('show.bs.modal', function (event) {
+    document.getElementById('deleteCategoryModal')?.addEventListener('show.bs.modal', function (event) {
       var button = event.relatedTarget;
-      var title = button.getAttribute('data-tip-title');
+      var title = button.getAttribute('data-category-title');
       var deleteUrl = button.getAttribute('data-delete-url');
 
-      document.getElementById('delete-tip-title').textContent = title || 'this tip';
-      document.getElementById('delete-tip-form').setAttribute('action', deleteUrl);
+      document.getElementById('delete-category-title').textContent = title || 'this category';
+      document.getElementById('delete-category-form').setAttribute('action', deleteUrl);
     });
   </script>
 @endsection

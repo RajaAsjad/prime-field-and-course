@@ -17,7 +17,10 @@ class CmsModulePermissionsSeeder extends Seeder
                 'admin.dashboard' => ['is_view' => 1, 'is_add' => 1, 'is_update' => 1, 'is_delete' => 1],
                 'users.index' => ['is_view' => 1, 'is_add' => 1, 'is_update' => 1, 'is_delete' => 1],
                 'site-settings.edit' => ['is_view' => 1, 'is_add' => 0, 'is_update' => 1, 'is_delete' => 0],
+                'admin.tips-management' => ['is_view' => 1, 'is_add' => 0, 'is_update' => 0, 'is_delete' => 0],
                 'admin.tips.index' => ['is_view' => 1, 'is_add' => 1, 'is_update' => 1, 'is_delete' => 1],
+                'admin.tips-categories.index' => ['is_view' => 1, 'is_add' => 1, 'is_update' => 1, 'is_delete' => 1],
+                'admin.promos.index' => ['is_view' => 1, 'is_add' => 1, 'is_update' => 1, 'is_delete' => 1],
             ],
 
             'user' => [

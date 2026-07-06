@@ -104,6 +104,113 @@ class GolfOddsService
         }
     }
 
+    /**
+     * @return array{id: int, title: string, content: string, url: string, detail_url: string, source: string, author: string, category: string, updated_at: ?string}|null
+     */
+    public function getNewsItem(int $newsId): ?array
+    {
+        if ($newsId <= 0) {
+            return null;
+        }
+
+        try {
+            $row = collect($this->fetchNewsRows())
+                ->first(fn ($item) => is_array($item) && (int) ($item['NewsID'] ?? 0) === $newsId);
+
+            return is_array($row) ? $this->formatNewsItem($row) : null;
+        } catch (\Throwable $exception) {
+            Log::warning('SportsDataIO golf news item failed', [
+                'news_id' => $newsId,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function fetchNewsRows(): array
+    {
+        $rows = $this->getJson(
+            $this->golfUrl('News'),
+            (int) config('sportsdata.news.cache_ttl', 300),
+            'sportsdata:golf:news'
+        );
+
+        return is_array($rows) ? $rows : [];
+    }
+
+    /**
+     * @return array{
+     *     items: list<array{id: int, title: string, content: string, url: string, detail_url: string, source: string, author: string, category: string, updated_at: ?string}>,
+     *     refresh_seconds: int,
+     *     updated_at: string,
+     *     error: ?string
+     * }
+     */
+    public function getNewsFeed(): array
+    {
+        $limit = (int) config('sportsdata.news.limit', 6);
+        $refreshSeconds = (int) config('sportsdata.news.refresh_seconds', 300);
+
+        $empty = [
+            'items' => [],
+            'refresh_seconds' => $refreshSeconds,
+            'updated_at' => now()->toIso8601String(),
+            'error' => null,
+        ];
+
+        try {
+            $items = collect($this->fetchNewsRows())
+                ->filter(fn ($row) => is_array($row))
+                ->sortByDesc(fn (array $row) => $row['Updated'] ?? '')
+                ->take($limit)
+                ->map(fn (array $row) => $this->formatNewsItem($row))
+                ->values()
+                ->all();
+
+            return [
+                'items' => $items,
+                'refresh_seconds' => $refreshSeconds,
+                'updated_at' => now()->toIso8601String(),
+                'error' => $items === [] ? 'No RotoBaller news available right now.' : null,
+            ];
+        } catch (\Throwable $exception) {
+            Log::error('SportsDataIO golf news failed', ['message' => $exception->getMessage()]);
+
+            return [
+                ...$empty,
+                'error' => 'Unable to load RotoBaller news right now. Please try again shortly.',
+            ];
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return array{id: int, title: string, content: string, url: string, detail_url: string, source: string, author: string, category: string, updated_at: ?string}
+     */
+    private function formatNewsItem(array $row): array
+    {
+        $updated = $row['Updated'] ?? null;
+        $newsId = (int) ($row['NewsID'] ?? 0);
+
+        return [
+            'id' => $newsId,
+            'title' => (string) ($row['Title'] ?? ''),
+            'content' => (string) ($row['Content'] ?? ''),
+            'url' => (string) ($row['Url'] ?? ''),
+            'detail_url' => url('/news/'.$newsId),
+            'source' => (string) ($row['Source'] ?? 'RotoBaller'),
+            'author' => (string) ($row['Author'] ?? ''),
+            'category' => (string) ($row['Categories'] ?? ''),
+            'updated_at' => is_string($updated) && $updated !== ''
+                ? \Carbon\Carbon::parse($updated)->toIso8601String()
+                : null,
+        ];
+    }
+
     private function friendlyOddsError(string $message): string
     {
         if (str_contains(strtolower($message), 'not authorized') || str_contains(strtolower($message), 'access denied')) {

@@ -1,43 +1,26 @@
 <div class="row g-3">
-  <div class="col-md-8">
+  <div class="col-md-12">
     <label class="form-label" for="title">Title <span class="text-danger">*</span></label>
     <input
       type="text"
       class="form-control @error('title') is-invalid @enderror"
       id="title"
       name="title"
-      value="{{ old('title', isset($tip) ? $tip->title : '') }}"
+      value="{{ old('title', isset($category) ? $category->title : '') }}"
       required
     />
+    <small class="text-muted">A unique URL slug will be generated automatically from the title.</small>
     @error('title')
       <div class="invalid-feedback d-block">{{ $message }}</div>
     @enderror
   </div>
 
-  <div class="col-md-4">
-    <label class="form-label" for="tips_category_id">Category <span class="text-danger">*</span></label>
-    <select class="form-select @error('tips_category_id') is-invalid @enderror" id="tips_category_id" name="tips_category_id" required>
-      <option value="">Select category</option>
-      @foreach ($categories as $category)
-        <option
-          value="{{ $category->id }}"
-          @selected((string) old('tips_category_id', isset($tip) ? $tip->tips_category_id : '') === (string) $category->id)
-        >
-          {{ $category->title }}
-        </option>
-      @endforeach
-    </select>
-    @error('tips_category_id')
-      <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-  </div>
-
   <div class="col-md-12">
     <label class="form-label" for="image">Image</label>
-    @if (isset($tip) && $tip->exists && $tip->imageUrl())
+    @if (isset($category) && $category->exists && $category->imageUrl())
       <div class="mb-2">
         <p class="small text-muted mb-1">Current image</p>
-        <img src="{{ $tip->imageUrl() }}" alt="{{ $tip->title }}" class="img-thumbnail tip-image-preview" id="current-tip-image">
+        <img src="{{ $category->imageUrl() }}" alt="{{ $category->title }}" class="img-thumbnail category-image-preview" id="current-category-image">
       </div>
     @endif
     <input
@@ -46,10 +29,10 @@
       id="image"
       name="image"
       accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-      data-preview="preview-tip-image"
+      data-preview="preview-category-image"
     />
     <small class="text-muted">Allowed: JPG, PNG, WEBP. Max 2MB.</small>
-    <img src="#" alt="" class="img-thumbnail tip-image-preview mt-2 d-none" id="preview-tip-image">
+    <img src="#" alt="" class="img-thumbnail category-image-preview mt-2 d-none" id="preview-category-image">
     @error('image')
       <div class="invalid-feedback d-block">{{ $message }}</div>
     @enderror
@@ -62,18 +45,8 @@
       id="description"
       name="description"
       rows="6"
-    >{{ old('description', isset($tip) ? $tip->description : '') }}</textarea>
+    >{{ old('description', isset($category) ? $category->description : '') }}</textarea>
     @error('description')
-      <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-  </div>
-  <div class="col-md-4">
-    <label class="form-label" for="status">Status <span class="text-danger">*</span></label>
-    <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
-      <option value="1" @selected((string) old('status', $tip->exists ? (int) $tip->status : 1) === '1')>Active</option>
-      <option value="0" @selected((string) old('status', $tip->exists ? (int) $tip->status : 1) === '0')>Inactive</option>
-    </select>
-    @error('status')
       <div class="invalid-feedback">{{ $message }}</div>
     @enderror
   </div>

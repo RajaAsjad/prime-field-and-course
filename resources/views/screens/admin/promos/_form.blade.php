@@ -6,38 +6,64 @@
       class="form-control @error('title') is-invalid @enderror"
       id="title"
       name="title"
-      value="{{ old('title', isset($tip) ? $tip->title : '') }}"
+      value="{{ old('title', isset($promo) ? $promo->title : '') }}"
       required
     />
+    <small class="text-muted">A unique URL slug will be generated automatically from the title.</small>
     @error('title')
       <div class="invalid-feedback d-block">{{ $message }}</div>
     @enderror
   </div>
 
   <div class="col-md-4">
-    <label class="form-label" for="tips_category_id">Category <span class="text-danger">*</span></label>
-    <select class="form-select @error('tips_category_id') is-invalid @enderror" id="tips_category_id" name="tips_category_id" required>
-      <option value="">Select category</option>
-      @foreach ($categories as $category)
-        <option
-          value="{{ $category->id }}"
-          @selected((string) old('tips_category_id', isset($tip) ? $tip->tips_category_id : '') === (string) $category->id)
-        >
-          {{ $category->title }}
-        </option>
-      @endforeach
+    <label class="form-label" for="status">Status <span class="text-danger">*</span></label>
+    <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+      <option value="1" @selected((string) old('status', $promo->exists ? (int) $promo->status : 1) === '1')>Active</option>
+      <option value="0" @selected((string) old('status', $promo->exists ? (int) $promo->status : 1) === '0')>Inactive</option>
     </select>
-    @error('tips_category_id')
+    @error('status')
+      <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label" for="price">Price</label>
+    <input
+      type="number"
+      step="0.01"
+      min="0"
+      class="form-control @error('price') is-invalid @enderror"
+      id="price"
+      name="price"
+      value="{{ old('price', isset($promo) ? $promo->price : '') }}"
+    />
+    @error('price')
+      <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label" for="discount_price">Discount Price</label>
+    <input
+      type="number"
+      step="0.01"
+      min="0"
+      class="form-control @error('discount_price') is-invalid @enderror"
+      id="discount_price"
+      name="discount_price"
+      value="{{ old('discount_price', isset($promo) ? $promo->discount_price : '') }}"
+    />
+    @error('discount_price')
       <div class="invalid-feedback">{{ $message }}</div>
     @enderror
   </div>
 
   <div class="col-md-12">
     <label class="form-label" for="image">Image</label>
-    @if (isset($tip) && $tip->exists && $tip->imageUrl())
+    @if (isset($promo) && $promo->exists && $promo->imageUrl())
       <div class="mb-2">
         <p class="small text-muted mb-1">Current image</p>
-        <img src="{{ $tip->imageUrl() }}" alt="{{ $tip->title }}" class="img-thumbnail tip-image-preview" id="current-tip-image">
+        <img src="{{ $promo->imageUrl() }}" alt="{{ $promo->title }}" class="img-thumbnail promo-image-preview" id="current-promo-image">
       </div>
     @endif
     <input
@@ -46,10 +72,10 @@
       id="image"
       name="image"
       accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-      data-preview="preview-tip-image"
+      data-preview="preview-promo-image"
     />
     <small class="text-muted">Allowed: JPG, PNG, WEBP. Max 2MB.</small>
-    <img src="#" alt="" class="img-thumbnail tip-image-preview mt-2 d-none" id="preview-tip-image">
+    <img src="#" alt="" class="img-thumbnail promo-image-preview mt-2 d-none" id="preview-promo-image">
     @error('image')
       <div class="invalid-feedback d-block">{{ $message }}</div>
     @enderror
@@ -62,18 +88,8 @@
       id="description"
       name="description"
       rows="6"
-    >{{ old('description', isset($tip) ? $tip->description : '') }}</textarea>
+    >{{ old('description', isset($promo) ? $promo->description : '') }}</textarea>
     @error('description')
-      <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-  </div>
-  <div class="col-md-4">
-    <label class="form-label" for="status">Status <span class="text-danger">*</span></label>
-    <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
-      <option value="1" @selected((string) old('status', $tip->exists ? (int) $tip->status : 1) === '1')>Active</option>
-      <option value="0" @selected((string) old('status', $tip->exists ? (int) $tip->status : 1) === '0')>Inactive</option>
-    </select>
-    @error('status')
       <div class="invalid-feedback">{{ $message }}</div>
     @enderror
   </div>

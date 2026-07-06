@@ -45,12 +45,45 @@ class CmsModuleSeeder extends Seeder
             ]
         );
 
+        $tipsManagement = CmsModule::updateOrCreate(
+            ['route_name' => 'admin.tips-management'],
+            [
+                'name' => 'Tips Management',
+                'icon' => 'fa-solid fa-lightbulb',
+                'sort_order' => 4,
+                'status' => 'active',
+                'parent_id' => 0,
+            ]
+        );
+
         CmsModule::updateOrCreate(
             ['route_name' => 'admin.tips.index'],
             [
-                'name' => 'Tips',
+                'name' => 'Tip',
                 'icon' => 'fa-solid fa-lightbulb',
-                'sort_order' => 4,
+                'sort_order' => 1,
+                'status' => 'active',
+                'parent_id' => $tipsManagement->id,
+            ]
+        );
+
+        CmsModule::updateOrCreate(
+            ['route_name' => 'admin.tips-categories.index'],
+            [
+                'name' => 'Tips Category',
+                'icon' => 'fa-solid fa-tags',
+                'sort_order' => 2,
+                'status' => 'active',
+                'parent_id' => $tipsManagement->id,
+            ]
+        );
+
+        CmsModule::updateOrCreate(
+            ['route_name' => 'admin.promos.index'],
+            [
+                'name' => 'Promos',
+                'icon' => 'fa-solid fa-gift',
+                'sort_order' => 5,
                 'status' => 'active',
                 'parent_id' => 0,
             ]
@@ -60,7 +93,10 @@ class CmsModuleSeeder extends Seeder
             'admin.dashboard',
             'users.index',
             'site-settings.edit',
+            'admin.tips-management',
             'admin.tips.index',
+            'admin.tips-categories.index',
+            'admin.promos.index',
         ];
 
         CmsModule::query()

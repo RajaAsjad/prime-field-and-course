@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\TipController;
+use App\Http\Controllers\Admin\TipsCategoryController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,5 +26,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('tips', TipController::class)
         ->names('admin.tips')
+        ->except(['show']);
+
+    Route::resource('tips-categories', TipsCategoryController::class)
+        ->names('admin.tips-categories')
+        ->except(['show']);
+
+    Route::resource('promos', PromoController::class)
+        ->names('admin.promos')
         ->except(['show']);
 });

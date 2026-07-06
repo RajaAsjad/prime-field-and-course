@@ -1,10 +1,10 @@
 @extends('layouts.admin.master')
 
-@section('title', 'Edit Tip')
+@section('title', 'Edit Tips Category')
 
 @section('content')
   <style>
-    .tip-image-preview { max-height: 120px; width: auto; }
+    .category-image-preview { max-height: 120px; width: auto; }
   </style>
 
   <div class="container-fluid">
@@ -24,17 +24,18 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header pb-0">
-            <h5>Edit Tip</h5>
+            <h5>Edit Tips Category</h5>
+            <p class="text-muted mb-0 mt-1">Current slug: <code>{{ $category->slug }}</code></p>
           </div>
           <div class="card-body">
-            <form action="{{ route('admin.tips.update', $tip) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.tips-categories.update', $category) }}" method="POST" enctype="multipart/form-data">
               @csrf
               @method('PUT')
-              @include('screens.admin.tips._form', ['tip' => $tip])
+              @include('screens.admin.tips-categories._form', ['category' => $category])
 
               <div class="d-flex flex-wrap gap-2 mt-4">
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{{ route('admin.tips.index') }}" class="btn btn-light">Cancel</a>
+                <a href="{{ route('admin.tips-categories.index') }}" class="btn btn-light">Cancel</a>
               </div>
             </form>
           </div>

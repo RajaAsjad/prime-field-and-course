@@ -29,46 +29,38 @@
           <p class="body-lg">In-depth articles and guides from professional golf analysts.</p>
         </div>
         <div class="cards-grid-4">
-          <article class="art-card rev rev-d1">
-            <div class="art-img" style="position:relative;background:linear-gradient(135deg,#edf7f0,#d4eddb)"><img
-                src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=800&q=80"
-                alt="Golf strategy" width="800" height="500" loading="lazy" decoding="async" /><span
-                class="art-tag">Strategy</span></div>
-            <div class="art-body">
-              <h3 class="art-title">Fade the Field: Finding Value Longshots</h3>
-              <p class="art-desc">How sharp bettors find value by analyzing strokes gained data.</p>
-            </div>
-          </article>
-          <article class="art-card rev rev-d2">
-            <div class="art-img" style="position:relative;background:linear-gradient(135deg,#fdf8ec,#f5edcc)"><img
-                src="https://images.unsplash.com/photo-1560807707-8cc77767d783?auto=format&fit=crop&w=800&q=80"
-                alt="Golf scorecard" width="800" height="500" loading="lazy" decoding="async" /><span
-                class="art-tag gold-tag">Handicapping</span></div>
-            <div class="art-body">
-              <h3 class="art-title">Strokes Gained: The Key Metric</h3>
-              <p class="art-desc">Translated into betting edges every week.</p>
-            </div>
-          </article>
-          <article class="art-card rev rev-d3">
-            <div class="art-img" style="position:relative;background:linear-gradient(135deg,#edf7f0,#d4eddb)"><img
-                src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80"
-                alt="Tournament leaderboard" width="800" height="500" loading="lazy" decoding="async" /><span
-                class="art-tag">Tournament</span></div>
-            <div class="art-body">
-              <h3 class="art-title">The Players Championship 2025 Preview</h3>
-              <p class="art-desc">Full field breakdown with course fits & projections.</p>
-            </div>
-          </article>
-          <article class="art-card rev rev-d4">
-            <div class="art-img" style="position:relative;background:linear-gradient(135deg,#fdf8ec,#f5edcc)"><img
-                src="https://images.unsplash.com/photo-1590496793929-36417d3117de?auto=format&fit=crop&w=800&q=80"
-                alt="Golf fairway" width="800" height="500" loading="lazy" decoding="async" /><span
-                class="art-tag gold-tag">Advanced</span></div>
-            <div class="art-body">
-              <h3 class="art-title">Weather & Wind: The Hidden Variable</h3>
-              <p class="art-desc">Create systematic edges across all PGA Tour venues.</p>
-            </div>
-          </article>
+          @forelse ($tips as $tip)
+            <a
+              href="{{ route('tips.show', $tip) }}"
+              class="art-card rev rev-d{{ ($loop->iteration - 1) % 4 + 1 }}"
+              style="text-decoration:none;color:inherit;"
+            >
+              <div
+                class="art-img"
+                style="position:relative;background:linear-gradient(135deg,{{ $loop->odd ? '#fdf8ec,#f5edcc' : '#edf7f0,#d4eddb' }})"
+              >
+                @if ($tip->imageUrl())
+                  <img
+                    src="{{ $tip->imageUrl() }}"
+                    alt="{{ $tip->title }}"
+                    width="800"
+                    height="500"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                @endif
+                @if ($tip->tipsCategory)
+                  <span class="art-tag{{ $loop->odd ? ' gold-tag' : '' }}">{{ $tip->tipsCategory->title }}</span>
+                @endif
+              </div>
+              <div class="art-body">
+                <h3 class="art-title">{{ $tip->title }}</h3>
+                <p class="art-desc">{{ $tip->description }}</p>
+              </div>
+            </a>
+          @empty
+            <p class="body-lg">No tips available at the moment.</p>
+          @endforelse
         </div>
       </div>
     </section>
@@ -264,6 +256,54 @@
             Updating automatically…
           </p>
         </div>
+      </div>
+    </section>
+
+    <section id="rotoballer-news" class="section-green-pale">
+      <div class="wrap">
+        <div class="sec-head rev">
+          <div class="eyebrow"><span
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Player
+            News</div>
+          <h2 class="h-section">Rotoballer <em>News Feed</em></h2>
+          <p class="body-lg" id="rotoballer-news-desc">Latest PGA Tour player news and matchup outlooks from RotoBaller. Auto-refreshes every {{ $newsRefreshSeconds ?? 300 }} seconds.</p>
+        </div>
+        <div
+          class="rb-news-grid rev"
+          id="rotoballer-news-feed"
+          data-endpoint="{{ route('api.rotoballer-news') }}"
+          data-refresh-ms="{{ ($newsRefreshSeconds ?? 300) * 1000 }}"
+        >
+          @forelse ($newsFeed['items'] ?? [] as $item)
+            <article class="rb-news-card">
+              <div class="rb-news-card__top">
+                @if (!empty($item['category']))
+                  <span class="rb-news-tag">{{ str_replace('-', ' ', $item['category']) }}</span>
+                @endif
+                @if (!empty($item['updated_at']))
+                  <time class="rb-news-date" datetime="{{ $item['updated_at'] }}">{{ \Carbon\Carbon::parse($item['updated_at'])->format('M j, Y g:i A') }}</time>
+                @endif
+              </div>
+              <h3 class="rb-news-title">{{ $item['title'] }}</h3>
+              <p class="rb-news-excerpt">{{ \Illuminate\Support\Str::limit($item['content'], 220) }}</p>
+              <div class="rb-news-card__foot">
+                <span class="rb-news-source">{{ $item['source'] }}</span>
+                @if (!empty($item['id']))
+                  <a href="{{ route('news.show', $item['id']) }}" class="read-more">Read full story &rarr;</a>
+                @endif
+              </div>
+            </article>
+          @empty
+            <p class="body-lg rb-news-empty" id="rotoballer-news-loading">Loading RotoBaller news…</p>
+          @endforelse
+        </div>
+        <p id="rotoballer-news-updated" style="margin-top:12px;font-size:.78rem;color:#9aaa9e;text-align:right;">
+          @if (!empty($newsFeed['error']))
+            {{ $newsFeed['error'] }}
+          @else
+            Updating automatically…
+          @endif
+        </p>
       </div>
     </section>
 
@@ -643,11 +683,97 @@
         width: 100%
       }
     }
+
+    #rotoballer-news .rb-news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 22px
+    }
+
+    #rotoballer-news .rb-news-card {
+      background: #fff;
+      border: 1.5px solid var(--bdr);
+      border-radius: var(--r-lg);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all .3s var(--ease-expo)
+    }
+
+    #rotoballer-news .rb-news-card:hover {
+      transform: translateY(-4px);
+      border-color: #78c98a;
+      box-shadow: 0 16px 40px rgba(26, 92, 40, .1)
+    }
+
+    #rotoballer-news .rb-news-card__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    #rotoballer-news .rb-news-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--g-600);
+      color: #fff;
+      font-size: .67rem;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      border-radius: var(--r-full)
+    }
+
+    #rotoballer-news .rb-news-date {
+      font-size: .72rem;
+      color: #9aaa9e
+    }
+
+    #rotoballer-news .rb-news-title {
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.32;
+      color: var(--tx-h)
+    }
+
+    #rotoballer-news .rb-news-excerpt {
+      font-size: .84rem;
+      color: var(--tx-m);
+      line-height: 1.64;
+      flex: 1
+    }
+
+    #rotoballer-news .rb-news-card__foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: auto
+    }
+
+    #rotoballer-news .rb-news-source {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--g-600);
+      text-transform: uppercase;
+      letter-spacing: .05em
+    }
+
+    #rotoballer-news .rb-news-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #7a8a7e
+    }
   </style>
 @endpush
 
 @push('scripts')
   <script src="{{ asset('assets/js/live-odds.js') }}?v={{ filemtime(public_path('assets/js/live-odds.js')) }}"></script>
+  <script src="{{ asset('assets/js/rotoballer-news.js') }}?v={{ filemtime(public_path('assets/js/rotoballer-news.js')) }}"></script>
 @endpush
 
 {{-- Main content end --}}

@@ -1,11 +1,11 @@
 @extends('layouts.admin.master')
 
-@section('title', 'Tips')
+@section('title', 'Promos')
 
 @section('content')
   <style>
-    .tip-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
-    .tip-thumb-placeholder {
+    .promo-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
+    .promo-thumb-placeholder {
       width: 56px;
       height: 56px;
       border-radius: 8px;
@@ -40,11 +40,11 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header pb-0 d-flex flex-wrap align-items-center justify-content-between gap-2">
-            <h5 class="mb-0">All Tips</h5>
-            <a href="{{ route('admin.tips.create') }}" class="btn btn-primary btn-sm">Create Tip</a>
+            <h5 class="mb-0">All Promos</h5>
+            <a href="{{ route('admin.promos.create') }}" class="btn btn-primary btn-sm">Create Promo</a>
           </div>
           <div class="card-body pt-3">
-            <form method="GET" action="{{ route('admin.tips.index') }}" class="row g-2 mb-3">
+            <form method="GET" action="{{ route('admin.promos.index') }}" class="row g-2 mb-3">
               <div class="col-md-6 col-lg-4">
                 <input
                   type="text"
@@ -59,7 +59,7 @@
               </div>
               @if ($search !== '')
                 <div class="col-auto">
-                  <a href="{{ route('admin.tips.index') }}" class="btn btn-light btn-sm">Clear</a>
+                  <a href="{{ route('admin.promos.index') }}" class="btn btn-light btn-sm">Clear</a>
                 </div>
               @endif
             </form>
@@ -71,43 +71,45 @@
                     <th><span class="c-o-light f-w-600">Image</span></th>
                     <th><span class="c-o-light f-w-600">Title</span></th>
                     <th><span class="c-o-light f-w-600">Slug</span></th>
-                    <th><span class="c-o-light f-w-600">Category</span></th>
+                    <th><span class="c-o-light f-w-600">Price</span></th>
+                    <th><span class="c-o-light f-w-600">Discount Price</span></th>
                     <th><span class="c-o-light f-w-600">Status</span></th>
                     <th><span class="c-o-light f-w-600">Created Date</span></th>
                     <th><span class="c-o-light f-w-600">Actions</span></th>
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse ($tips as $tip)
+                  @forelse ($promos as $promo)
                     <tr>
                       <td>
-                        @if ($tip->imageUrl())
-                          <img src="{{ $tip->imageUrl() }}" alt="{{ $tip->title }}" class="tip-thumb">
+                        @if ($promo->imageUrl())
+                          <img src="{{ $promo->imageUrl() }}" alt="{{ $promo->title }}" class="promo-thumb">
                         @else
-                          <div class="tip-thumb-placeholder">No<br>Image</div>
+                          <div class="promo-thumb-placeholder">No<br>Image</div>
                         @endif
                       </td>
-                      <td>{{ $tip->title }}</td>
-                      <td><code>{{ $tip->slug }}</code></td>
-                      <td>{{ $tip->tipsCategory?->title ?: '—' }}</td>
+                      <td>{{ $promo->title }}</td>
+                      <td><code>{{ $promo->slug }}</code></td>
+                      <td>{{ $promo->price !== null ? '$'.number_format((float) $promo->price, 2) : '—' }}</td>
+                      <td>{{ $promo->discount_price !== null ? '$'.number_format((float) $promo->discount_price, 2) : '—' }}</td>
                       <td>
-                        @if ($tip->status)
+                        @if ($promo->status)
                           <span class="badge bg-success">Active</span>
                         @else
                           <span class="badge bg-secondary">Inactive</span>
                         @endif
                       </td>
-                      <td>{{ $tip->created_at?->format('d M Y, H:i A') }}</td>
+                      <td>{{ $promo->created_at?->format('d M Y, H:i A') }}</td>
                       <td>
                         <div class="d-flex flex-wrap gap-2">
-                          <a href="{{ route('admin.tips.edit', $tip) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                          <a href="{{ route('admin.promos.edit', $promo) }}" class="btn btn-outline-primary btn-sm">Edit</a>
                           <button
                             type="button"
                             class="btn btn-outline-danger btn-sm"
                             data-bs-toggle="modal"
-                            data-bs-target="#deleteTipModal"
-                            data-tip-title="{{ $tip->title }}"
-                            data-delete-url="{{ route('admin.tips.destroy', $tip) }}"
+                            data-bs-target="#deletePromoModal"
+                            data-promo-title="{{ $promo->title }}"
+                            data-delete-url="{{ route('admin.promos.destroy', $promo) }}"
                           >
                             Delete
                           </button>
@@ -116,16 +118,16 @@
                     </tr>
                   @empty
                     <tr>
-                      <td colspan="7" class="text-center py-4">No tips found.</td>
+                      <td colspan="8" class="text-center py-4">No promos found.</td>
                     </tr>
                   @endforelse
                 </tbody>
               </table>
             </div>
 
-            @if ($tips->hasPages())
+            @if ($promos->hasPages())
               <div class="pt-3">
-                {{ $tips->links() }}
+                {{ $promos->links() }}
               </div>
             @endif
           </div>
@@ -134,19 +136,19 @@
     </div>
   </div>
 
-  <div class="modal fade" id="deleteTipModal" tabindex="-1" aria-labelledby="deleteTipModalLabel" aria-hidden="true">
+  <div class="modal fade" id="deletePromoModal" tabindex="-1" aria-labelledby="deletePromoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="deleteTipModalLabel">Delete Tip</h5>
+          <h5 class="modal-title" id="deletePromoModalLabel">Delete Promo</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p class="mb-0">Are you sure you want to delete <strong id="delete-tip-title"></strong>? This action cannot be undone.</p>
+          <p class="mb-0">Are you sure you want to delete <strong id="delete-promo-title"></strong>? This action cannot be undone.</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-          <form id="delete-tip-form" method="POST">
+          <form id="delete-promo-form" method="POST">
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-danger">Delete</button>
@@ -157,13 +159,13 @@
   </div>
 
   <script>
-    document.getElementById('deleteTipModal')?.addEventListener('show.bs.modal', function (event) {
+    document.getElementById('deletePromoModal')?.addEventListener('show.bs.modal', function (event) {
       var button = event.relatedTarget;
-      var title = button.getAttribute('data-tip-title');
+      var title = button.getAttribute('data-promo-title');
       var deleteUrl = button.getAttribute('data-delete-url');
 
-      document.getElementById('delete-tip-title').textContent = title || 'this tip';
-      document.getElementById('delete-tip-form').setAttribute('action', deleteUrl);
+      document.getElementById('delete-promo-title').textContent = title || 'this promo';
+      document.getElementById('delete-promo-form').setAttribute('action', deleteUrl);
     });
   </script>
 @endsection

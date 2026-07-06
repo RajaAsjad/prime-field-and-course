@@ -22,6 +22,12 @@ return [
         'live_refresh_seconds' => (int) env('SPORTSDATA_LIVE_REFRESH_SECONDS', 30),
     ],
 
+    'news' => [
+        'limit' => (int) env('SPORTSDATA_NEWS_LIMIT', 6),
+        'cache_ttl' => (int) env('SPORTSDATA_NEWS_CACHE_TTL', 300),
+        'refresh_seconds' => (int) env('SPORTSDATA_NEWS_REFRESH_SECONDS', 300),
+    ],
+
     'sportsbooks' => [
         'DraftKings' => ['DraftKings', 'Draft Kings'],
         'FanDuel' => ['FanDuel', 'Fan Duel'],

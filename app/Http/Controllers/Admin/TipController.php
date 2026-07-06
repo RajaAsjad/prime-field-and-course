@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTipRequest;
 use App\Http\Requests\Admin\UpdateTipRequest;
 use App\Models\Tip;
+use App\Models\TipsCategory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class TipController extends Controller
         $search = trim((string) $request->query('search', ''));
 
         $tips = Tip::query()
+            ->with('tipsCategory')
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($builder) use ($search) {
                     $builder->where('title', 'like', "%{$search}%")
@@ -33,8 +35,9 @@ class TipController extends Controller
     public function create(): View
     {
         $tip = new Tip();
+        $categories = TipsCategory::query()->orderBy('title')->get();
 
-        return view('screens.admin.tips.create', compact('tip'));
+        return view('screens.admin.tips.create', compact('tip', 'categories'));
     }
 
     public function store(StoreTipRequest $request): RedirectResponse
@@ -57,7 +60,9 @@ class TipController extends Controller
 
     public function edit(Tip $tip): View
     {
-        return view('screens.admin.tips.edit', compact('tip'));
+        $categories = TipsCategory::query()->orderBy('title')->get();
+
+        return view('screens.admin.tips.edit', compact('tip', 'categories'));
     }
 
     public function update(UpdateTipRequest $request, Tip $tip): RedirectResponse
