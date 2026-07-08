@@ -180,6 +180,71 @@
       </div>
     </section>
 
+    <section id="hot-props" class="section-white">
+      <div class="wrap">
+        <div class="sec-head rev">
+          <div class="eyebrow"><span
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Odds
+            &amp; Sportsbooks</div>
+          <h2 class="h-section">This Week's <em>Hot Props</em></h2>
+          <p class="body-lg" id="hot-props-desc">Consensus and sportsbook prop odds via SportsDataIO Sportsbook Group. Auto-refreshes every {{ $propsRefreshSeconds ?? 120 }} seconds.</p>
+        </div>
+        @if (!empty($hotProps['tournament']['name']))
+          <p class="body-lg hot-props-tournament rev" id="hot-props-tournament">
+            {{ $hotProps['tournament']['name'] }}
+            @if (!empty($hotProps['tournament']['start_date']))
+              &middot; {{ \Carbon\Carbon::parse($hotProps['tournament']['start_date'])->format('M j') }}
+              @if (!empty($hotProps['tournament']['end_date']))
+                &ndash; {{ \Carbon\Carbon::parse($hotProps['tournament']['end_date'])->format('M j, Y') }}
+              @endif
+            @endif
+          </p>
+        @endif
+        <div
+          class="rev"
+          id="hot-props-panel"
+          data-endpoint="{{ route('api.hot-props') }}"
+          data-refresh-ms="{{ ($propsRefreshSeconds ?? 120) * 1000 }}"
+          data-active-key="{{ $hotProps['active_key'] ?? 'top_5' }}"
+          data-sportsbooks='@json($hotProps['sportsbooks'] ?? [])'
+        >
+          <div class="hot-props-tabs" id="hot-props-tabs" role="tablist" aria-label="Prop brackets">
+            @foreach ($hotProps['brackets'] ?? [] as $bracket)
+              <button
+                type="button"
+                class="hot-props-tab{{ ($hotProps['active_key'] ?? '') === $bracket['key'] ? ' is-active' : '' }}"
+                data-bracket-key="{{ $bracket['key'] }}"
+                role="tab"
+                aria-selected="{{ ($hotProps['active_key'] ?? '') === $bracket['key'] ? 'true' : 'false' }}"
+              >{{ $bracket['label'] }}</button>
+            @endforeach
+          </div>
+          <div class="table-wrap">
+            <table class="odds-tbl" id="hot-props-table">
+              <thead id="hot-props-thead">
+                <tr>
+                  <th style="min-width:180px;">Selection</th>
+                  @foreach ($hotProps['sportsbooks'] ?? [] as $book)
+                    <th>{{ $book }}</th>
+                  @endforeach
+                </tr>
+              </thead>
+              <tbody id="hot-props-body">
+                <tr id="hot-props-loading">
+                  <td colspan="{{ count($hotProps['sportsbooks'] ?? []) + 1 }}" style="text-align:center;padding:28px;color:#7a8a7e;">
+                    Loading prop odds…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p id="hot-props-updated" style="margin-top:12px;font-size:.78rem;color:#9aaa9e;text-align:right;">
+            Updating automatically…
+          </p>
+        </div>
+      </div>
+    </section>
+
     <section id="running-odds" class="section-white">
       <div class="wrap">
         <div class="sec-head rev">
@@ -768,11 +833,51 @@
       text-align: center;
       color: #7a8a7e
     }
+
+    #hot-props .hot-props-tournament {
+      margin: -8px 0 24px;
+      color: var(--g-600);
+      font-weight: 700
+    }
+
+    #hot-props .hot-props-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px
+    }
+
+    #hot-props .hot-props-tab {
+      border: 1.5px solid var(--bdr);
+      background: #fff;
+      color: var(--tx-m);
+      border-radius: var(--r-full);
+      padding: 8px 16px;
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .25s var(--ease-expo)
+    }
+
+    #hot-props .hot-props-tab:hover,
+    #hot-props .hot-props-tab.is-active {
+      border-color: var(--g-600);
+      color: var(--g-600);
+      background: rgba(26, 92, 40, .06)
+    }
+
+    #hot-props .odds-cell-best {
+      color: var(--g-600);
+      font-weight: 800
+    }
   </style>
 @endpush
 
 @push('scripts')
   <script src="{{ asset('assets/js/live-odds.js') }}?v={{ filemtime(public_path('assets/js/live-odds.js')) }}"></script>
+  <script src="{{ asset('assets/js/hot-props.js') }}?v={{ filemtime(public_path('assets/js/hot-props.js')) }}"></script>
   <script src="{{ asset('assets/js/rotoballer-news.js') }}?v={{ filemtime(public_path('assets/js/rotoballer-news.js')) }}"></script>
 @endpush
 

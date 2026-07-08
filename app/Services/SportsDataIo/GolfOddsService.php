@@ -144,6 +144,78 @@ class GolfOddsService
 
     /**
      * @return array{
+     *     tournament: ?array{id: int, name: string, start_date: ?string, end_date: ?string, is_in_progress: bool},
+     *     sportsbooks: list<string>,
+     *     brackets: list<array{key: string, label: string, type: string, players?: list<array{name: string, odds: array<string, array{american: string, decimal: float, best: bool}>}>, outcomes?: list<array{label: string, odds: array<string, array{american: string, decimal: float, best: bool}>}>}>,
+     *     active_key: string,
+     *     refresh_seconds: int,
+     *     updated_at: string,
+     *     error: ?string
+     * }
+     */
+    public function getHotPropsBracket(): array
+    {
+        $sportsbooks = $this->propsSportsbookColumns();
+        $bracketConfig = config('sportsdata.props.brackets', []);
+        $refreshSeconds = (int) config('sportsdata.props.refresh_seconds', 120);
+
+        $empty = [
+            'tournament' => null,
+            'sportsbooks' => $sportsbooks,
+            'brackets' => [],
+            'active_key' => array_key_first($bracketConfig) ?: 'top_5',
+            'refresh_seconds' => $refreshSeconds,
+            'updated_at' => now()->toIso8601String(),
+            'error' => null,
+        ];
+
+        try {
+            $tournament = $this->resolveTargetTournament();
+
+            if ($tournament === null) {
+                $empty['error'] = 'No upcoming PGA Tour tournament found.';
+
+                return $empty;
+            }
+
+            $tournamentId = (int) $tournament['TournamentID'];
+            $isLive = (bool) ($tournament['IsInProgress'] ?? false);
+            $markets = $this->fetchBettingMarketsByGroup($tournamentId, $isLive);
+            $brackets = [];
+
+            foreach ($bracketConfig as $key => $config) {
+                if (! is_array($config)) {
+                    continue;
+                }
+
+                $bracket = $this->buildPropsBracket($key, $config, $markets, $sportsbooks);
+
+                if ($bracket !== null) {
+                    $brackets[] = $bracket;
+                }
+            }
+
+            return [
+                'tournament' => $this->formatTournament($tournament),
+                'sportsbooks' => $sportsbooks,
+                'brackets' => $brackets,
+                'active_key' => $brackets[0]['key'] ?? ($empty['active_key']),
+                'refresh_seconds' => $refreshSeconds,
+                'updated_at' => now()->toIso8601String(),
+                'error' => $brackets === [] ? 'Prop odds are not available yet for this tournament.' : null,
+            ];
+        } catch (\Throwable $exception) {
+            Log::error('SportsDataIO golf props failed', ['message' => $exception->getMessage()]);
+
+            return [
+                ...$empty,
+                'error' => 'Unable to load prop odds right now. Please try again shortly.',
+            ];
+        }
+    }
+
+    /**
+     * @return array{
      *     items: list<array{id: int, title: string, content: string, url: string, detail_url: string, source: string, author: string, category: string, updated_at: ?string}>,
      *     refresh_seconds: int,
      *     updated_at: string,
@@ -327,6 +399,258 @@ class GolfOddsService
     /**
      * @return Collection<int, array<string, mixed>>
      */
+    /**
+     * @return list<string>
+     */
+    private function propsSportsbookColumns(): array
+    {
+        return [
+            ...array_keys(config('sportsdata.sportsbooks', [])),
+            'Consensus',
+        ];
+    }
+
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function fetchBettingMarketsByGroup(int $tournamentId, bool $inProgress): Collection
+    {
+        $group = trim((string) config('sportsdata.sportsbook_group', 'G1000'));
+        $cacheKey = "sportsdata:props-markets:{$tournamentId}:{$group}:" . ($inProgress ? 'live' : 'pregame');
+        $ttl = $inProgress
+            ? (int) config('sportsdata.cache.scores_ttl')
+            : (int) config('sportsdata.props.cache_ttl', 120);
+
+        return Cache::remember($cacheKey, $ttl, function () use ($tournamentId, $group) {
+            try {
+                $markets = $this->request(
+                    $this->oddsUrl("BettingMarketsByTournamentID/{$tournamentId}/{$group}")
+                );
+            } catch (RuntimeException $exception) {
+                if (str_contains($exception->getMessage(), 'not authorized')) {
+                    throw $exception;
+                }
+
+                return collect();
+            }
+
+            if (! is_array($markets)) {
+                return collect();
+            }
+
+            return collect($markets)->filter(fn ($market) => is_array($market))->values();
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     * @param  Collection<int, array<string, mixed>>  $markets
+     * @param  list<string>  $sportsbooks
+     * @return array{key: string, label: string, type: string, players?: list<array{name: string, odds: array<string, array{american: string, decimal: float, best: bool}>}>, outcomes?: list<array{label: string, odds: array<string, array{american: string, decimal: float, best: bool}>}>}|null
+     */
+    private function buildPropsBracket(string $key, array $config, Collection $markets, array $sportsbooks): ?array
+    {
+        $label = (string) ($config['label'] ?? $key);
+        $betTypes = collect($config['bet_types'] ?? [])->filter()->values();
+        $marketFilter = (string) ($config['market_filter'] ?? 'player');
+
+        if ($betTypes->isEmpty()) {
+            return null;
+        }
+
+        $matchedMarkets = $markets->filter(function (array $market) use ($betTypes) {
+            $betType = (string) ($market['BettingBetType'] ?? '');
+
+            return $betTypes->contains($betType);
+        })->values();
+
+        if ($matchedMarkets->isEmpty()) {
+            if ($marketFilter === 'yes_no_tournament') {
+                return [
+                    'key' => $key,
+                    'label' => $label,
+                    'type' => 'yes_no',
+                    'outcomes' => [],
+                ];
+            }
+
+            return [
+                'key' => $key,
+                'label' => $label,
+                'type' => 'player',
+                'players' => [],
+            ];
+        }
+
+        if ($marketFilter === 'yes_no_tournament') {
+            $market = $matchedMarkets->first(function (array $market) {
+                $types = collect($market['BettingOutcomes'] ?? [])
+                    ->pluck('BettingOutcomeType')
+                    ->filter()
+                    ->map(fn ($type) => strtolower((string) $type));
+
+                return $types->contains('yes') && $types->contains('no');
+            });
+
+            if (! is_array($market)) {
+                return [
+                    'key' => $key,
+                    'label' => $label,
+                    'type' => 'yes_no',
+                    'outcomes' => [],
+                ];
+            }
+
+            return [
+                'key' => $key,
+                'label' => $label,
+                'type' => 'yes_no',
+                'outcomes' => $this->buildYesNoOutcomes($market, $sportsbooks),
+            ];
+        }
+
+        $market = $matchedMarkets->first();
+
+        if (! is_array($market)) {
+            return null;
+        }
+
+        return [
+            'key' => $key,
+            'label' => $label,
+            'type' => 'player',
+            'players' => $this->buildPlayerPropRows($market, $sportsbooks),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $market
+     * @param  list<string>  $sportsbooks
+     * @return list<array{label: string, odds: array<string, array{american: string, decimal: float, best: bool}>}>
+     */
+    private function buildYesNoOutcomes(array $market, array $sportsbooks): array
+    {
+        $grouped = [];
+
+        foreach ($market['BettingOutcomes'] ?? [] as $outcome) {
+            if (! is_array($outcome)) {
+                continue;
+            }
+
+            $book = $this->normalizePropsSportsbook(
+                (string) ($outcome['SportsBook']['Name'] ?? $outcome['SportsBook']['Sportsbook'] ?? '')
+            );
+
+            if ($book === null) {
+                continue;
+            }
+
+            $american = $outcome['PayoutAmerican'] ?? null;
+
+            if ($american === null || ! is_numeric($american)) {
+                continue;
+            }
+
+            $label = ucfirst(strtolower((string) ($outcome['BettingOutcomeType'] ?? 'Outcome')));
+            $grouped[$label][$book] = [
+                'american' => $this->formatAmericanOdds((int) $american),
+                'decimal' => $this->americanToDecimal((int) $american),
+                'best' => false,
+            ];
+        }
+
+        return collect($grouped)
+            ->map(function (array $odds, string $label) {
+                if ($odds !== []) {
+                    $bestBook = collect($odds)->sortByDesc('decimal')->keys()->first();
+                    $odds[$bestBook]['best'] = true;
+                }
+
+                return [
+                    'label' => $label,
+                    'odds' => $odds,
+                ];
+            })
+            ->sortBy(fn (array $row) => $row['label'] === 'Yes' ? 0 : 1)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  array<string, mixed>  $market
+     * @param  list<string>  $sportsbooks
+     * @return list<array{name: string, odds: array<string, array{american: string, decimal: float, best: bool}>}>
+     */
+    private function buildPlayerPropRows(array $market, array $sportsbooks): array
+    {
+        $limit = (int) config('sportsdata.props.player_limit', 8);
+        $grouped = [];
+
+        foreach ($market['BettingOutcomes'] ?? [] as $outcome) {
+            if (! is_array($outcome)) {
+                continue;
+            }
+
+            $name = trim((string) ($outcome['Participant'] ?? $market['PlayerName'] ?? ''));
+
+            if ($name === '') {
+                continue;
+            }
+
+            $book = $this->normalizePropsSportsbook(
+                (string) ($outcome['SportsBook']['Name'] ?? $outcome['SportsBook']['Sportsbook'] ?? '')
+            );
+
+            if ($book === null) {
+                continue;
+            }
+
+            $american = $outcome['PayoutAmerican'] ?? null;
+
+            if ($american === null || ! is_numeric($american)) {
+                continue;
+            }
+
+            $grouped[$name][$book] = [
+                'american' => $this->formatAmericanOdds((int) $american),
+                'decimal' => $this->americanToDecimal((int) $american),
+                'best' => false,
+            ];
+        }
+
+        return collect($grouped)
+            ->map(function (array $odds, string $name) {
+                if ($odds !== []) {
+                    $bestBook = collect($odds)->sortByDesc('decimal')->keys()->first();
+                    $odds[$bestBook]['best'] = true;
+                }
+
+                return [
+                    'name' => $name,
+                    'odds' => $odds,
+                    'sort_decimal' => $odds === [] ? PHP_FLOAT_MAX : min(array_column($odds, 'decimal')),
+                ];
+            })
+            ->sortBy('sort_decimal')
+            ->take($limit)
+            ->map(function (array $player) {
+                unset($player['sort_decimal']);
+
+                return $player;
+            })
+            ->values()
+            ->all();
+    }
+
+    private function normalizePropsSportsbook(string $name): ?string
+    {
+        if (strtolower(trim($name)) === 'consensus') {
+            return 'Consensus';
+        }
+
+        return $this->normalizeSportsbook($name);
+    }
+
     private function fetchOddsFromBettingMarkets(int $tournamentId): Collection
     {
         try {
