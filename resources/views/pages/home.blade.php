@@ -334,33 +334,46 @@
           <p class="body-lg" id="rotoballer-news-desc">Latest PGA Tour player news and matchup outlooks from RotoBaller. Auto-refreshes every {{ $newsRefreshSeconds ?? 300 }} seconds.</p>
         </div>
         <div
-          class="rb-news-grid rev"
+          class="rev"
           id="rotoballer-news-feed"
           data-endpoint="{{ route('api.rotoballer-news') }}"
           data-refresh-ms="{{ ($newsRefreshSeconds ?? 300) * 1000 }}"
         >
-          @forelse ($newsFeed['items'] ?? [] as $item)
-            <article class="rb-news-card">
-              <div class="rb-news-card__top">
-                @if (!empty($item['category']))
-                  <span class="rb-news-tag">{{ str_replace('-', ' ', $item['category']) }}</span>
-                @endif
-                @if (!empty($item['updated_at']))
-                  <time class="rb-news-date" datetime="{{ $item['updated_at'] }}">{{ \Carbon\Carbon::parse($item['updated_at'])->format('M j, Y g:i A') }}</time>
-                @endif
-              </div>
-              <h3 class="rb-news-title">{{ $item['title'] }}</h3>
-              <p class="rb-news-excerpt">{{ \Illuminate\Support\Str::limit($item['content'], 220) }}</p>
-              <div class="rb-news-card__foot">
-                <span class="rb-news-source">{{ $item['source'] }}</span>
-                @if (!empty($item['id']))
-                  <a href="{{ route('news.show', $item['id']) }}" class="read-more">Read full story &rarr;</a>
-                @endif
-              </div>
-            </article>
-          @empty
-            <p class="body-lg rb-news-empty" id="rotoballer-news-loading">Loading RotoBaller news…</p>
-          @endforelse
+          <div class="swiper rb-news-swiper">
+            <div class="swiper-wrapper" id="rb-news-swiper-wrapper">
+              @forelse ($newsFeed['items'] ?? [] as $item)
+                <div class="swiper-slide">
+                  <article class="rb-news-card">
+                    <div class="rb-news-card__top">
+                      @if (!empty($item['category']))
+                        <span class="rb-news-tag">{{ str_replace('-', ' ', $item['category']) }}</span>
+                      @endif
+                      @if (!empty($item['updated_at']))
+                        <time class="rb-news-date" datetime="{{ $item['updated_at'] }}">{{ \Carbon\Carbon::parse($item['updated_at'])->format('M j, Y g:i A') }}</time>
+                      @endif
+                    </div>
+                    <h3 class="rb-news-title">{{ $item['title'] }}</h3>
+                    <p class="rb-news-excerpt">{{ \Illuminate\Support\Str::limit($item['content'], 220) }}</p>
+                    <div class="rb-news-card__foot">
+                      <span class="rb-news-source">{{ $item['source'] }}</span>
+                      @if (!empty($item['id']))
+                        <a href="{{ route('news.show', $item['id']) }}" class="read-more">Read full story &rarr;</a>
+                      @endif
+                    </div>
+                  </article>
+                </div>
+              @empty
+                <div class="swiper-slide">
+                  <p class="body-lg rb-news-empty" id="rotoballer-news-loading">Loading RotoBaller news…</p>
+                </div>
+              @endforelse
+            </div>
+          </div>
+          <div class="car-ctrl rb-news-controls">
+            <button type="button" class="car-btn rb-news-prev" aria-label="Previous news">&#9664;</button>
+            <div class="swiper-pagination rb-news-pagination"></div>
+            <button type="button" class="car-btn rb-news-next" aria-label="Next news">&#9654;</button>
+          </div>
         </div>
         <p id="rotoballer-news-updated" style="margin-top:12px;font-size:.78rem;color:#9aaa9e;text-align:right;">
           @if (!empty($newsFeed['error']))
@@ -383,25 +396,25 @@
         </div>
         <div class="split-2">
           <div class="guide-rows rev"><a href="#golf-betting" class="guide-row">
-              <div class="guide-icon">ðŸ“–</div>
+            <div class="guide-icon">📖</div>
               <div>
                 <div class="guide-title">Complete Beginner's Guide</div>
                 <div class="guide-meta">Beginner Â· 15 min</div>
               </div>
             </a><a href="#golf-betting" class="guide-row">
-              <div class="guide-icon">ðŸŽ¯</div>
+              <div class="guide-icon">🎯</div>
               <div>
                 <div class="guide-title">Types of Golf Bets Explained</div>
                 <div class="guide-meta">Beginner Â· 8 min</div>
               </div>
             </a><a href="#golf-betting" class="guide-row">
-              <div class="guide-icon">ðŸ“Š</div>
+            <div class="guide-icon">📊</div>
               <div>
                 <div class="guide-title">Line Shopping: Find Best Odds</div>
                 <div class="guide-meta">Advanced Â· 10 min</div>
               </div>
             </a><a href="#golf-betting" class="guide-row">
-              <div class="guide-icon">âš¡</div>
+            <div class="guide-icon">�</div>
               <div>
                 <div class="guide-title">Live In-Play Betting Strategy</div>
                 <div class="guide-meta">Advanced Â· 12 min</div>
@@ -439,7 +452,7 @@
                   src="https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&fit=crop&w=800&q=80"
                   alt="TPC Sawgrass" width="800" height="450" loading="lazy" decoding="async" /></div>
               <div class="t-body">
-                <div class="t-date">ðŸ“… Apr 8â€“13 Â· Ponte Vedra, FL</div>
+                <div class="t-date">🏆 Apr 8–13 Â· Ponte Vedra, FL</div>
                 <h3 class="t-name">The Players Championship</h3>
                 <div class="t-players"><span class="t-chip">Scheffler</span><span class="t-chip">McIlroy</span></div><a
                   href="#best-picks" class="btn btn-primary btn-xs">View Picks â†’</a>
@@ -450,7 +463,7 @@
                   src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=800&q=80"
                   alt="Valero" width="800" height="450" loading="lazy" decoding="async" /></div>
               <div class="t-body">
-                <div class="t-date">ðŸ“… Mar 27â€“30 Â· San Antonio</div>
+                <div class="t-date">🏆 Mar 27–30 Â· San Antonio</div>
                 <h3 class="t-name">Valero Texas Open</h3>
                 <div class="t-players"><span class="t-chip">Bhatia</span><span class="t-chip">Harman</span></div><a
                   href="#best-picks" class="btn btn-primary btn-xs">View Picks â†’</a>
@@ -461,7 +474,7 @@
                   src="https://images.unsplash.com/photo-1590496793929-36417d3117de?auto=format&fit=crop&w=800&q=80"
                   alt="Masters" width="800" height="450" loading="lazy" decoding="async" /></div>
               <div class="t-body">
-                <div class="t-date">ðŸ“… Apr 10â€“13 Â· Augusta, GA</div>
+                <div class="t-date">🏆 Apr 10–13 Â· Augusta, GA</div>
                 <h3 class="t-name">The Masters Tournament</h3>
                 <div class="t-players"><span class="t-chip">McIlroy</span><span class="t-chip">Scheffler</span></div><a
                   href="#best-picks" class="btn btn-primary btn-xs">View Picks â†’</a>
@@ -469,9 +482,9 @@
             </div>
           </div>
         </div>
-        <div class="car-ctrl"><button class="car-btn" id="c-prev">â€¹</button>
+        <div class="car-ctrl"><button class="car-btn" id="c-prev">◀</button>
           <div class="car-dots"><button class="car-dot on"></button><button class="car-dot"></button><button
-              class="car-dot"></button></div><button class="car-btn" id="c-next">â€º</button>
+              class="car-dot"></button></div><button class="car-btn" id="c-next">▶</button>
         </div>
       </div>
     </section>
@@ -486,9 +499,9 @@
               <span class="price-big">$9.99</span><span class="price-unit">/month</span>
             </div>
             <div class="cta-feats">
-              <div class="cta-feat"><span class="cta-feat-check">âœ“</span>Weekly expert picks every Tuesday</div>
-              <div class="cta-feat"><span class="cta-feat-check">âœ“</span>Deep tournament analysis &amp; projections</div>
-              <div class="cta-feat"><span class="cta-feat-check">âœ“</span>Exclusive sportsbook bonus alerts</div>
+              <div class="cta-feat"><span class="cta-feat-check">✅</span>Weekly expert picks every Tuesday</div>
+              <div class="cta-feat"><span class="cta-feat-check">✅</span>Deep tournament analysis &amp; projections</div>
+              <div class="cta-feat"><span class="cta-feat-check">✅</span>Exclusive sportsbook bonus alerts</div>
             </div>
           </div>
           <div class="rev rev-d2">
@@ -500,14 +513,14 @@
                   <label class="form-lbl cta-form-lbl" for="p-email">Email</label>
                   <input class="form-inp dark-inp" type="email" id="p-email" name="email" placeholder="your@email.com" required />
                 </div>
-                <button type="submit" class="btn btn-gold form-btn" style="width:100%;">Subscribe â€” 7 Days Free</button>
+                <button type="submit" class="btn btn-gold form-btn" style="width:100%;">Subscribe — 7 Days Free</button>
               </form>
             </div>
           </div>
         </div>
         <div class="testi-grid">
           <div class="testi-card rev rev-d1">
-            <div class="testi-stars">â˜…â˜…â˜…â˜…â˜…</div>
+            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
             <p class="testi-q">"Hit three of their top five picks last week. Completely changed how I approach betting."
             </p>
             <div class="testi-auth">
@@ -517,7 +530,7 @@
             </div>
           </div>
           <div class="testi-card rev rev-d2">
-            <div class="testi-stars">â˜…â˜…â˜…â˜…â˜…</div>
+            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
             <p class="testi-q">"The DraftKings bonus alone paid for six months. Their odds table saves me hours weekly."
             </p>
             <div class="testi-auth">
@@ -527,7 +540,7 @@
             </div>
           </div>
           <div class="testi-card rev rev-d3">
-            <div class="testi-stars">â˜…â˜…â˜…â˜…â˜…</div>
+            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
             <p class="testi-q">"Finally a golf betting site that goes beyond basic picks. I've recommended it to
               everyone."</p>
             <div class="testi-auth">
@@ -601,6 +614,7 @@
   </main>
 
 @push('styles')
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
     #running-odds .tournament-meta {
       width: 100%;
@@ -749,10 +763,42 @@
       }
     }
 
-    #rotoballer-news .rb-news-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 22px
+    #rotoballer-news .rb-news-swiper {
+      overflow: hidden;
+      border-radius: var(--r-lg)
+    }
+
+    #rotoballer-news .swiper-slide {
+      height: auto
+    }
+
+    #rotoballer-news .rb-news-controls {
+      margin-top: 18px
+    }
+
+    #rotoballer-news .rb-news-controls .car-btn {
+      position: static;
+      font-size: .82rem;
+      line-height: 1;
+      cursor: pointer
+    }
+
+    #rotoballer-news .rb-news-controls .car-btn::after,
+    #rotoballer-news .rb-news-controls .car-btn::before {
+      display: none
+    }
+
+    #rotoballer-news .rb-news-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: static;
+      width: auto
+    }
+
+    #rotoballer-news .rb-news-pagination .car-dot {
+      margin: 0
     }
 
     #rotoballer-news .rb-news-card {
@@ -763,7 +809,8 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      transition: all .3s var(--ease-expo)
+      transition: all .3s var(--ease-expo);
+      height: 100%;
     }
 
     #rotoballer-news .rb-news-card:hover {
@@ -829,9 +876,9 @@
     }
 
     #rotoballer-news .rb-news-empty {
-      grid-column: 1 / -1;
       text-align: center;
-      color: #7a8a7e
+      color: #7a8a7e;
+      padding: 28px 0
     }
 
     #hot-props .hot-props-tournament {
@@ -876,6 +923,7 @@
 @endpush
 
 @push('scripts')
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="{{ asset('assets/js/live-odds.js') }}?v={{ filemtime(public_path('assets/js/live-odds.js')) }}"></script>
   <script src="{{ asset('assets/js/hot-props.js') }}?v={{ filemtime(public_path('assets/js/hot-props.js')) }}"></script>
   <script src="{{ asset('assets/js/rotoballer-news.js') }}?v={{ filemtime(public_path('assets/js/rotoballer-news.js')) }}"></script>

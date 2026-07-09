@@ -1,9 +1,11 @@
 (function () {
   const feed = document.getElementById('rotoballer-news-feed');
+  const wrapper = document.getElementById('rb-news-swiper-wrapper');
   const updatedEl = document.getElementById('rotoballer-news-updated');
   const descEl = document.getElementById('rotoballer-news-desc');
+  const controlsEl = feed?.querySelector('.rb-news-controls');
 
-  if (!feed) {
+  if (!feed || !wrapper) {
     return;
   }
 
@@ -11,6 +13,7 @@
   let refreshMs = Number(feed.dataset.refreshMs || 300000);
   let refreshTimer = null;
   let isFetching = false;
+  let newsSwiper = null;
 
   const escapeHtml = (value) => String(value)
     .replace(/&/g, '&amp;')
@@ -42,25 +45,19 @@
     return text.slice(0, limit).trim() + '…';
   };
 
-  const renderItems = (items) => {
-    if (!Array.isArray(items) || items.length === 0) {
-      feed.innerHTML = '<p class="body-lg rb-news-empty">No RotoBaller news available right now.</p>';
+  const renderCard = (item) => {
+    const category = item.category
+      ? `<span class="rb-news-tag">${escapeHtml(formatCategory(item.category))}</span>`
+      : '';
+    const date = item.updated_at
+      ? `<time class="rb-news-date" datetime="${escapeHtml(item.updated_at)}">${escapeHtml(formatDate(item.updated_at))}</time>`
+      : '';
+    const link = item.detail_url
+      ? `<a href="${escapeHtml(item.detail_url)}" class="read-more">Read full story &rarr;</a>`
+      : '';
 
-      return;
-    }
-
-    feed.innerHTML = items.map((item) => {
-      const category = item.category
-        ? `<span class="rb-news-tag">${escapeHtml(formatCategory(item.category))}</span>`
-        : '';
-      const date = item.updated_at
-        ? `<time class="rb-news-date" datetime="${escapeHtml(item.updated_at)}">${escapeHtml(formatDate(item.updated_at))}</time>`
-        : '';
-      const link = item.detail_url
-        ? `<a href="${escapeHtml(item.detail_url)}" class="read-more">Read full story &rarr;</a>`
-        : '';
-
-      return `
+    return `
+      <div class="swiper-slide">
         <article class="rb-news-card">
           <div class="rb-news-card__top">
             ${category}
@@ -73,8 +70,81 @@
             ${link}
           </div>
         </article>
+      </div>
+    `;
+  };
+
+  const initSwiper = () => {
+    const swiperEl = feed.querySelector('.rb-news-swiper');
+    const slides = wrapper.querySelectorAll('.swiper-slide .rb-news-card');
+
+    if (newsSwiper) {
+      newsSwiper.destroy(true, true);
+      newsSwiper = null;
+    }
+
+    if (!swiperEl || slides.length === 0 || typeof Swiper === 'undefined') {
+      if (controlsEl) {
+        controlsEl.style.display = 'none';
+      }
+
+      return;
+    }
+
+    if (controlsEl) {
+      controlsEl.style.display = slides.length > 1 ? '' : 'none';
+    }
+
+    newsSwiper = new Swiper(swiperEl, {
+      slidesPerView: 1,
+      spaceBetween: 20,
+      grabCursor: true,
+      watchOverflow: true,
+      pagination: {
+        el: feed.querySelector('.rb-news-pagination'),
+        clickable: true,
+        bulletClass: 'car-dot',
+        bulletActiveClass: 'on',
+      },
+      breakpoints: {
+        600: {
+          slidesPerView: 2,
+        },
+        900: {
+          slidesPerView: 3,
+        },
+      },
+    });
+
+    const prevBtn = feed.querySelector('.rb-news-prev');
+    const nextBtn = feed.querySelector('.rb-news-next');
+
+    if (prevBtn) {
+      prevBtn.onclick = () => newsSwiper?.slidePrev();
+    }
+
+    if (nextBtn) {
+      nextBtn.onclick = () => newsSwiper?.slideNext();
+    }
+  };
+
+  const renderItems = (items) => {
+    const latestItems = Array.isArray(items) ? items.slice(0, 6) : [];
+
+    if (latestItems.length === 0) {
+      wrapper.innerHTML = `
+        <div class="swiper-slide">
+          <p class="body-lg rb-news-empty">No RotoBaller news available right now.</p>
+        </div>
       `;
-    }).join('');
+
+      initSwiper();
+
+      return;
+    }
+
+    wrapper.innerHTML = latestItems.map(renderCard).join('');
+    initSwiper();
   };
 
   const renderUpdated = (payload) => {
@@ -147,6 +217,7 @@
     refreshTimer = setInterval(fetchNews, refreshMs);
   };
 
+  initSwiper();
   fetchNews();
   scheduleRefresh();
 })();
