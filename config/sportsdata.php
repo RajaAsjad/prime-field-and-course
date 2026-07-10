@@ -20,6 +20,7 @@ return [
         'player_limit' => (int) env('SPORTSDATA_ODDS_PLAYER_LIMIT', 10),
         'refresh_seconds' => (int) env('SPORTSDATA_ODDS_REFRESH_SECONDS', 60),
         'live_refresh_seconds' => (int) env('SPORTSDATA_LIVE_REFRESH_SECONDS', 30),
+        'best_value_american_min' => (int) env('SPORTSDATA_BEST_VALUE_AMERICAN_MIN', 2800),
     ],
 
     'news' => [
@@ -50,15 +51,6 @@ return [
             'hole_in_one' => [
                 'label' => 'One Hole in One',
                 'bet_types' => ['To Make A Hole In One'],
-                'market_filter' => 'yes_no_tournament',
-            ],
-            'two_hole_in_ones' => [
-                'label' => 'Two Hole in Ones',
-                'bet_types' => [
-                    '2 or More Holes in One in the Tournament',
-                    '2 Or More Holes In One In The Tournament',
-                    'Two or More Holes in One in the Tournament',
-                ],
                 'market_filter' => 'yes_no_tournament',
             ],
         ],

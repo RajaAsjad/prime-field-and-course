@@ -775,8 +775,6 @@ class GolfOddsService
         $limit = config('sportsdata.odds.player_limit');
 
         return collect($leaderboard)
-            ->sortBy(fn (array $entry) => $entry['rank'] ?? PHP_INT_MAX)
-            ->take($limit)
             ->map(function (array $entry) use ($oddsByPlayer, $tournamentName) {
                 $playerId = $entry['player_id'];
                 $odds = $oddsByPlayer[$playerId] ?? [];
@@ -795,6 +793,20 @@ class GolfOddsService
                 ];
             })
             ->filter(fn (array $player) => $player['score']['label'] !== null || $player['odds'] !== [])
+            ->sort(function (array $a, array $b) {
+                $aFanDuel = $a['odds']['FanDuel']['decimal'] ?? 0;
+                $bFanDuel = $b['odds']['FanDuel']['decimal'] ?? 0;
+
+                if ($aFanDuel !== $bFanDuel) {
+                    return $bFanDuel <=> $aFanDuel;
+                }
+
+                $aBetMgm = $a['odds']['BetMGM']['decimal'] ?? 0;
+                $bBetMgm = $b['odds']['BetMGM']['decimal'] ?? 0;
+
+                return $bBetMgm <=> $aBetMgm;
+            })
+            ->take($limit)
             ->values()
             ->all();
     }
@@ -852,16 +864,13 @@ class GolfOddsService
                     $odds[$book] = [
                         'american' => $this->formatAmericanOdds($match['american']),
                         'decimal' => $match['decimal'],
-                        'best' => false,
+                        'best' => $this->isBestValueOdds($match['american']),
                     ];
                 }
 
                 if ($odds === []) {
                     return null;
                 }
-
-                $bestBook = collect($odds)->sortByDesc('decimal')->keys()->first();
-                $odds[$bestBook]['best'] = true;
 
                 $score = $leaderboard[$playerId] ?? null;
 
@@ -876,18 +885,24 @@ class GolfOddsService
                         'label' => $score['label'],
                     ] : null,
                     'odds' => $odds,
-                    'sort_decimal' => min(array_column($odds, 'decimal')),
                 ];
             })
             ->filter()
-            ->sortBy('sort_decimal')
+            ->sort(function (array $a, array $b) {
+                $aFanDuel = $a['odds']['FanDuel']['decimal'] ?? 0;
+                $bFanDuel = $b['odds']['FanDuel']['decimal'] ?? 0;
+
+                if ($aFanDuel !== $bFanDuel) {
+                    return $bFanDuel <=> $aFanDuel;
+                }
+
+                $aBetMgm = $a['odds']['BetMGM']['decimal'] ?? 0;
+                $bBetMgm = $b['odds']['BetMGM']['decimal'] ?? 0;
+
+                return $bBetMgm <=> $aBetMgm;
+            })
             ->take(config('sportsdata.odds.player_limit'))
             ->values()
-            ->map(function (array $player) {
-                unset($player['sort_decimal']);
-
-                return $player;
-            })
             ->all();
 
         return $players;
@@ -921,20 +936,16 @@ class GolfOddsService
             $grouped[$playerId][$book] = [
                 'american' => $this->formatAmericanOdds($american),
                 'decimal' => $this->americanToDecimal($american),
-                'best' => false,
+                'best' => $this->isBestValueOdds($american),
             ];
         }
 
-        foreach ($grouped as $playerId => $odds) {
-            if ($odds === []) {
-                continue;
-            }
-
-            $bestBook = collect($odds)->sortByDesc('decimal')->keys()->first();
-            $grouped[$playerId][$bestBook]['best'] = true;
-        }
-
         return $grouped;
+    }
+
+    private function isBestValueOdds(int $american): bool
+    {
+        return $american >= (int) config('sportsdata.odds.best_value_american_min', 2800);
     }
 
     private function formatScoreToPar(mixed $totalScore): ?string
