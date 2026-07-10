@@ -20,7 +20,7 @@ return [
         'player_limit' => (int) env('SPORTSDATA_ODDS_PLAYER_LIMIT', 10),
         'refresh_seconds' => (int) env('SPORTSDATA_ODDS_REFRESH_SECONDS', 60),
         'live_refresh_seconds' => (int) env('SPORTSDATA_LIVE_REFRESH_SECONDS', 30),
-        'best_value_american_min' => (int) env('SPORTSDATA_BEST_VALUE_AMERICAN_MIN', 2800),
+        'best_value_american' => [2800, 3000, 3300],
     ],
 
     'news' => [

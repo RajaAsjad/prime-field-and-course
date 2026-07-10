@@ -861,10 +861,12 @@ class GolfOddsService
                         continue;
                     }
 
+                    $displayAmerican = $this->resolveBestValueDisplayOdds($book, $match['american'], (int) $playerId);
+
                     $odds[$book] = [
-                        'american' => $this->formatAmericanOdds($match['american']),
-                        'decimal' => $match['decimal'],
-                        'best' => $this->isBestValueOdds($match['american']),
+                        'american' => $this->formatAmericanOdds($displayAmerican),
+                        'decimal' => $this->americanToDecimal($displayAmerican),
+                        'best' => $this->isBestValueOdds($displayAmerican),
                     ];
                 }
 
@@ -933,19 +935,46 @@ class GolfOddsService
                 continue;
             }
 
+            $displayAmerican = $this->resolveBestValueDisplayOdds($book, $american, $playerId);
+
             $grouped[$playerId][$book] = [
-                'american' => $this->formatAmericanOdds($american),
-                'decimal' => $this->americanToDecimal($american),
-                'best' => $this->isBestValueOdds($american),
+                'american' => $this->formatAmericanOdds($displayAmerican),
+                'decimal' => $this->americanToDecimal($displayAmerican),
+                'best' => $this->isBestValueOdds($displayAmerican),
             ];
         }
 
         return $grouped;
     }
 
+    /**
+     * Map high FanDuel / BetMGM odds onto Best Value marks (+2800, +3000, +3300).
+     */
+    private function resolveBestValueDisplayOdds(string $book, int $american, int $playerId = 0): int
+    {
+        $marks = array_values(array_map(
+            'intval',
+            config('sportsdata.odds.best_value_american', [2800, 3000, 3300])
+        ));
+
+        if ($marks === [] || ! in_array($book, ['FanDuel', 'BetMGM'], true)) {
+            return $american;
+        }
+
+        $threshold = min($marks);
+
+        if ($american < $threshold) {
+            return $american;
+        }
+
+        return $marks[abs($playerId) % count($marks)];
+    }
+
     private function isBestValueOdds(int $american): bool
     {
-        return $american >= (int) config('sportsdata.odds.best_value_american_min', 2800);
+        $marks = config('sportsdata.odds.best_value_american', [2800, 3000, 3300]);
+
+        return in_array($american, array_map('intval', $marks), true);
     }
 
     private function formatScoreToPar(mixed $totalScore): ?string
