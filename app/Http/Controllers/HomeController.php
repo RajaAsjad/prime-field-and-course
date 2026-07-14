@@ -16,6 +16,7 @@ class HomeController extends Controller
     public function index(): View
     {
         $liveOdds = $this->golfOddsService->getComparisonTable();
+        $topPicks = $this->golfOddsService->buildTopPicks($liveOdds);
         $hotProps = $this->golfOddsService->getHotPropsBracket();
         $newsFeed = $this->golfOddsService->getNewsFeed();
 
@@ -28,6 +29,7 @@ class HomeController extends Controller
         return view('pages.home', [
             'liveOdds' => $liveOdds,
             'oddsRefreshSeconds' => $liveOdds['refresh_seconds'] ?? config('sportsdata.odds.refresh_seconds'),
+            'topPicks' => $topPicks,
             'hotProps' => $hotProps,
             'propsRefreshSeconds' => $hotProps['refresh_seconds'] ?? config('sportsdata.props.refresh_seconds'),
             'newsFeed' => $newsFeed,

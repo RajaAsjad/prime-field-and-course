@@ -105,6 +105,144 @@ class GolfOddsService
     }
 
     /**
+     * Build Top Picks cards from the live odds comparison table (no demo data).
+     *
+     * @param  array{
+     *     tournament: ?array{name?: string},
+     *     players: list<array{name: string, odds: array<string, array{american: string, decimal: float, best: bool}>, score?: ?array{rank?: ?int}}>,
+     *     is_live?: bool
+     * }  $liveOdds
+     * @return list<array{tournament: string, player: string, american: string, book: string, badge: string, badge_class: string, confidence: int}>
+     */
+    public function buildTopPicks(array $liveOdds, int $limit = 4): array
+    {
+        $tournament = (string) ($liveOdds['tournament']['name'] ?? 'PGA Tour');
+        $marks = array_values(array_map(
+            'intval',
+            config('sportsdata.odds.best_value_american', [2800, 3000, 3300])
+        ));
+        $badges = [
+            ['label' => 'Hot Pick', 'class' => 'badge-hot'],
+            ['label' => 'Value', 'class' => 'badge-value'],
+            ['label' => 'Value', 'class' => 'badge-value'],
+            ['label' => 'Sharp', 'class' => 'badge-hot'],
+        ];
+
+        $picks = collect($liveOdds['players'] ?? [])
+            ->filter(fn ($player) => is_array($player) && ! empty($player['odds']))
+            ->map(function (array $player) use ($tournament, $marks) {
+                $match = $this->findBestValueOddsMatch($player['odds'] ?? [], $marks);
+
+                if ($match === null) {
+                    return null;
+                }
+
+                return [
+                    'tournament' => $tournament,
+                    'player' => (string) ($player['name'] ?? 'Unknown'),
+                    'american' => $this->formatAmericanOdds($match['american']),
+                    'book' => $match['book'],
+                    'decimal' => $this->americanToDecimal($match['american']),
+                    'rank' => $player['score']['rank'] ?? null,
+                    'mark_index' => array_search($match['american'], $marks, true),
+                ];
+            })
+            ->filter()
+            ->sortBy([
+                ['mark_index', 'asc'],
+                ['rank', 'asc'],
+            ])
+            ->unique('player')
+            ->take($limit)
+            ->values()
+            ->map(function (array $pick, int $index) use ($badges) {
+                $badge = $badges[$index % count($badges)];
+
+                return [
+                    'tournament' => $pick['tournament'],
+                    'player' => $pick['player'],
+                    'american' => $pick['american'],
+                    'book' => $pick['book'],
+                    'badge' => $badge['label'],
+                    'badge_class' => $badge['class'],
+                    'confidence' => $this->topPickConfidence($pick['decimal'], $pick['rank']),
+                ];
+            })
+            ->all();
+
+        return $picks;
+    }
+
+    /**
+     * Only accept Best Value marks (+2800, +3000, +3300) — never odds below those.
+     *
+     * @param  array<string, array{american: string, decimal: float, best: bool}>  $odds
+     * @param  list<int>  $marks
+     * @return array{american: int, book: string}|null
+     */
+    private function findBestValueOddsMatch(array $odds, array $marks): ?array
+    {
+        if ($marks === []) {
+            return null;
+        }
+
+        $minMark = min($marks);
+        $preferredBooks = ['FanDuel', 'BetMGM', 'DraftKings', 'Caesars'];
+        $exact = null;
+        $above = null;
+
+        foreach ($preferredBooks as $book) {
+            if (! isset($odds[$book]['american'])) {
+                continue;
+            }
+
+            $american = (int) str_replace('+', '', (string) $odds[$book]['american']);
+
+            if ($american < $minMark) {
+                continue;
+            }
+
+            if (in_array($american, $marks, true)) {
+                $exact = ['american' => $american, 'book' => $book];
+                break;
+            }
+
+            if ($above === null) {
+                // Snap high longshots onto the nearest mark (never below)
+                $nearest = $marks[0];
+                $bestDistance = abs($american - $nearest);
+
+                foreach ($marks as $mark) {
+                    $distance = abs($american - $mark);
+
+                    if ($distance < $bestDistance) {
+                        $nearest = $mark;
+                        $bestDistance = $distance;
+                    }
+                }
+
+                $above = ['american' => $nearest, 'book' => $book];
+            }
+        }
+
+        return $exact ?? $above;
+    }
+
+    private function topPickConfidence(float $decimal, ?int $rank): int
+    {
+        if ($rank !== null && $rank > 0) {
+            return max(55, min(95, 100 - (($rank - 1) * 4)));
+        }
+
+        if ($decimal <= 0) {
+            return 70;
+        }
+
+        // Shorter odds → higher confidence
+        return max(62, min(92, (int) round(98 - (($decimal - 1.5) * 3.5))));
+    }
+
+    /**
      * @return array{id: int, title: string, content: string, url: string, detail_url: string, source: string, author: string, category: string, updated_at: ?string}|null
      */
     public function getNewsItem(int $newsId): ?array
@@ -793,22 +931,15 @@ class GolfOddsService
                 ];
             })
             ->filter(fn (array $player) => $player['score']['label'] !== null || $player['odds'] !== [])
-            ->sort(function (array $a, array $b) {
-                $aFanDuel = $a['odds']['FanDuel']['decimal'] ?? 0;
-                $bFanDuel = $b['odds']['FanDuel']['decimal'] ?? 0;
-
-                if ($aFanDuel !== $bFanDuel) {
-                    return $bFanDuel <=> $aFanDuel;
-                }
-
-                $aBetMgm = $a['odds']['BetMGM']['decimal'] ?? 0;
-                $bBetMgm = $b['odds']['BetMGM']['decimal'] ?? 0;
-
-                return $bBetMgm <=> $aBetMgm;
-            })
-            ->take($limit)
+            ->sortBy(fn (array $player) => $player['score']['rank'] ?? PHP_INT_MAX)
             ->values()
             ->all();
+
+        return array_slice(
+            $this->applyBestValueMarks($players),
+            0,
+            (int) $limit
+        );
     }
 
     /**
@@ -861,12 +992,10 @@ class GolfOddsService
                         continue;
                     }
 
-                    $displayAmerican = $this->resolveBestValueDisplayOdds($book, $match['american'], (int) $playerId);
-
                     $odds[$book] = [
-                        'american' => $this->formatAmericanOdds($displayAmerican),
-                        'decimal' => $this->americanToDecimal($displayAmerican),
-                        'best' => $this->isBestValueOdds($displayAmerican),
+                        'american' => $this->formatAmericanOdds($match['american']),
+                        'decimal' => $match['decimal'],
+                        'best' => $this->isBestValueOdds($match['american']),
                     ];
                 }
 
@@ -891,23 +1020,104 @@ class GolfOddsService
             })
             ->filter()
             ->sort(function (array $a, array $b) {
-                $aFanDuel = $a['odds']['FanDuel']['decimal'] ?? 0;
-                $bFanDuel = $b['odds']['FanDuel']['decimal'] ?? 0;
+                $aBest = $this->playerBestDecimal($a['odds'] ?? []);
+                $bBest = $this->playerBestDecimal($b['odds'] ?? []);
 
-                if ($aFanDuel !== $bFanDuel) {
-                    return $bFanDuel <=> $aFanDuel;
-                }
-
-                $aBetMgm = $a['odds']['BetMGM']['decimal'] ?? 0;
-                $bBetMgm = $b['odds']['BetMGM']['decimal'] ?? 0;
-
-                return $bBetMgm <=> $aBetMgm;
+                return $aBest <=> $bBest;
             })
-            ->take(config('sportsdata.odds.player_limit'))
             ->values()
             ->all();
 
-        return $players;
+        return array_slice(
+            $this->applyBestValueMarks($players),
+            0,
+            (int) config('sportsdata.odds.player_limit')
+        );
+    }
+
+    /**
+     * FanDuel / BetMGM Best Value board: only show players at or above the marks,
+     * and display only +2800, +3000, +3300 (rotated). Odds below those are excluded.
+     *
+     * @param  list<array{odds: array<string, array{american: string, decimal: float, best: bool}>}>  $players
+     * @return list<array{odds: array<string, array{american: string, decimal: float, best: bool}>}>
+     */
+    private function applyBestValueMarks(array $players): array
+    {
+        $marks = array_values(array_map(
+            'intval',
+            config('sportsdata.odds.best_value_american', [2800, 3000, 3300])
+        ));
+
+        if ($marks === []) {
+            return $players;
+        }
+
+        $minMark = min($marks);
+        $cursor = 0;
+        $filtered = [];
+
+        foreach ($players as $player) {
+            $hasBestValueBook = false;
+
+            foreach (['FanDuel', 'BetMGM'] as $book) {
+                if (! isset($player['odds'][$book]['american'])) {
+                    continue;
+                }
+
+                $american = (int) str_replace('+', '', (string) $player['odds'][$book]['american']);
+
+                if ($american >= $minMark) {
+                    $hasBestValueBook = true;
+                    break;
+                }
+            }
+
+            if (! $hasBestValueBook) {
+                continue;
+            }
+
+            foreach (['FanDuel', 'BetMGM'] as $book) {
+                if (! isset($player['odds'][$book]['american'])) {
+                    continue;
+                }
+
+                $american = (int) str_replace('+', '', (string) $player['odds'][$book]['american']);
+
+                if ($american < $minMark) {
+                    unset($player['odds'][$book]);
+
+                    continue;
+                }
+
+                $mark = $marks[$cursor % count($marks)];
+                $cursor++;
+
+                $player['odds'][$book] = [
+                    'american' => $this->formatAmericanOdds($mark),
+                    'best' => true,
+                    'decimal' => $this->americanToDecimal($mark),
+                ];
+            }
+
+            if ($player['odds'] === []) {
+                continue;
+            }
+
+            $filtered[] = $player;
+        }
+
+        return $filtered;
+    }
+
+    /**
+     * @param  array<string, array{american: string, decimal: float, best: bool}>  $odds
+     */
+    private function playerBestDecimal(array $odds): float
+    {
+        $decimals = array_column($odds, 'decimal');
+
+        return $decimals === [] ? PHP_FLOAT_MAX : (float) min($decimals);
     }
 
     /**
@@ -935,39 +1145,14 @@ class GolfOddsService
                 continue;
             }
 
-            $displayAmerican = $this->resolveBestValueDisplayOdds($book, $american, $playerId);
-
             $grouped[$playerId][$book] = [
-                'american' => $this->formatAmericanOdds($displayAmerican),
-                'decimal' => $this->americanToDecimal($displayAmerican),
-                'best' => $this->isBestValueOdds($displayAmerican),
+                'american' => $this->formatAmericanOdds($american),
+                'decimal' => $this->americanToDecimal($american),
+                'best' => false,
             ];
         }
 
         return $grouped;
-    }
-
-    /**
-     * Map high FanDuel / BetMGM odds onto Best Value marks (+2800, +3000, +3300).
-     */
-    private function resolveBestValueDisplayOdds(string $book, int $american, int $playerId = 0): int
-    {
-        $marks = array_values(array_map(
-            'intval',
-            config('sportsdata.odds.best_value_american', [2800, 3000, 3300])
-        ));
-
-        if ($marks === [] || ! in_array($book, ['FanDuel', 'BetMGM'], true)) {
-            return $american;
-        }
-
-        $threshold = min($marks);
-
-        if ($american < $threshold) {
-            return $american;
-        }
-
-        return $marks[abs($playerId) % count($marks)];
     }
 
     private function isBestValueOdds(int $american): bool

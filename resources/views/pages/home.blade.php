@@ -120,62 +120,28 @@
           <p class="body-lg">Hand-selected by our analytics team with confidence ratings.</p>
         </div>
         <div class="picks-grid">
-          <div class="pick-card rev rev-d1">
-            <div class="pick-top"><span class="pick-tour">The Players Championship</span><span
-                class="pick-badge badge-hot">ðŸ”¥ Hot Pick</span></div>
-            <div class="pick-player">Scottie Scheffler</div>
-            <div class="pick-stats">
-              <div class="pick-stat-g"><span class="psl">Best Odds</span><span class="psv odds">+650</span></div>
-              <div class="pick-stat-g"><span class="psl">Book</span><span class="psv">DraftKings</span></div>
+          @forelse ($topPicks ?? [] as $pick)
+            <div class="pick-card rev rev-d{{ ($loop->iteration - 1) % 4 + 1 }}">
+              <div class="pick-top">
+                <span class="pick-tour">{{ $pick['tournament'] }}</span>
+                <span class="pick-badge {{ $pick['badge_class'] }}">{{ $pick['badge'] }}</span>
+              </div>
+              <div class="pick-player">{{ $pick['player'] }}</div>
+              <div class="pick-stats">
+                <div class="pick-stat-g"><span class="psl">Best Odds</span><span class="psv odds">{{ $pick['american'] }}</span></div>
+                <div class="pick-stat-g"><span class="psl">Book</span><span class="psv">{{ $pick['book'] }}</span></div>
+              </div>
+              <div class="conf-row">
+                <span class="conf-lbl">Confidence</span>
+                <div class="conf-bar-bg">
+                  <div class="conf-fill" style="--w:{{ $pick['confidence'] }}%"></div>
+                </div>
+                <span class="conf-pct">{{ $pick['confidence'] }}%</span>
+              </div>
             </div>
-            <div class="conf-row"><span class="conf-lbl">Confidence</span>
-              <div class="conf-bar-bg">
-                <div class="conf-fill" style="--w:88%"></div>
-              </div><span class="conf-pct">88%</span>
-            </div>
-          </div>
-          <div class="pick-card rev rev-d2">
-            <div class="pick-top"><span class="pick-tour">Valero Texas Open</span><span
-                class="pick-badge badge-value">ðŸ’Ž Value</span></div>
-            <div class="pick-player">Akshay Bhatia</div>
-            <div class="pick-stats">
-              <div class="pick-stat-g"><span class="psl">Best Odds</span><span class="psv odds">+2800</span></div>
-              <div class="pick-stat-g"><span class="psl">Book</span><span class="psv">FanDuel</span></div>
-            </div>
-            <div class="conf-row"><span class="conf-lbl">Confidence</span>
-              <div class="conf-bar-bg">
-                <div class="conf-fill" style="--w:72%"></div>
-              </div><span class="conf-pct">72%</span>
-            </div>
-          </div>
-          <div class="pick-card rev rev-d3">
-            <div class="pick-top"><span class="pick-tour">The Masters</span><span class="pick-badge badge-value">ðŸ’Ž
-                Value</span></div>
-            <div class="pick-player">Rory McIlroy</div>
-            <div class="pick-stats">
-              <div class="pick-stat-g"><span class="psl">Best Odds</span><span class="psv odds">+950</span></div>
-              <div class="pick-stat-g"><span class="psl">Book</span><span class="psv">BetMGM</span></div>
-            </div>
-            <div class="conf-row"><span class="conf-lbl">Confidence</span>
-              <div class="conf-bar-bg">
-                <div class="conf-fill" style="--w:81%"></div>
-              </div><span class="conf-pct">81%</span>
-            </div>
-          </div>
-          <div class="pick-card rev rev-d4">
-            <div class="pick-top"><span class="pick-tour">The Players Championship</span><span
-                class="pick-badge badge-hot">âš¡ Sharp</span></div>
-            <div class="pick-player">Xander Schauffele</div>
-            <div class="pick-stats">
-              <div class="pick-stat-g"><span class="psl">Best Odds</span><span class="psv odds">+1400</span></div>
-              <div class="pick-stat-g"><span class="psl">Book</span><span class="psv">Bet365</span></div>
-            </div>
-            <div class="conf-row"><span class="conf-lbl">Confidence</span>
-              <div class="conf-bar-bg">
-                <div class="conf-fill" style="--w:76%"></div>
-              </div><span class="conf-pct">76%</span>
-            </div>
-          </div>
+          @empty
+            <p class="body-lg" style="grid-column:1/-1;text-align:center;color:#7a8a7e;">Top picks will appear when odds are available for this tournament.</p>
+          @endforelse
         </div>
       </div>
     </section>
