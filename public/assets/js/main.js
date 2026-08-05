@@ -1,5 +1,13 @@
 ﻿    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => nav.classList.toggle('solid', window.scrollY > 16), { passive: true });
+    const forceSolidNav = nav?.dataset.forceSolid === '1';
+    window.addEventListener('scroll', () => {
+      if (!nav) return;
+      if (forceSolidNav) {
+        nav.classList.add('solid');
+        return;
+      }
+      nav.classList.toggle('solid', window.scrollY > 16);
+    }, { passive: true });
 
     const nvLinks = document.querySelectorAll('.nv');
     const allSections = document.querySelectorAll('section[id]');
@@ -53,8 +61,17 @@
       btn.addEventListener('click', () => {
         const item = btn.closest('.faq-item');
         const isOpen = item.classList.contains('open');
-        document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
-        if (!isOpen) item.classList.add('open');
+
+        document.querySelectorAll('.faq-item.open').forEach(i => {
+          i.classList.remove('open');
+          const openBtn = i.querySelector('.faq-q');
+          if (openBtn) openBtn.setAttribute('aria-expanded', 'false');
+        });
+
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
       });
     });
 

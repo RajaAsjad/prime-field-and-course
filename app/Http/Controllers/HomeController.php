@@ -18,6 +18,7 @@ class HomeController extends Controller
         $liveOdds = $this->golfOddsService->getComparisonTable();
         $topPicks = $this->golfOddsService->buildTopPicks($liveOdds);
         $hotProps = $this->golfOddsService->getHotPropsBracket();
+        $competitionFeeds = $this->golfOddsService->getCompetitionFeeds();
         $newsFeed = $this->golfOddsService->getNewsFeed();
 
         $tips = Tip::query()
@@ -32,6 +33,8 @@ class HomeController extends Controller
             'topPicks' => $topPicks,
             'hotProps' => $hotProps,
             'propsRefreshSeconds' => $hotProps['refresh_seconds'] ?? config('sportsdata.props.refresh_seconds'),
+            'competitionFeeds' => $competitionFeeds,
+            'competitionRefreshSeconds' => $competitionFeeds['refresh_seconds'] ?? config('sportsdata.competition.refresh_seconds'),
             'newsFeed' => $newsFeed,
             'newsRefreshSeconds' => $newsFeed['refresh_seconds'] ?? config('sportsdata.news.refresh_seconds'),
             'tips' => $tips,
@@ -58,6 +61,14 @@ class HomeController extends Controller
     {
         return response()
             ->json($this->golfOddsService->getHotPropsBracket())
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
+            ->header('Pragma', 'no-cache');
+    }
+
+    public function competitionFeeds(): JsonResponse
+    {
+        return response()
+            ->json($this->golfOddsService->getCompetitionFeeds())
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
             ->header('Pragma', 'no-cache');
     }

@@ -29,24 +29,36 @@ return [
         'refresh_seconds' => (int) env('SPORTSDATA_NEWS_REFRESH_SECONDS', 300),
     ],
 
-    'sportsbook_group' => env('SPORTSDATA_SPORTSBOOK_GROUP', 'G1000'),
+    'sportsbook_group' => env('SPORTSDATA_SPORTSBOOK_GROUP', ''),
+
+    'competition' => [
+        'rankings_limit' => (int) env('SPORTSDATA_RANKINGS_LIMIT', 10),
+        'courses_limit' => (int) env('SPORTSDATA_COURSES_LIMIT', 8),
+        'schedule_limit' => (int) env('SPORTSDATA_SCHEDULE_LIMIT', 8),
+        'players_limit' => (int) env('SPORTSDATA_PLAYERS_LIMIT', 6),
+        'cache_ttl' => (int) env('SPORTSDATA_COMPETITION_CACHE_TTL', 900),
+        'refresh_seconds' => (int) env('SPORTSDATA_COMPETITION_REFRESH_SECONDS', 900),
+    ],
 
     'props' => [
-        'player_limit' => (int) env('SPORTSDATA_PROPS_PLAYER_LIMIT', 8),
+        'player_limit' => (int) env('SPORTSDATA_PROPS_PLAYER_LIMIT', 20),
         'cache_ttl' => (int) env('SPORTSDATA_PROPS_CACHE_TTL', 120),
         'refresh_seconds' => (int) env('SPORTSDATA_PROPS_REFRESH_SECONDS', 120),
         'brackets' => [
             'top_5' => [
                 'label' => 'Top 5',
                 'bet_types' => ['Top 5 Finish'],
+                'limit' => 5,
             ],
             'top_10' => [
                 'label' => 'Top 10',
                 'bet_types' => ['Top 10 Finish'],
+                'limit' => 10,
             ],
             'top_20' => [
                 'label' => 'Top 20',
                 'bet_types' => ['Top 20 Finish'],
+                'limit' => 20,
             ],
             'hole_in_one' => [
                 'label' => 'One Hole in One',

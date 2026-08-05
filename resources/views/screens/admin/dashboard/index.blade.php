@@ -14,9 +14,9 @@
             </div>
             <div class="d-flex flex-wrap gap-2">
               @if ($user->hasRole(config('roles.admin')))
-                <a href="{{ route('users.index') }}" class="btn btn-light btn-sm">Manage Users</a>
+                <a href="{{ route('users.index') }}" class="btn btn-sm dashboard-welcome-btn dashboard-welcome-btn--solid">Manage Users</a>
               @endif
-              <a href="{{ route('home') }}" class="btn btn-outline-light btn-sm" target="_blank">View Website</a>
+              <a href="{{ route('home') }}" class="btn btn-sm dashboard-welcome-btn dashboard-welcome-btn--ghost" target="_blank">View Website</a>
             </div>
           </div>
         </div>
@@ -61,6 +61,38 @@
 
     .dashboard-welcome-sub {
       color: rgba(255, 255, 255, .72);
+    }
+
+    .dashboard-welcome-btn {
+      font-weight: 700;
+      border-radius: 8px;
+      padding: .45rem .9rem;
+    }
+
+    .dashboard-welcome-btn--solid {
+      background: #fff !important;
+      border: 1px solid #fff !important;
+      color: #1a5c28 !important;
+    }
+
+    .dashboard-welcome-btn--solid:hover,
+    .dashboard-welcome-btn--solid:focus {
+      background: #f3f7f4 !important;
+      border-color: #f3f7f4 !important;
+      color: #0d1e10 !important;
+    }
+
+    .dashboard-welcome-btn--ghost {
+      background: transparent !important;
+      border: 1px solid rgba(255, 255, 255, .85) !important;
+      color: #fff !important;
+    }
+
+    .dashboard-welcome-btn--ghost:hover,
+    .dashboard-welcome-btn--ghost:focus {
+      background: rgba(255, 255, 255, .12) !important;
+      border-color: #fff !important;
+      color: #fff !important;
     }
 
     .default-dashboard .widget-round.primary .bg-round svg {

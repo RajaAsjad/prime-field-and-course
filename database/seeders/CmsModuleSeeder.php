@@ -16,7 +16,7 @@ class CmsModuleSeeder extends Seeder
             ['route_name' => 'admin.dashboard'],
             [
                 'name' => 'Dashboard',
-                'icon' => 'fa-regular fa-house',
+                'icon' => 'fa-solid fa-house',
                 'sort_order' => 1,
                 'status' => 'active',
                 'parent_id' => 0,

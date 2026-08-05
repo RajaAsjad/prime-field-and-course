@@ -122,14 +122,18 @@
   };
 
   const renderTable = (data) => {
-    const books = data.sportsbooks?.length ? data.sportsbooks : sportsbooks;
-    sportsbooks = books;
-    table.dataset.sportsbooks = JSON.stringify(books);
-
-    const headCells = books.map((book) => `<th>${escapeHtml(book)}</th>`).join('');
     const players = data.players || [];
+    const configuredBooks = data.sportsbooks?.length ? data.sportsbooks : sportsbooks;
+    const books = configuredBooks.filter((book) =>
+      players.some((player) => Boolean(player.odds?.[book]?.american))
+    );
+    sportsbooks = books.length ? books : configuredBooks;
+    table.dataset.sportsbooks = JSON.stringify(sportsbooks);
+
+    const showScore = Boolean(data.scores_available) || players.some((player) => Boolean(player.score?.to_par));
+    const headCells = sportsbooks.map((book) => `<th>${escapeHtml(book)}</th>`).join('');
     const isLive = Boolean(data.is_live);
-    const colspan = books.length + 2;
+    const colspan = sportsbooks.length + 1 + (showScore ? 1 : 0);
 
     let bodyHtml = '';
 
@@ -142,7 +146,7 @@
         </tr>`;
     } else {
       bodyHtml = players.map((player) => {
-        const oddsCells = books.map((book) => {
+        const oddsCells = sportsbooks.map((book) => {
           const odds = player.odds?.[book];
 
           if (!odds) {
@@ -160,7 +164,7 @@
               <span class="pname">${escapeHtml(player.name)}</span><br>
               <span class="psl" style="color:#9aaa9e">${escapeHtml(player.subtitle || '')}</span>
             </td>
-            ${renderScoreCell(player, isLive)}
+            ${showScore ? renderScoreCell(player, isLive) : ''}
             ${oddsCells}
           </tr>`;
       }).join('');
@@ -170,14 +174,14 @@
       <thead>
         <tr>
           <th style="min-width:180px;">Player / Tournament</th>
-          <th class="score-col">Score</th>
+          ${showScore ? '<th class="score-col">Score</th>' : ''}
           ${headCells}
         </tr>
       </thead>
       <tbody id="live-odds-body">${bodyHtml}</tbody>`;
   };
 
-  const renderUpdated = (updatedAt, isLive) => {
+  const renderUpdated = (updatedAt, isLive, scoresAvailable) => {
     if (!updatedEl) {
       return;
     }
@@ -194,7 +198,13 @@
       second: '2-digit',
     });
 
-    text += isLive ? ' · Live scoring active' : ' · Auto-refresh on';
+    if (isLive && scoresAvailable) {
+      text += ' · Live scoring active';
+    } else if (isLive) {
+      text += ' · Live odds (scores feed unavailable)';
+    } else {
+      text += ' · Pre-game odds · Scores appear once play starts';
+    }
 
     updatedEl.textContent = text;
   };
@@ -243,7 +253,7 @@
       renderWeather(data.weather);
       renderDescription(data.is_live, data.refresh_seconds);
       renderTable(data);
-      renderUpdated(data.updated_at, data.is_live);
+      renderUpdated(data.updated_at, data.is_live, data.scores_available);
     } catch (error) {
       if (updatedEl) {
         updatedEl.textContent = 'Unable to refresh. Retrying automatically…';

@@ -80,31 +80,31 @@
             <div class="book-name dk">DraftKings</div>
             <div class="promo-bonus">$200 Bonus</div>
             <p class="promo-desc">Bet $5, get $200 in bonus bets instantly.</p><a href="#promos" class="btn btn-gold"
-              style="width:100%;justify-content:center;">Claim Bonus â†’</a>
+              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
           </div>
           <div class="promo-card rev rev-d2">
             <div class="book-name fd">FanDuel</div>
             <div class="promo-bonus">$150 Back</div>
             <p class="promo-desc">No Sweat First Bet up to $150.</p><a href="#promos" class="btn btn-primary"
-              style="width:100%;justify-content:center;">Claim Bonus â†’</a>
+              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
           </div>
           <div class="promo-card rev rev-d3">
             <div class="book-name mgm">BetMGM</div>
             <div class="promo-bonus">$1,500 Back</div>
             <p class="promo-desc">First bet insurance up to $1,500.</p><a href="#promos" class="btn btn-primary"
-              style="width:100%;justify-content:center;">Claim Bonus â†’</a>
+              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
           </div>
           <div class="promo-card rev rev-d4">
             <div class="book-name cz">Caesars</div>
             <div class="promo-bonus">$1,000 Back</div>
             <p class="promo-desc">First bet up to $1,000 back as bonus.</p><a href="#promos" class="btn btn-primary"
-              style="width:100%;justify-content:center;">Claim Bonus â†’</a>
+              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
           </div>
           <div class="promo-card rev rev-d5">
             <div class="book-name b365">Bet365</div>
             <div class="promo-bonus">$200 Bonus</div>
             <p class="promo-desc">Bet $5 and receive $200 in bonus bets.</p><a href="#promos" class="btn btn-primary"
-              style="width:100%;justify-content:center;">Claim Bonus â†’</a>
+              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
           </div>
         </div>
       </div>
@@ -117,7 +117,7 @@
               style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Weekly
             Selections</div>
           <h2 class="h-section">Top Picks <em>This Week</em></h2>
-          <p class="body-lg">Hand-selected by our analytics team with confidence ratings.</p>
+          <p class="body-lg">Live SportsDataIO odds with confidence ratings for this week's top contenders.</p>
         </div>
         <div class="picks-grid">
           @forelse ($topPicks ?? [] as $pick)
@@ -208,6 +208,177 @@
             Updating automatically…
           </p>
         </div>
+      </div>
+    </section>
+
+    <section id="competition-feeds" class="section-warm">
+      <div class="wrap">
+        <div class="sec-head rev">
+          <div class="eyebrow"><span
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Golf API
+            Feeds</div>
+          <h2 class="h-section">Competition &amp; <em>Event Data</em></h2>
+          <p class="body-lg">
+            Live SportsDataIO Golf feeds unlocked on your subscription — rankings, players, venues, schedule, stats, props &amp; news.
+            @if (!empty($competitionFeeds['season']['description']))
+              Season {{ $competitionFeeds['season']['description'] }}.
+            @endif
+          </p>
+        </div>
+
+        @if (!empty($competitionFeeds['error']))
+          <p class="body-lg rev" style="text-align:center;color:#7a8a7e;">{{ $competitionFeeds['error'] }}</p>
+        @endif
+
+        @if (!empty($competitionFeeds['players']))
+          <div class="comp-players rev">
+            @foreach ($competitionFeeds['players'] as $player)
+              <article class="comp-player-card">
+                <div class="comp-player-card__rank">#{{ $player['rank'] }}</div>
+                <div class="comp-player-card__body">
+                  <h4>{{ $player['name'] }}</h4>
+                  <p>
+                    @if (!empty($player['country'])) {{ $player['country'] }} @endif
+                    @if (!empty($player['swings'])) &middot; {{ $player['swings'] }} @endif
+                    @if (!empty($player['college'])) &middot; {{ $player['college'] }} @endif
+                  </p>
+                </div>
+              </article>
+            @endforeach
+          </div>
+        @endif
+
+        <div class="comp-grid rev">
+          <div class="comp-panel">
+            <div class="comp-panel__head">
+              <h3 class="comp-panel__title">OWGR Top {{ count($competitionFeeds['rankings'] ?? []) }}</h3>
+              <span class="comp-panel__meta">Standings &amp; Rankings</span>
+            </div>
+            <div class="table-wrap">
+              <table class="odds-tbl comp-rank-tbl">
+                <thead>
+                  <tr>
+                    <th style="width:64px;">Rank</th>
+                    <th>Player</th>
+                    <th>Avg Pts</th>
+                    <th>Events</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse ($competitionFeeds['rankings'] ?? [] as $row)
+                    <tr>
+                      <td>
+                        <span class="comp-rank">{{ $row['rank'] }}</span>
+                        @if (!empty($row['rank_last_week']) && $row['rank_last_week'] !== $row['rank'])
+                          <span class="comp-rank-delta {{ $row['rank'] < $row['rank_last_week'] ? 'is-up' : 'is-down' }}">
+                            {{ $row['rank'] < $row['rank_last_week'] ? '▲' : '▼' }}{{ abs($row['rank'] - $row['rank_last_week']) }}
+                          </span>
+                        @endif
+                      </td>
+                      <td><strong>{{ $row['name'] }}</strong></td>
+                      <td>{{ number_format((float) $row['average_points'], 2) }}</td>
+                      <td>{{ $row['events'] }}</td>
+                    </tr>
+                  @empty
+                    <tr>
+                      <td colspan="4" style="text-align:center;padding:28px;color:#7a8a7e;">Rankings unavailable.</td>
+                    </tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="comp-panel">
+            <div class="comp-panel__head">
+              <h3 class="comp-panel__title">Season Stats</h3>
+              <span class="comp-panel__meta">Player Stats (Final)</span>
+            </div>
+            <div class="table-wrap">
+              <table class="odds-tbl">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Total Pts</th>
+                    <th>Gained</th>
+                    <th>Lost</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse ($competitionFeeds['stats'] ?? [] as $row)
+                    <tr>
+                      <td><strong>#{{ $row['rank'] }} {{ $row['name'] }}</strong></td>
+                      <td>{{ number_format((float) $row['total_points'], 1) }}</td>
+                      <td style="color:#1f7a1f;">{{ number_format((float) $row['points_gained'], 1) }}</td>
+                      <td style="color:#b45309;">{{ number_format((float) $row['points_lost'], 1) }}</td>
+                    </tr>
+                  @empty
+                    <tr>
+                      <td colspan="4" style="text-align:center;padding:28px;color:#7a8a7e;">Season stats unavailable.</td>
+                    </tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-grid rev" style="margin-top:22px;">
+          <div class="comp-panel" style="grid-column:1 / -1;">
+            <div class="comp-panel__head">
+              <h3 class="comp-panel__title">Tournament Schedule &amp; Venues</h3>
+              <span class="comp-panel__meta">Schedules &amp; Courses</span>
+            </div>
+            <div class="comp-courses comp-courses--grid">
+              @forelse ($competitionFeeds['schedule'] ?? [] as $event)
+                <article class="comp-course-card">
+                  <div class="comp-course-card__top">
+                    <h4>{{ $event['name'] }}</h4>
+                    @if (!empty($event['is_in_progress']))
+                      <span class="comp-live-pill">Live</span>
+                    @elseif (!empty($event['is_over']))
+                      <span class="comp-done-pill">Final</span>
+                    @elseif (!empty($event['start_date']))
+                      <time datetime="{{ $event['start_date'] }}">
+                        {{ \Carbon\Carbon::parse($event['start_date'])->format('M j') }}
+                        @if (!empty($event['end_date']))
+                          – {{ \Carbon\Carbon::parse($event['end_date'])->format('M j, Y') }}
+                        @endif
+                      </time>
+                    @endif
+                  </div>
+                  @if (!empty($event['venue']))
+                    <p class="comp-course-venue">{{ $event['venue'] }}</p>
+                  @endif
+                  @if (!empty($event['location']))
+                    <p class="comp-course-loc">{{ $event['location'] }}</p>
+                  @endif
+                  <div class="comp-course-meta">
+                    @if (!empty($event['par']))
+                      <span>Par {{ $event['par'] }}</span>
+                    @endif
+                    @if (!empty($event['yards']))
+                      <span>{{ number_format($event['yards']) }} yds</span>
+                    @endif
+                    @if (!empty($event['format']))
+                      <span>{{ $event['format'] }}</span>
+                    @endif
+                    @if (!empty($event['purse']))
+                      <span>${{ number_format($event['purse'] / 1000000, 1) }}M</span>
+                    @endif
+                  </div>
+                </article>
+              @empty
+                <p class="body-lg" style="color:#7a8a7e;">Schedule unavailable.</p>
+              @endforelse
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top:12px;font-size:.78rem;color:#9aaa9e;text-align:right;">
+          Last updated {{ \Carbon\Carbon::parse($competitionFeeds['updated_at'] ?? now())->timezone(config('app.timezone'))->format('g:i A') }}.
+          Competition feeds refresh every {{ $competitionRefreshSeconds ?? 900 }} seconds.
+        </p>
       </div>
     </section>
 
@@ -365,25 +536,25 @@
             <div class="guide-icon">📖</div>
               <div>
                 <div class="guide-title">Complete Beginner's Guide</div>
-                <div class="guide-meta">Beginner Â· 15 min</div>
+                <div class="guide-meta">Beginner &middot; 15 min</div>
               </div>
             </a><a href="#golf-betting" class="guide-row">
               <div class="guide-icon">🎯</div>
               <div>
                 <div class="guide-title">Types of Golf Bets Explained</div>
-                <div class="guide-meta">Beginner Â· 8 min</div>
+                <div class="guide-meta">Beginner &middot; 8 min</div>
               </div>
             </a><a href="#golf-betting" class="guide-row">
             <div class="guide-icon">📊</div>
               <div>
                 <div class="guide-title">Line Shopping: Find Best Odds</div>
-                <div class="guide-meta">Advanced Â· 10 min</div>
+                <div class="guide-meta">Advanced &middot; 10 min</div>
               </div>
             </a><a href="#golf-betting" class="guide-row">
-            <div class="guide-icon">�</div>
+            <div class="guide-icon">⚡</div>
               <div>
                 <div class="guide-title">Live In-Play Betting Strategy</div>
-                <div class="guide-meta">Advanced Â· 12 min</div>
+                <div class="guide-meta">Advanced &middot; 12 min</div>
               </div>
             </a></div>
           <div class="news-card rev rev-d2">
@@ -395,7 +566,7 @@
             <form action="#" method="post">
               <div class="form-grp"><label class="form-lbl" for="n-email">Email Address</label><input class="form-inp"
                   type="email" id="n-email" name="email" placeholder="your@email.com" required /></div><button
-                type="submit" class="btn btn-gold form-btn">Subscribe â€” It's Free</button>
+                type="submit" class="btn btn-gold form-btn">Subscribe &mdash; It's Free</button>
             </form>
           </div>
         </div>
@@ -409,48 +580,59 @@
               style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Live
             Schedule</div>
           <h2 class="h-section">Tournament Updates & <em>Major Events</em></h2>
-          <p class="body-lg">Current and upcoming PGA Tour events with key contenders.</p>
+          <p class="body-lg">Current and upcoming PGA Tour events from SportsDataIO Schedules feed.</p>
         </div>
         <div class="carousel-outer rev">
           <div class="carousel-inner" id="c-inner">
-            <div class="t-card">
-              <div class="t-img"><img
-                  src="https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&fit=crop&w=800&q=80"
-                  alt="TPC Sawgrass" width="800" height="450" loading="lazy" decoding="async" /></div>
-              <div class="t-body">
-                <div class="t-date">🏆 Apr 8–13 Â· Ponte Vedra, FL</div>
-                <h3 class="t-name">The Players Championship</h3>
-                <div class="t-players"><span class="t-chip">Scheffler</span><span class="t-chip">McIlroy</span></div><a
-                  href="#best-picks" class="btn btn-primary btn-xs">View Picks â†’</a>
+            @forelse ($competitionFeeds['schedule'] ?? [] as $event)
+              <div class="t-card">
+                <div class="t-img"><img
+                    src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=800&q=80"
+                    alt="{{ $event['name'] }}" width="800" height="450" loading="lazy" decoding="async" /></div>
+                <div class="t-body">
+                  <div class="t-date">
+                    @if (!empty($event['is_in_progress']))
+                      Live
+                    @elseif (!empty($event['is_over']))
+                      Final
+                    @elseif (!empty($event['start_date']))
+                      {{ \Carbon\Carbon::parse($event['start_date'])->format('M j') }}
+                      @if (!empty($event['end_date']))
+                        – {{ \Carbon\Carbon::parse($event['end_date'])->format('M j') }}
+                      @endif
+                    @endif
+                    @if (!empty($event['location']))
+                      &middot; {{ $event['location'] }}
+                    @endif
+                  </div>
+                  <h3 class="t-name">{{ $event['name'] }}</h3>
+                  <div class="t-players">
+                    @if (!empty($event['venue']))
+                      <span class="t-chip">{{ $event['venue'] }}</span>
+                    @endif
+                    @if (!empty($event['purse']))
+                      <span class="t-chip">${{ number_format($event['purse'] / 1000000, 1) }}M</span>
+                    @endif
+                  </div>
+                  <a href="#best-picks" class="btn btn-primary btn-xs">View Picks &rarr;</a>
+                </div>
               </div>
-            </div>
-            <div class="t-card">
-              <div class="t-img"><img
-                  src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=800&q=80"
-                  alt="Valero" width="800" height="450" loading="lazy" decoding="async" /></div>
-              <div class="t-body">
-                <div class="t-date">🏆 Mar 27–30 Â· San Antonio</div>
-                <h3 class="t-name">Valero Texas Open</h3>
-                <div class="t-players"><span class="t-chip">Bhatia</span><span class="t-chip">Harman</span></div><a
-                  href="#best-picks" class="btn btn-primary btn-xs">View Picks â†’</a>
+            @empty
+              <div class="t-card">
+                <div class="t-body">
+                  <h3 class="t-name">Schedule loading…</h3>
+                  <p class="body-lg">Tournament schedule will appear when the feed is available.</p>
+                </div>
               </div>
-            </div>
-            <div class="t-card">
-              <div class="t-img"><img
-                  src="https://images.unsplash.com/photo-1590496793929-36417d3117de?auto=format&fit=crop&w=800&q=80"
-                  alt="Masters" width="800" height="450" loading="lazy" decoding="async" /></div>
-              <div class="t-body">
-                <div class="t-date">🏆 Apr 10–13 Â· Augusta, GA</div>
-                <h3 class="t-name">The Masters Tournament</h3>
-                <div class="t-players"><span class="t-chip">McIlroy</span><span class="t-chip">Scheffler</span></div><a
-                  href="#best-picks" class="btn btn-primary btn-xs">View Picks â†’</a>
-              </div>
-            </div>
+            @endforelse
           </div>
         </div>
         <div class="car-ctrl"><button class="car-btn" id="c-prev">◀</button>
-          <div class="car-dots"><button class="car-dot on"></button><button class="car-dot"></button><button
-              class="car-dot"></button></div><button class="car-btn" id="c-next">▶</button>
+          <div class="car-dots">
+            @foreach ($competitionFeeds['schedule'] ?? [1] as $i => $event)
+              <button class="car-dot{{ $i === 0 ? ' on' : '' }}"></button>
+            @endforeach
+          </div><button class="car-btn" id="c-next">▶</button>
         </div>
       </div>
     </section>
@@ -527,50 +709,50 @@
             Questions?</div>
           <h2 class="h-section">Frequently Asked <em>Questions</em></h2>
         </div>
-        <div class="faq-wrap rev">
-          <div class="faq-item"><button class="faq-q">Is Single Swing Golf free?<span class="faq-icon"><svg
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M12 5v14M5 12h14" />
-                </svg></span></button>
+        <div class="faq-wrap rev" role="list">
+          <div class="faq-item open" role="listitem">
+            <button type="button" class="faq-q" aria-expanded="true">
+              <span class="faq-q-text">Is Prime Field &amp; Course free?</span>
+              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
+            </button>
             <div class="faq-a">
-              <div class="faq-a-inner">Yes! Core features are free. Premium subscription is $9.99/month for exclusive
-                picks and analysis.</div>
+              <div class="faq-a-inner">Yes. Core picks, odds, and news are free. Premium is optional for exclusive analysis and early access.</div>
             </div>
           </div>
-          <div class="faq-item"><button class="faq-q">How do affiliate bonuses work?<span class="faq-icon"><svg
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M12 5v14M5 12h14" />
-                </svg></span></button>
+          <div class="faq-item" role="listitem">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span class="faq-q-text">How do affiliate bonuses work?</span>
+              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
+            </button>
             <div class="faq-a">
-              <div class="faq-a-inner">Click a "Claim Bonus" button and sign up. The bonus applies automatically. We
-                earn commission at no cost to you.</div>
+              <div class="faq-a-inner">Click a Claim Bonus button and complete signup with the partner. The offer applies automatically at no extra cost to you.</div>
             </div>
           </div>
-          <div class="faq-item"><button class="faq-q">How are picks selected?<span class="faq-icon"><svg
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M12 5v14M5 12h14" />
-                </svg></span></button>
+          <div class="faq-item" role="listitem">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span class="faq-q-text">How are picks selected?</span>
+              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
+            </button>
             <div class="faq-a">
-              <div class="faq-a-inner">Using Strokes Gained data, course fit analysis, recent form, and weather
-                projections. Every pick is reviewed by senior analysts.</div>
+              <div class="faq-a-inner">We combine course fit, recent form, weather, and SportsDataIO odds/value signals. Every pick is reviewed before it goes live.</div>
             </div>
           </div>
-          <div class="faq-item"><button class="faq-q">How often are odds updated?<span class="faq-icon"><svg
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M12 5v14M5 12h14" />
-                </svg></span></button>
+          <div class="faq-item" role="listitem">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span class="faq-q-text">How often are odds updated?</span>
+              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
+            </button>
             <div class="faq-a">
-              <div class="faq-a-inner">Every 2 minutes during tournaments. Best odds highlighted in green for quick
-                identification.</div>
+              <div class="faq-a-inner">Live odds refresh about every 30–120 seconds depending on the feed. Best available prices are highlighted in green.</div>
             </div>
           </div>
-          <div class="faq-item"><button class="faq-q">Can I cancel my subscription?<span class="faq-icon"><svg
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M12 5v14M5 12h14" />
-                </svg></span></button>
+          <div class="faq-item" role="listitem">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span class="faq-q-text">Can I cancel my subscription?</span>
+              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
+            </button>
             <div class="faq-a">
-              <div class="faq-a-inner">Absolutely. Cancel anytime, no questions asked. No long-term contracts. Full
-                access until billing cycle ends.</div>
+              <div class="faq-a-inner">Yes. Cancel anytime with no long-term contract. You keep access through the end of your billing period.</div>
             </div>
           </div>
         </div>
@@ -884,6 +1066,295 @@
     #hot-props .odds-cell-best {
       color: var(--g-600);
       font-weight: 800
+    }
+
+    #competition-feeds .comp-books {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 28px
+    }
+
+    #competition-feeds .comp-feed-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 18px
+    }
+
+    #competition-feeds .comp-feed-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--bdr);
+      background: rgba(255,255,255,.7);
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--tx-m)
+    }
+
+    #competition-feeds .comp-feed-badge.is-live {
+      color: var(--g-700);
+      border-color: rgba(26, 92, 40, .25);
+      background: rgba(26, 92, 40, .08)
+    }
+
+    #competition-feeds .comp-players {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 22px
+    }
+
+    #competition-feeds .comp-player-card {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--bdr);
+      border-radius: 14px;
+      padding: 12px 14px
+    }
+
+    #competition-feeds .comp-player-card__rank {
+      min-width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(26, 92, 40, .1);
+      color: var(--g-600);
+      font-weight: 800
+    }
+
+    #competition-feeds .comp-player-card h4 {
+      margin: 0 0 4px;
+      font-size: .92rem;
+      font-weight: 800;
+      color: var(--tx-h)
+    }
+
+    #competition-feeds .comp-player-card p {
+      margin: 0;
+      font-size: .75rem;
+      color: var(--tx-m)
+    }
+
+    #competition-feeds .comp-live-pill,
+    #competition-feeds .comp-done-pill {
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 4px 8px
+    }
+
+    #competition-feeds .comp-live-pill {
+      color: #fff;
+      background: var(--g-600)
+    }
+
+    #competition-feeds .comp-done-pill {
+      color: var(--tx-m);
+      background: #eef2ef
+    }
+
+    #competition-feeds .comp-book-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--bdr);
+      background: #fff;
+      font-size: .74rem;
+      font-weight: 700;
+      color: var(--g-700);
+      letter-spacing: .01em
+    }
+
+    #competition-feeds {
+      overflow-x: clip
+    }
+
+    #competition-feeds > .wrap {
+      max-width: var(--container);
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box
+    }
+
+    #competition-feeds .comp-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+      width: 100%;
+      min-width: 0
+    }
+
+    #competition-feeds .comp-panel {
+      background: #fff;
+      border: 1px solid var(--bdr);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 28px rgba(13, 30, 16, .04);
+      height: auto;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden
+    }
+
+    #competition-feeds .comp-panel .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch
+    }
+
+    #competition-feeds .comp-panel .odds-tbl {
+      min-width: 0;
+      width: 100%;
+      table-layout: fixed
+    }
+
+    #competition-feeds .comp-panel .odds-tbl th,
+    #competition-feeds .comp-panel .odds-tbl td {
+      padding: 12px 10px;
+      word-break: break-word;
+      overflow-wrap: anywhere
+    }
+
+    #competition-feeds .comp-panel__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      min-width: 0
+    }
+
+    #competition-feeds .comp-panel__title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--tx-h);
+      margin: 0
+    }
+
+    #competition-feeds .comp-panel__meta {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--tx-m)
+    }
+
+    #competition-feeds .comp-rank {
+      display: inline-flex;
+      min-width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(26, 92, 40, .1);
+      color: var(--g-600);
+      font-weight: 800;
+      font-size: .82rem
+    }
+
+    #competition-feeds .comp-rank-delta {
+      margin-left: 6px;
+      font-size: .68rem;
+      font-weight: 700
+    }
+
+    #competition-feeds .comp-rank-delta.is-up { color: #1f7a1f }
+    #competition-feeds .comp-rank-delta.is-down { color: #b45309 }
+
+    #competition-feeds .comp-courses {
+      display: grid;
+      gap: 12px
+    }
+
+    #competition-feeds .comp-courses--grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px
+    }
+
+    #competition-feeds .comp-course-card {
+      border: 1px solid var(--bdr);
+      border-radius: 14px;
+      padding: 14px 14px 12px;
+      background: linear-gradient(180deg, #fff 0%, #f7faf7 100%)
+    }
+
+    #competition-feeds .comp-course-card__top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start
+    }
+
+    #competition-feeds .comp-course-card h4 {
+      margin: 0;
+      font-size: .95rem;
+      font-weight: 800;
+      color: var(--tx-h)
+    }
+
+    #competition-feeds .comp-course-card time {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--g-600);
+      white-space: nowrap
+    }
+
+    #competition-feeds .comp-course-venue {
+      margin: 8px 0 2px;
+      font-size: .84rem;
+      font-weight: 600;
+      color: var(--tx-b)
+    }
+
+    #competition-feeds .comp-course-loc {
+      margin: 0;
+      font-size: .78rem;
+      color: var(--tx-m)
+    }
+
+    #competition-feeds .comp-course-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px
+    }
+
+    #competition-feeds .comp-course-meta span {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--g-700);
+      background: rgba(26, 92, 40, .08);
+      border-radius: 999px;
+      padding: 5px 9px
+    }
+
+    @media (max-width: 920px) {
+      #competition-feeds .comp-grid {
+        grid-template-columns: 1fr
+      }
+
+      #competition-feeds .comp-players {
+        grid-template-columns: 1fr
+      }
+
+      #competition-feeds .comp-courses--grid {
+        grid-template-columns: 1fr
+      }
     }
   </style>
 @endpush

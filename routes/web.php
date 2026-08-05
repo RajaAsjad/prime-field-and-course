@@ -14,6 +14,7 @@ Route::get('/tips/{tip:slug}', [TipController::class, 'show'])->name('tips.show'
 Route::get('/news/{newsId}', [RotoballerNewsController::class, 'show'])->name('news.show');
 Route::get('/api/live-odds', [HomeController::class, 'liveOdds'])->name('api.live-odds');
 Route::get('/api/hot-props', [HomeController::class, 'hotProps'])->name('api.hot-props');
+Route::get('/api/competition-feeds', [HomeController::class, 'competitionFeeds'])->name('api.competition-feeds');
 Route::get('/api/rotoballer-news', [HomeController::class, 'rotoballerNews'])->name('api.rotoballer-news');
 
 

@@ -66,6 +66,11 @@ class Tip extends Model
             return $this->image;
         }
 
+        // Public folder assets (works with artisan serve / correct APP_URL).
+        if (str_starts_with($this->image, 'assets/')) {
+            return asset($this->image);
+        }
+
         return Storage::disk('public')->url($this->image);
     }
 

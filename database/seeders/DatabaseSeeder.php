@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             SiteSettingsSeeder::class,
             CmsModuleSeeder::class,
             CmsModulePermissionsSeeder::class,
+            TipsCategorySeeder::class,
+            TipSeeder::class,
         ]);
     }
 }

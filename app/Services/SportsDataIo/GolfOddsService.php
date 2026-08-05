@@ -29,7 +29,9 @@ class GolfOddsService
             'weather' => null,
             'sportsbooks' => $sportsbooks,
             'players' => [],
+            'market_players' => [],
             'is_live' => false,
+            'scores_available' => false,
             'refresh_seconds' => $this->refreshSeconds(false),
             'updated_at' => now()->toIso8601String(),
             'error' => null,
@@ -61,6 +63,7 @@ class GolfOddsService
                     'sportsbooks' => $sportsbooks,
                     'players' => $this->buildLiveScoreRows($leaderboard, collect(), $tournament),
                     'is_live' => $isLive,
+                    'scores_available' => $leaderboard !== [],
                     'refresh_seconds' => $this->refreshSeconds($isLive),
                     'updated_at' => now()->toIso8601String(),
                     'error' => $this->friendlyOddsError($exception->getMessage()),
@@ -74,22 +77,37 @@ class GolfOddsService
                     'sportsbooks' => $sportsbooks,
                     'players' => [],
                     'is_live' => $isLive,
+                    'scores_available' => false,
                     'refresh_seconds' => $this->refreshSeconds($isLive),
                     'updated_at' => now()->toIso8601String(),
                     'error' => 'Live odds are not available yet for this tournament.',
                 ];
             }
 
-            $players = $isLive && $leaderboard !== []
-                ? $this->buildLiveScoreRows($leaderboard, $oddsRows, $tournament)
-                : $this->buildPlayerRows($oddsRows, $tournament, $leaderboard);
+            $rawPlayers = $isLive && $leaderboard !== []
+                ? $this->buildLiveScoreRows($leaderboard, $oddsRows, $tournament, applyBestValueMarks: false)
+                : $this->buildPlayerRows($oddsRows, $tournament, $leaderboard, applyBestValueMarks: false);
+
+            $playerLimit = (int) config('sportsdata.odds.player_limit', 10);
+            $players = array_slice(
+                $this->applyBestValueMarks($rawPlayers),
+                0,
+                $playerLimit
+            );
+
+            $visibleSportsbooks = $this->sportsbooksPresentInPlayers($players, $sportsbooks);
+            $scoresAvailable = collect($players)->contains(
+                fn (array $player) => ! empty($player['score']['to_par'] ?? null)
+            );
 
             return [
                 'tournament' => $formattedTournament,
                 'weather' => $weather,
-                'sportsbooks' => $sportsbooks,
+                'sportsbooks' => $visibleSportsbooks !== [] ? $visibleSportsbooks : $sportsbooks,
                 'players' => $players,
+                'market_players' => $rawPlayers,
                 'is_live' => $isLive,
+                'scores_available' => $scoresAvailable,
                 'refresh_seconds' => $this->refreshSeconds($isLive),
                 'updated_at' => now()->toIso8601String(),
                 'error' => null,
@@ -99,17 +117,20 @@ class GolfOddsService
 
             return [
                 ...$empty,
+                'scores_available' => false,
+                'market_players' => [],
                 'error' => 'Unable to load live odds right now. Please try again shortly.',
             ];
         }
     }
 
     /**
-     * Build Top Picks cards from the live odds comparison table (no demo data).
+     * Top Picks from real SportsDataIO tournament odds (favorites first, actual book prices).
      *
      * @param  array{
      *     tournament: ?array{name?: string},
-     *     players: list<array{name: string, odds: array<string, array{american: string, decimal: float, best: bool}>, score?: ?array{rank?: ?int}}>,
+     *     players?: list<array{name: string, odds: array<string, array{american: string, decimal: float, best: bool}>, score?: ?array{rank?: ?int}}>,
+     *     market_players?: list<array{name: string, odds: array<string, array{american: string, decimal: float, best: bool}>, score?: ?array{rank?: ?int}}>,
      *     is_live?: bool
      * }  $liveOdds
      * @return list<array{tournament: string, player: string, american: string, book: string, badge: string, badge_class: string, confidence: int}>
@@ -117,10 +138,6 @@ class GolfOddsService
     public function buildTopPicks(array $liveOdds, int $limit = 4): array
     {
         $tournament = (string) ($liveOdds['tournament']['name'] ?? 'PGA Tour');
-        $marks = array_values(array_map(
-            'intval',
-            config('sportsdata.odds.best_value_american', [2800, 3000, 3300])
-        ));
         $badges = [
             ['label' => 'Hot Pick', 'class' => 'badge-hot'],
             ['label' => 'Value', 'class' => 'badge-value'],
@@ -128,29 +145,31 @@ class GolfOddsService
             ['label' => 'Sharp', 'class' => 'badge-hot'],
         ];
 
-        $picks = collect($liveOdds['players'] ?? [])
-            ->filter(fn ($player) => is_array($player) && ! empty($player['odds']))
-            ->map(function (array $player) use ($tournament, $marks) {
-                $match = $this->findBestValueOddsMatch($player['odds'] ?? [], $marks);
+        $sourcePlayers = $liveOdds['market_players'] ?? $liveOdds['players'] ?? [];
 
-                if ($match === null) {
+        return collect($sourcePlayers)
+            ->filter(fn ($player) => is_array($player) && ! empty($player['odds']))
+            ->map(function (array $player) use ($tournament) {
+                $bestPayout = $this->findBestPayoutOdds($player['odds'] ?? []);
+
+                if ($bestPayout === null) {
                     return null;
                 }
 
                 return [
                     'tournament' => $tournament,
                     'player' => (string) ($player['name'] ?? 'Unknown'),
-                    'american' => $this->formatAmericanOdds($match['american']),
-                    'book' => $match['book'],
-                    'decimal' => $this->americanToDecimal($match['american']),
+                    'american' => $this->formatAmericanOdds($bestPayout['american']),
+                    'book' => $bestPayout['book'],
+                    'decimal' => $this->americanToDecimal($bestPayout['american']),
+                    'favorite_decimal' => $this->playerBestDecimal($player['odds'] ?? []),
                     'rank' => $player['score']['rank'] ?? null,
-                    'mark_index' => array_search($match['american'], $marks, true),
                 ];
             })
             ->filter()
             ->sortBy([
-                ['mark_index', 'asc'],
-                ['rank', 'asc'],
+                ['favorite_decimal', 'asc'],
+                ['player', 'asc'],
             ])
             ->unique('player')
             ->take($limit)
@@ -165,31 +184,22 @@ class GolfOddsService
                     'book' => $pick['book'],
                     'badge' => $badge['label'],
                     'badge_class' => $badge['class'],
-                    'confidence' => $this->topPickConfidence($pick['decimal'], $pick['rank']),
+                    'confidence' => $this->topPickConfidence($pick['favorite_decimal'], $pick['rank'], $index),
                 ];
             })
             ->all();
-
-        return $picks;
     }
 
     /**
-     * Only accept Best Value marks (+2800, +3000, +3300) — never odds below those.
+     * Best payout for the bettor across sportsbooks (highest decimal / longest American).
      *
      * @param  array<string, array{american: string, decimal: float, best: bool}>  $odds
-     * @param  list<int>  $marks
      * @return array{american: int, book: string}|null
      */
-    private function findBestValueOddsMatch(array $odds, array $marks): ?array
+    private function findBestPayoutOdds(array $odds): ?array
     {
-        if ($marks === []) {
-            return null;
-        }
-
-        $minMark = min($marks);
         $preferredBooks = ['FanDuel', 'BetMGM', 'DraftKings', 'Caesars'];
-        $exact = null;
-        $above = null;
+        $best = null;
 
         foreach ($preferredBooks as $book) {
             if (! isset($odds[$book]['american'])) {
@@ -197,49 +207,41 @@ class GolfOddsService
             }
 
             $american = (int) str_replace('+', '', (string) $odds[$book]['american']);
+            $decimal = $this->americanToDecimal($american);
 
-            if ($american < $minMark) {
-                continue;
-            }
-
-            if (in_array($american, $marks, true)) {
-                $exact = ['american' => $american, 'book' => $book];
-                break;
-            }
-
-            if ($above === null) {
-                // Snap high longshots onto the nearest mark (never below)
-                $nearest = $marks[0];
-                $bestDistance = abs($american - $nearest);
-
-                foreach ($marks as $mark) {
-                    $distance = abs($american - $mark);
-
-                    if ($distance < $bestDistance) {
-                        $nearest = $mark;
-                        $bestDistance = $distance;
-                    }
-                }
-
-                $above = ['american' => $nearest, 'book' => $book];
+            if ($best === null || $decimal > $best['decimal']) {
+                $best = [
+                    'american' => $american,
+                    'book' => $book,
+                    'decimal' => $decimal,
+                ];
             }
         }
 
-        return $exact ?? $above;
+        if ($best === null) {
+            return null;
+        }
+
+        return [
+            'american' => $best['american'],
+            'book' => $best['book'],
+        ];
     }
 
-    private function topPickConfidence(float $decimal, ?int $rank): int
+    private function topPickConfidence(float $decimal, ?int $rank, int $index = 0): int
     {
         if ($rank !== null && $rank > 0) {
             return max(55, min(95, 100 - (($rank - 1) * 4)));
         }
 
         if ($decimal <= 0) {
-            return 70;
+            return max(60, 82 - ($index * 6));
         }
 
-        // Shorter odds → higher confidence
-        return max(62, min(92, (int) round(98 - (($decimal - 1.5) * 3.5))));
+        // Favorites (shorter prices) score higher; card order also spreads values.
+        $fromOdds = (int) round(100 - ($decimal * 2.4));
+
+        return max(55, min(94, $fromOdds - ($index * 3)));
     }
 
     /**
@@ -335,7 +337,7 @@ class GolfOddsService
 
             return [
                 'tournament' => $this->formatTournament($tournament),
-                'sportsbooks' => $sportsbooks,
+                'sportsbooks' => $this->sportsbooksPresentInPropBrackets($brackets, $sportsbooks),
                 'brackets' => $brackets,
                 'active_key' => $brackets[0]['key'] ?? ($empty['active_key']),
                 'refresh_seconds' => $refreshSeconds,
@@ -350,6 +352,306 @@ class GolfOddsService
                 'error' => 'Unable to load prop odds right now. Please try again shortly.',
             ];
         }
+    }
+
+    /**
+     * Competition + Event feeds the Golf subscription unlocks:
+     * Rankings, Players, Courses/Venues, Utility, Schedule (Tournaments), Season Stats.
+     *
+     * @return array{
+     *     season: ?array{id: int, description: string, start_date: ?string, end_date: ?string},
+     *     feeds: list<array{key: string, label: string, status: string}>,
+     *     rankings: list<array{rank: int, rank_last_week: ?int, player_id: int, name: string, events: int, average_points: float, total_points: float}>,
+     *     players: list<array{player_id: int, name: string, rank: int, country: ?string, college: ?string, swings: ?string, birth_date: ?string, photo_url: ?string}>,
+     *     stats: list<array{player_id: int, name: string, rank: int, events: int, average_points: float, total_points: float, points_gained: float, points_lost: float}>,
+     *     courses: list<array{tournament_id: ?int, name: string, venue: ?string, location: ?string, start_date: ?string, end_date: ?string, par: ?int, yards: ?int, format: ?string}>,
+     *     schedule: list<array{id: int, name: string, venue: ?string, location: ?string, start_date: ?string, end_date: ?string, is_over: bool, is_in_progress: bool, par: ?int, yards: ?int, purse: ?float}>,
+     *     sportsbooks: list<array{id: int, name: string}>,
+     *     refresh_seconds: int,
+     *     updated_at: string,
+     *     error: ?string
+     * }
+     */
+    public function getCompetitionFeeds(): array
+    {
+        $refreshSeconds = (int) config('sportsdata.competition.refresh_seconds', 900);
+        $empty = [
+            'season' => null,
+            'feeds' => $this->competitionFeedBadges(),
+            'rankings' => [],
+            'players' => [],
+            'stats' => [],
+            'courses' => [],
+            'schedule' => [],
+            'sportsbooks' => [],
+            'refresh_seconds' => $refreshSeconds,
+            'updated_at' => now()->toIso8601String(),
+            'error' => null,
+        ];
+
+        try {
+            $ttl = (int) config('sportsdata.competition.cache_ttl', 900);
+            $rankingsLimit = (int) config('sportsdata.competition.rankings_limit', 10);
+            $coursesLimit = (int) config('sportsdata.competition.courses_limit', 6);
+            $scheduleLimit = (int) config('sportsdata.competition.schedule_limit', 8);
+            $playersLimit = (int) config('sportsdata.competition.players_limit', 6);
+
+            $seasonPayload = $this->getJson(
+                $this->golfUrl('CurrentSeason'),
+                $ttl,
+                'sportsdata:competition:current-season'
+            );
+
+            $seasonId = (int) ($seasonPayload['SeasonID'] ?? now()->year);
+
+            $rankingsRows = collect($this->getJson(
+                $this->golfUrl("Rankings/{$seasonId}"),
+                $ttl,
+                "sportsdata:competition:rankings:{$seasonId}"
+            ))->filter(fn ($row) => is_array($row) && ! empty($row['Name']));
+
+            $rankings = $rankingsRows
+                ->sortBy(fn (array $row) => (int) ($row['WorldGolfRank'] ?? PHP_INT_MAX))
+                ->take($rankingsLimit)
+                ->map(fn (array $row) => [
+                    'rank' => (int) ($row['WorldGolfRank'] ?? 0),
+                    'rank_last_week' => isset($row['WorldGolfRankLastWeek']) ? (int) $row['WorldGolfRankLastWeek'] : null,
+                    'player_id' => (int) ($row['PlayerID'] ?? 0),
+                    'name' => (string) ($row['Name'] ?? ''),
+                    'events' => (int) ($row['Events'] ?? 0),
+                    'average_points' => (float) ($row['AveragePoints'] ?? 0),
+                    'total_points' => (float) ($row['TotalPoints'] ?? 0),
+                ])
+                ->values()
+                ->all();
+
+            $stats = collect($this->getJson(
+                $this->golfUrl("PlayerSeasonStats/{$seasonId}"),
+                $ttl,
+                "sportsdata:competition:season-stats:{$seasonId}"
+            ))
+                ->filter(fn ($row) => is_array($row) && ! empty($row['Name']))
+                ->sortBy(fn (array $row) => (int) ($row['WorldGolfRank'] ?? PHP_INT_MAX))
+                ->take($rankingsLimit)
+                ->map(fn (array $row) => [
+                    'player_id' => (int) ($row['PlayerID'] ?? 0),
+                    'name' => (string) ($row['Name'] ?? ''),
+                    'rank' => (int) ($row['WorldGolfRank'] ?? 0),
+                    'events' => (int) ($row['Events'] ?? 0),
+                    'average_points' => (float) ($row['AveragePoints'] ?? 0),
+                    'total_points' => (float) ($row['TotalPoints'] ?? 0),
+                    'points_gained' => (float) ($row['PointsGained'] ?? 0),
+                    'points_lost' => (float) ($row['PointsLost'] ?? 0),
+                ])
+                ->values()
+                ->all();
+
+            $players = $this->buildFeaturedPlayers(
+                collect($rankings)->take($playersLimit)->all(),
+                $ttl
+            );
+
+            $today = now()->startOfDay();
+
+            $schedule = collect($this->getJson(
+                $this->golfUrl("Tournaments/{$seasonId}"),
+                $ttl,
+                "sportsdata:competition:tournaments:{$seasonId}"
+            ))
+                ->filter(fn ($row) => is_array($row) && ! empty($row['Name']))
+                ->filter(function (array $row) use ($today) {
+                    $start = isset($row['StartDate']) ? \Carbon\Carbon::parse($row['StartDate']) : null;
+                    $end = isset($row['EndDate']) ? \Carbon\Carbon::parse($row['EndDate']) : $start;
+
+                    if ($start === null || $end === null) {
+                        return false;
+                    }
+
+                    return $end->greaterThanOrEqualTo($today->copy()->subDays(3))
+                        && $start->lessThanOrEqualTo($today->copy()->addMonths(4));
+                })
+                ->sortBy('StartDate')
+                ->take($scheduleLimit)
+                ->map(fn (array $row) => [
+                    'id' => (int) ($row['TournamentID'] ?? 0),
+                    'name' => (string) ($row['Name'] ?? ''),
+                    'venue' => $row['Venue'] ?? null,
+                    'location' => $row['Location'] ?? null,
+                    'start_date' => $row['StartDate'] ?? null,
+                    'end_date' => $row['EndDate'] ?? null,
+                    'is_over' => (bool) ($row['IsOver'] ?? false),
+                    'is_in_progress' => (bool) ($row['IsInProgress'] ?? false),
+                    'par' => isset($row['Par']) ? (int) $row['Par'] : null,
+                    'yards' => isset($row['Yards']) ? (int) $row['Yards'] : null,
+                    'purse' => isset($row['Purse']) ? (float) $row['Purse'] : null,
+                    'format' => $row['Format'] ?? null,
+                ])
+                ->values()
+                ->all();
+
+            // Enrich schedule with course format, then expose the same list as venues.
+            $courseFormats = collect($this->getJson(
+                $this->golfUrl('Courses'),
+                $ttl,
+                'sportsdata:competition:courses'
+            ))
+                ->filter(fn ($row) => is_array($row) && ! empty($row['TournamentID']))
+                ->mapWithKeys(fn (array $row) => [
+                    (int) $row['TournamentID'] => $row['Format'] ?? null,
+                ]);
+
+            $schedule = collect($schedule)
+                ->map(function (array $event) use ($courseFormats) {
+                    $event['format'] = $event['format'] ?? $courseFormats->get($event['id']);
+
+                    return $event;
+                })
+                ->values()
+                ->all();
+
+            $courses = collect($schedule)
+                ->take(max($coursesLimit, $scheduleLimit))
+                ->map(fn (array $event) => [
+                    'tournament_id' => $event['id'],
+                    'name' => $event['name'],
+                    'venue' => $event['venue'],
+                    'location' => $event['location'],
+                    'start_date' => $event['start_date'],
+                    'end_date' => $event['end_date'],
+                    'par' => $event['par'],
+                    'yards' => $event['yards'],
+                    'format' => $event['format'] ?? null,
+                ])
+                ->values()
+                ->all();
+
+            $preferredBooks = array_keys(config('sportsdata.sportsbooks', []));
+            $sportsbooks = collect($this->getJson(
+                $this->oddsUrl('ActiveSportsbooks'),
+                $ttl,
+                'sportsdata:competition:active-sportsbooks'
+            ))
+                ->filter(fn ($row) => is_array($row) && ! empty($row['Name']))
+                ->map(fn (array $row) => [
+                    'id' => (int) ($row['SportsbookID'] ?? 0),
+                    'name' => (string) ($row['Name'] ?? ''),
+                ])
+                ->sortBy(function (array $book) use ($preferredBooks) {
+                    $index = array_search($book['name'], $preferredBooks, true);
+
+                    return $index === false ? 100 + $book['id'] : $index;
+                })
+                ->values()
+                ->all();
+
+            return [
+                'season' => [
+                    'id' => $seasonId,
+                    'description' => (string) ($seasonPayload['Description'] ?? (string) $seasonId),
+                    'start_date' => $seasonPayload['StartDate'] ?? null,
+                    'end_date' => $seasonPayload['EndDate'] ?? null,
+                ],
+                'feeds' => $this->competitionFeedBadges([
+                    'rankings' => $rankings !== [],
+                    'players' => $players !== [],
+                    'courses' => $courses !== [],
+                    'utility' => $seasonId > 0,
+                    'schedule' => $schedule !== [],
+                    'stats' => $stats !== [],
+                    'props' => true,
+                    'news' => true,
+                ]),
+                'rankings' => $rankings,
+                'players' => $players,
+                'stats' => $stats,
+                'courses' => $courses,
+                'schedule' => $schedule,
+                'sportsbooks' => $sportsbooks,
+                'refresh_seconds' => $refreshSeconds,
+                'updated_at' => now()->toIso8601String(),
+                'error' => ($rankings === [] && $schedule === [])
+                    ? 'Competition feed data is not available right now.'
+                    : null,
+            ];
+        } catch (\Throwable $exception) {
+            Log::error('SportsDataIO competition feeds failed', ['message' => $exception->getMessage()]);
+
+            return [
+                ...$empty,
+                'error' => 'Unable to load competition feeds right now. Please try again shortly.',
+            ];
+        }
+    }
+
+    /**
+     * @param  array<string, bool>  $availability
+     * @return list<array{key: string, label: string, status: string}>
+     */
+    private function competitionFeedBadges(array $availability = []): array
+    {
+        $defs = [
+            'rankings' => 'Standings & Rankings',
+            'players' => 'Teams, Players & Rosters',
+            'courses' => 'Venues & Officials',
+            'utility' => 'Utility Endpoints',
+            'schedule' => 'Schedules & Game Day',
+            'stats' => 'Player Season Stats',
+            'props' => 'Betting Props',
+            'news' => 'RotoBaller News',
+        ];
+
+        return collect($defs)
+            ->map(fn (string $label, string $key) => [
+                'key' => $key,
+                'label' => $label,
+                'status' => ($availability[$key] ?? true) ? 'live' : 'pending',
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  list<array{player_id: int, name: string, rank: int}>  $rankings
+     * @return list<array{player_id: int, name: string, rank: int, country: ?string, college: ?string, swings: ?string, birth_date: ?string, photo_url: ?string}>
+     */
+    private function buildFeaturedPlayers(array $rankings, int $ttl): array
+    {
+        $players = [];
+
+        foreach ($rankings as $row) {
+            $playerId = (int) ($row['player_id'] ?? 0);
+
+            if ($playerId <= 0) {
+                continue;
+            }
+
+            try {
+                $profile = $this->getJson(
+                    $this->golfUrl("Player/{$playerId}"),
+                    $ttl,
+                    "sportsdata:competition:player:{$playerId}"
+                );
+            } catch (\Throwable) {
+                $profile = [];
+            }
+
+            $first = trim((string) ($profile['FirstName'] ?? ''));
+            $last = trim((string) ($profile['LastName'] ?? ''));
+            $fullName = trim($first.' '.$last);
+
+            $players[] = [
+                'player_id' => $playerId,
+                'name' => $fullName !== '' ? $fullName : (string) ($row['name'] ?? 'Player'),
+                'rank' => (int) ($row['rank'] ?? 0),
+                'country' => $profile['Country'] ?? null,
+                'college' => $profile['College'] ?? null,
+                'swings' => $profile['Swings'] ?? null,
+                'birth_date' => $profile['BirthDate'] ?? null,
+                'photo_url' => $profile['PhotoUrl'] ?? null,
+            ];
+        }
+
+        return $players;
     }
 
     /**
@@ -553,30 +855,69 @@ class GolfOddsService
      */
     private function fetchBettingMarketsByGroup(int $tournamentId, bool $inProgress): Collection
     {
-        $group = trim((string) config('sportsdata.sportsbook_group', 'G1000'));
-        $cacheKey = "sportsdata:props-markets:{$tournamentId}:{$group}:" . ($inProgress ? 'live' : 'pregame');
+        $group = trim((string) config('sportsdata.sportsbook_group', ''));
+        $groupKey = $group !== '' ? $group : 'all';
+        $cacheKey = "sportsdata:props-markets:{$tournamentId}:{$groupKey}:v2:" . ($inProgress ? 'live' : 'pregame');
         $ttl = $inProgress
             ? (int) config('sportsdata.cache.scores_ttl')
             : (int) config('sportsdata.props.cache_ttl', 120);
 
         return Cache::remember($cacheKey, $ttl, function () use ($tournamentId, $group) {
+            // Ungrouped endpoint returns individual sportsbooks (FanDuel, BetMGM, Caesars, etc).
+            // G1000 / consensus groups often only include Consensus lines.
+            $path = $group !== ''
+                ? "BettingMarketsByTournamentID/{$tournamentId}/{$group}"
+                : "BettingMarketsByTournamentID/{$tournamentId}";
+
             try {
-                $markets = $this->request(
-                    $this->oddsUrl("BettingMarketsByTournamentID/{$tournamentId}/{$group}")
-                );
+                $markets = $this->request($this->oddsUrl($path));
             } catch (RuntimeException $exception) {
                 if (str_contains($exception->getMessage(), 'not authorized')) {
                     throw $exception;
                 }
 
-                return collect();
+                // If a custom group fails, fall back to all sportsbooks.
+                if ($group !== '') {
+                    try {
+                        $markets = $this->request(
+                            $this->oddsUrl("BettingMarketsByTournamentID/{$tournamentId}")
+                        );
+                    } catch (RuntimeException $fallbackException) {
+                        if (str_contains($fallbackException->getMessage(), 'not authorized')) {
+                            throw $fallbackException;
+                        }
+
+                        return collect();
+                    }
+                } else {
+                    return collect();
+                }
             }
 
             if (! is_array($markets)) {
                 return collect();
             }
 
-            return collect($markets)->filter(fn ($market) => is_array($market))->values();
+            $neededBetTypes = collect(config('sportsdata.props.brackets', []))
+                ->flatMap(fn ($bracket) => is_array($bracket) ? ($bracket['bet_types'] ?? []) : [])
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            return collect($markets)
+                ->filter(function ($market) use ($neededBetTypes) {
+                    if (! is_array($market)) {
+                        return false;
+                    }
+
+                    if ($neededBetTypes === []) {
+                        return true;
+                    }
+
+                    return in_array((string) ($market['BettingBetType'] ?? ''), $neededBetTypes, true);
+                })
+                ->values();
         });
     }
 
@@ -653,11 +994,13 @@ class GolfOddsService
             return null;
         }
 
+        $limit = (int) ($config['limit'] ?? config('sportsdata.props.player_limit', 20));
+
         return [
             'key' => $key,
             'label' => $label,
             'type' => 'player',
-            'players' => $this->buildPlayerPropRows($market, $sportsbooks),
+            'players' => $this->buildPlayerPropRows($market, $sportsbooks, $limit),
         ];
     }
 
@@ -719,9 +1062,9 @@ class GolfOddsService
      * @param  list<string>  $sportsbooks
      * @return list<array{name: string, odds: array<string, array{american: string, decimal: float, best: bool}>}>
      */
-    private function buildPlayerPropRows(array $market, array $sportsbooks): array
+    private function buildPlayerPropRows(array $market, array $sportsbooks, ?int $limit = null): array
     {
-        $limit = (int) config('sportsdata.props.player_limit', 8);
+        $limit = max(1, $limit ?? (int) config('sportsdata.props.player_limit', 20));
         $grouped = [];
 
         foreach ($market['BettingOutcomes'] ?? [] as $outcome) {
@@ -759,20 +1102,34 @@ class GolfOddsService
         return collect($grouped)
             ->map(function (array $odds, string $name) {
                 if ($odds !== []) {
+                    // Highlight best payout for the bettor (longest price).
                     $bestBook = collect($odds)->sortByDesc('decimal')->keys()->first();
                     $odds[$bestBook]['best'] = true;
                 }
 
+                $hasConsensus = isset($odds['Consensus']['decimal']);
+                $fallbackDecimal = $odds === []
+                    ? PHP_FLOAT_MAX
+                    : (float) min(array_column($odds, 'decimal'));
+
                 return [
                     'name' => $name,
                     'odds' => $odds,
-                    'sort_decimal' => $odds === [] ? PHP_FLOAT_MAX : min(array_column($odds, 'decimal')),
+                    // Favorites first: Consensus ASC, then players missing Consensus by shortest book price.
+                    'sort_group' => $hasConsensus ? 0 : 1,
+                    'sort_decimal' => $hasConsensus
+                        ? (float) $odds['Consensus']['decimal']
+                        : $fallbackDecimal,
                 ];
             })
-            ->sortBy('sort_decimal')
+            ->sortBy([
+                ['sort_group', 'asc'],
+                ['sort_decimal', 'asc'],
+                ['name', 'asc'],
+            ])
             ->take($limit)
             ->map(function (array $player) {
-                unset($player['sort_decimal']);
+                unset($player['sort_group'], $player['sort_decimal']);
 
                 return $player;
             })
@@ -906,13 +1263,17 @@ class GolfOddsService
      * @param  array<string, mixed>  $tournament
      * @return list<array{player_id: int, name: string, subtitle: string, score: ?array{rank: ?int, to_par: ?string, through: ?int, label: ?string}, odds: array<string, array{american: string, decimal: float, best: bool}>}>
      */
-    private function buildLiveScoreRows(array $leaderboard, Collection $oddsRows, array $tournament): array
-    {
+    private function buildLiveScoreRows(
+        array $leaderboard,
+        Collection $oddsRows,
+        array $tournament,
+        bool $applyBestValueMarks = true
+    ): array {
         $oddsByPlayer = $this->groupOddsByPlayer($oddsRows);
         $tournamentName = (string) ($tournament['Name'] ?? 'PGA Tour');
-        $limit = config('sportsdata.odds.player_limit');
+        $limit = (int) config('sportsdata.odds.player_limit', 10);
 
-        return collect($leaderboard)
+        $players = collect($leaderboard)
             ->map(function (array $entry) use ($oddsByPlayer, $tournamentName) {
                 $playerId = $entry['player_id'];
                 $odds = $oddsByPlayer[$playerId] ?? [];
@@ -935,10 +1296,14 @@ class GolfOddsService
             ->values()
             ->all();
 
+        if (! $applyBestValueMarks) {
+            return $players;
+        }
+
         return array_slice(
             $this->applyBestValueMarks($players),
             0,
-            (int) $limit
+            $limit
         );
     }
 
@@ -948,13 +1313,17 @@ class GolfOddsService
      * @param  array<int, array{player_id: int, name: string, rank: ?int, to_par: ?string, through: ?int, label: ?string}>  $leaderboard
      * @return list<array{player_id: int, name: string, subtitle: string, score: ?array{rank: ?int, to_par: ?string, through: ?int, label: ?string}, odds: array<string, array{american: string, decimal: float, best: bool}>}>
      */
-    private function buildPlayerRows(Collection $oddsRows, array $tournament, array $leaderboard = []): array
-    {
+    private function buildPlayerRows(
+        Collection $oddsRows,
+        array $tournament,
+        array $leaderboard = [],
+        bool $applyBestValueMarks = true
+    ): array {
         $sportsbookMap = config('sportsdata.sportsbooks', []);
         $tournamentName = (string) ($tournament['Name'] ?? 'PGA Tour');
 
         $grouped = $oddsRows
-            ->map(function (array $row) use ($sportsbookMap) {
+            ->map(function (array $row) {
                 $book = $this->normalizeSportsbook(
                     (string) ($row['SportbookName'] ?? $row['SportsBook']['Name'] ?? '')
                 );
@@ -995,8 +1364,13 @@ class GolfOddsService
                     $odds[$book] = [
                         'american' => $this->formatAmericanOdds($match['american']),
                         'decimal' => $match['decimal'],
-                        'best' => $this->isBestValueOdds($match['american']),
+                        'best' => false,
                     ];
+                }
+
+                if ($odds !== []) {
+                    $bestBook = collect($odds)->sortByDesc('decimal')->keys()->first();
+                    $odds[$bestBook]['best'] = true;
                 }
 
                 if ($odds === []) {
@@ -1028,10 +1402,14 @@ class GolfOddsService
             ->values()
             ->all();
 
+        if (! $applyBestValueMarks) {
+            return $players;
+        }
+
         return array_slice(
             $this->applyBestValueMarks($players),
             0,
-            (int) config('sportsdata.odds.player_limit')
+            (int) config('sportsdata.odds.player_limit', 10)
         );
     }
 
@@ -1359,6 +1737,53 @@ class GolfOddsService
         return null;
     }
 
+    /**
+     * Keep only sportsbook columns that currently have at least one odds value.
+     *
+     * @param  list<array{odds?: array<string, mixed>}>  $players
+     * @param  list<string>  $configured
+     * @return list<string>
+     */
+    private function sportsbooksPresentInPlayers(array $players, array $configured): array
+    {
+        $present = [];
+
+        foreach ($configured as $book) {
+            foreach ($players as $player) {
+                if (! empty($player['odds'][$book]['american'] ?? null)) {
+                    $present[] = $book;
+                    break;
+                }
+            }
+        }
+
+        return $present;
+    }
+
+    /**
+     * @param  list<array{type?: string, players?: list<array{odds?: array<string, mixed>}>, outcomes?: list<array{odds?: array<string, mixed>}>}>  $brackets
+     * @param  list<string>  $configured
+     * @return list<string>
+     */
+    private function sportsbooksPresentInPropBrackets(array $brackets, array $configured): array
+    {
+        $rows = [];
+
+        foreach ($brackets as $bracket) {
+            foreach ($bracket['players'] ?? [] as $player) {
+                $rows[] = $player;
+            }
+
+            foreach ($bracket['outcomes'] ?? [] as $outcome) {
+                $rows[] = $outcome;
+            }
+        }
+
+        $present = $this->sportsbooksPresentInPlayers($rows, $configured);
+
+        return $present !== [] ? $present : $configured;
+    }
+
     private function americanToDecimal(int $american): float
     {
         if ($american > 0) {
@@ -1396,7 +1821,7 @@ class GolfOddsService
             throw new RuntimeException('SportsDataIO API key is not configured.');
         }
 
-        $response = Http::timeout(20)
+        $response = Http::timeout(45)
             ->withHeaders([self::HEADER => $apiKey])
             ->get($url);
 
