@@ -7,6 +7,7 @@ return [
     'base_urls' => [
         'golf' => env('SPORTSDATA_GOLF_BASE_URL', 'https://api.sportsdata.io/golf/v2/json'),
         'odds' => env('SPORTSDATA_GOLF_ODDS_BASE_URL', 'https://api.sportsdata.io/v3/golf/odds/json'),
+        'news' => env('SPORTSDATA_GOLF_NEWS_BASE_URL', 'https://api.sportsdata.io/v3/golf/news-rotoballer/json'),
     ],
 
     'cache' => [
@@ -24,7 +25,8 @@ return [
     ],
 
     'news' => [
-        'limit' => (int) env('SPORTSDATA_NEWS_LIMIT', 6),
+        'limit' => (int) env('SPORTSDATA_NEWS_LIMIT', 0),
+        'lookback_days' => (int) env('SPORTSDATA_NEWS_LOOKBACK_DAYS', 14),
         'cache_ttl' => (int) env('SPORTSDATA_NEWS_CACHE_TTL', 300),
         'refresh_seconds' => (int) env('SPORTSDATA_NEWS_REFRESH_SECONDS', 300),
     ],
@@ -41,7 +43,7 @@ return [
     ],
 
     'props' => [
-        'player_limit' => (int) env('SPORTSDATA_PROPS_PLAYER_LIMIT', 20),
+        'player_limit' => (int) env('SPORTSDATA_PROPS_PLAYER_LIMIT', 0),
         'cache_ttl' => (int) env('SPORTSDATA_PROPS_CACHE_TTL', 120),
         'refresh_seconds' => (int) env('SPORTSDATA_PROPS_REFRESH_SECONDS', 120),
         'brackets' => [

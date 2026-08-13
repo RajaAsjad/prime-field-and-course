@@ -13,8 +13,7 @@
         <h1 class="hero-h1"><span>Golf Betting</span> <span class="gold">Made Simple.</span> <span>Expert Picks &
             Exclusive Deals.</span></h1>
         <p class="hero-sub">All your favourite sportsbooks, insider tips, and tournament updates in one place.</p>
-        <div class="hero-btns"><a href="#best-picks" class="btn btn-gold">View Best Picks</a><a href="#promos"
-            class="btn btn-outline-dark" style="color:#fff;border-color:rgba(255,255,255,.3);">Sign Up & Get Bonuses</a>
+        <div class="hero-btns"><a href="#best-picks" class="btn btn-gold">View Best Picks</a><a href="#promos" class="btn btn-outline-hero">Sign Up & Get Bonuses</a></div>
         </div>
       </div>
     </section>
@@ -26,72 +25,111 @@
               style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Expert
             Knowledge</div>
           <h2 class="h-section">Expert Strategy & <em>Tips</em></h2>
-          <p class="body-lg">In-depth articles and guides from professional golf analysts.</p>
+          <p class="body-lg" id="flm-stories-desc">Latest golf coverage from Field Level Media — previews, recaps, and news.</p>
         </div>
-        <div class="cards-grid-4">
-          @forelse ($tips as $tip)
-            <a
-              href="{{ route('tips.show', $tip) }}"
-              class="art-card rev rev-d{{ ($loop->iteration - 1) % 4 + 1 }}"
-              style="text-decoration:none;color:inherit;"
-            >
-              <div
-                class="art-img"
-                style="position:relative;background:linear-gradient(135deg,{{ $loop->odd ? '#fdf8ec,#f5edcc' : '#edf7f0,#d4eddb' }})"
-              >
-                @if ($tip->imageUrl())
-                  <img
-                    src="{{ $tip->imageUrl() }}"
-                    alt="{{ $tip->title }}"
-                    width="800"
-                    height="500"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                @endif
-                @if ($tip->tipsCategory)
-                  <span class="art-tag{{ $loop->odd ? ' gold-tag' : '' }}">{{ $tip->tipsCategory->title }}</span>
-                @endif
-              </div>
-              <div class="art-body">
-                <h3 class="art-title">{{ $tip->title }}</h3>
-                <p class="art-desc">{{ $tip->description }}</p>
-              </div>
-            </a>
-          @empty
-            <p class="body-lg">No tips available at the moment.</p>
-          @endforelse
+        <div
+          id="flm-stories-feed"
+          data-endpoint="{{ route('api.flm-stories') }}"
+          data-refresh-ms="{{ (int) config('flm.cache.stories_ttl', 300) * 1000 }}"
+        >
+          <div class="swiper flm-stories-swiper">
+            <div class="swiper-wrapper" id="flm-stories-wrapper">
+              @forelse ($flmFeed['items'] ?? [] as $story)
+                <div class="swiper-slide">
+                  <a
+                    href="{{ $story['url'] }}"
+                    class="art-card"
+                    style="text-decoration:none;color:inherit;"
+                  >
+                    <div
+                      class="art-img"
+                      style="position:relative;background:linear-gradient(135deg,{{ $loop->odd ? '#fdf8ec,#f5edcc' : '#edf7f0,#d4eddb' }})"
+                    >
+                      @if (!empty($story['image']))
+                        <img
+                          src="{{ $story['image'] }}"
+                          alt="{{ $story['title'] }}"
+                          width="800"
+                          height="500"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      @endif
+                      @if (!empty($story['category']))
+                        <span class="art-tag{{ $loop->odd ? ' gold-tag' : '' }}">{{ $story['category'] }}</span>
+                      @endif
+                    </div>
+                    <div class="art-body">
+                      <h3 class="art-title">{{ $story['title'] }}</h3>
+                      <p class="art-desc">{{ $story['excerpt'] }}</p>
+                    </div>
+                  </a>
+                </div>
+              @empty
+                <div class="swiper-slide">
+                  <p class="body-lg" id="flm-stories-loading">{{ $flmFeed['error'] ?? 'Loading golf stories…' }}</p>
+                </div>
+              @endforelse
+            </div>
+          </div>
+          <div class="car-ctrl flm-stories-controls">
+            <button type="button" class="car-btn flm-stories-prev" aria-label="Previous stories">&#9664;</button>
+            <div class="swiper-pagination flm-stories-pagination"></div>
+            <button type="button" class="car-btn flm-stories-next" aria-label="Next stories">&#9654;</button>
+          </div>
         </div>
+        <p id="flm-stories-updated" style="margin-top:12px;font-size:.78rem;color:#9aaa9e;text-align:right;">
+          Updating automatically…
+        </p>
       </div>
     </section>
+
+    <section class="section-white betmgm-offer">
+      <div class="wrap">
+        <a
+          href="https://www.anrdoezrs.net/click-101764042-17337458"
+          class="betmgm-banner" 
+          target="_blank"
+          rel="sponsored noopener noreferrer">
+          <span class="betmgm-banner__logo">BetMGM</span>
+          <span class="betmgm-banner__copy">
+            <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
+            <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
+          </span>
+          <span class="betmgm-banner__cta">Claim Offer <span aria-hidden="true">&rarr;</span></span>
+        </a>
+        <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
+      </div>
+    </section>
+
+
 
     <section id="promos" class="section-white">
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Partner
-            Offers</div>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Partner Offers</div>
           <h2 class="h-section">Exclusive <em>Sign-Up Bonuses</em></h2>
           <p class="body-lg">Verified offers updated weekly. All bonuses for new users only. Must be 21+.</p>
         </div>
         <div class="promos-grid">
           <div class="promo-card featured rev rev-d1">
             <div class="promo-ribbon">TOP PICK</div>
-            <div class="book-name dk">DraftKings</div>
-            <div class="promo-bonus">$200 Bonus</div>
-            <p class="promo-desc">Bet $5, get $200 in bonus bets instantly.</p><a href="#promos" class="btn btn-gold"
+            <div class="book-name mgm"><span>BetMGM</span></div>
+            <div class="promo-bonus">$1,500 Back</div>
+            <p class="promo-desc">First bet insurance up to $1,500.</p><a href="#promos" class="btn btn-gold"
               style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
           </div>
           <div class="promo-card rev rev-d2">
             <div class="book-name fd">FanDuel</div>
             <div class="promo-bonus">$150 Back</div>
             <p class="promo-desc">No Sweat First Bet up to $150.</p><a href="#promos" class="btn btn-primary"
-              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
+            style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
           </div>
-          <div class="promo-card rev rev-d3">
-            <div class="book-name mgm">BetMGM</div>
-            <div class="promo-bonus">$1,500 Back</div>
-            <p class="promo-desc">First bet insurance up to $1,500.</p><a href="#promos" class="btn btn-primary"
+          <div class="promo-card rev rev-d3"> 
+            <div class="book-name dk">DraftKings</div>
+            <div class="promo-bonus">$200 Bonus</div>
+            <p class="promo-desc">Bet $5, get $200 in bonus bets instantly.</p><a href="#promos" class="btn btn-primary"
               style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
           </div>
           <div class="promo-card rev rev-d4">
@@ -140,7 +178,9 @@
               </div>
             </div>
           @empty
-            <p class="body-lg" style="grid-column:1/-1;text-align:center;color:#7a8a7e;">Top picks will appear when odds are available for this tournament.</p>
+            <p class="body-lg" style="grid-column:1/-1;text-align:center;color:#7a8a7e;">
+              {{ $liveOdds['error'] ?? 'Top picks will appear when odds are available for this tournament.' }}
+            </p>
           @endforelse
         </div>
       </div>
@@ -191,7 +231,7 @@
                 <tr>
                   <th style="min-width:180px;">Selection</th>
                   @foreach ($hotProps['sportsbooks'] ?? [] as $book)
-                    <th>{{ $book }}</th>
+                    <th @class(['th-book-mgm' => strcasecmp($book, 'BetMGM') === 0])>{{ $book }}</th>
                   @endforeach
                 </tr>
               </thead>
@@ -441,7 +481,7 @@
                   <th style="min-width:180px;">Player / Tournament</th>
                   <th class="score-col">Score</th>
                   @foreach ($liveOdds['sportsbooks'] as $book)
-                    <th>{{ $book }}</th>
+                    <th @class(['th-book-mgm' => strcasecmp($book, 'BetMGM') === 0])>{{ $book }}</th>
                   @endforeach
                 </tr>
               </thead>
@@ -468,7 +508,7 @@
               style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Player
             News</div>
           <h2 class="h-section">Rotoballer <em>News Feed</em></h2>
-          <p class="body-lg" id="rotoballer-news-desc">Latest PGA Tour player news and matchup outlooks from RotoBaller. Auto-refreshes every {{ $newsRefreshSeconds ?? 300 }} seconds.</p>
+          <p class="body-lg" id="rotoballer-news-desc">Latest PGA Tour player news and matchup outlooks from RotoBaller. Showing stories from the last 2 weeks. Auto-refreshes every {{ $newsRefreshSeconds ?? 300 }} seconds.</p>
         </div>
         <div
           class="rev"
@@ -477,7 +517,7 @@
           data-refresh-ms="{{ ($newsRefreshSeconds ?? 300) * 1000 }}"
         >
           <div class="swiper rb-news-swiper">
-            <div class="swiper-wrapper" id="rb-news-swiper-wrapper">
+            <div class="swiper-wrapper" id="rb-news-wrapper">
               @forelse ($newsFeed['items'] ?? [] as $item)
                 <div class="swiper-slide">
                   <article class="rb-news-card">
@@ -490,7 +530,7 @@
                       @endif
                     </div>
                     <h3 class="rb-news-title">{{ $item['title'] }}</h3>
-                    <p class="rb-news-excerpt">{{ \Illuminate\Support\Str::limit($item['content'], 220) }}</p>
+                    <p class="rb-news-excerpt">{{ \Illuminate\Support\Str::limit($item['content'], 160) }}</p>
                     <div class="rb-news-card__foot">
                       <span class="rb-news-source">{{ $item['source'] }}</span>
                       @if (!empty($item['id']))
@@ -911,19 +951,26 @@
       }
     }
 
-    #rotoballer-news .rb-news-swiper {
+    #strategy .flm-stories-swiper {
       overflow: hidden;
-      border-radius: var(--r-lg)
+      padding: 14px 8px 24px;
+      margin: 0 -8px
     }
 
-    #rotoballer-news .swiper-slide {
+    #strategy .flm-stories-swiper .swiper-slide {
       height: auto
     }
 
+    #strategy .flm-stories-swiper .art-card {
+      height: 100%
+    }
+
+    #strategy .flm-stories-controls,
     #rotoballer-news .rb-news-controls {
       margin-top: 18px
     }
 
+    #strategy .flm-stories-controls .car-btn,
     #rotoballer-news .rb-news-controls .car-btn {
       position: static;
       font-size: .82rem;
@@ -931,11 +978,14 @@
       cursor: pointer
     }
 
+    #strategy .flm-stories-controls .car-btn::after,
+    #strategy .flm-stories-controls .car-btn::before,
     #rotoballer-news .rb-news-controls .car-btn::after,
     #rotoballer-news .rb-news-controls .car-btn::before {
       display: none
     }
 
+    #strategy .flm-stories-pagination,
     #rotoballer-news .rb-news-pagination {
       display: flex;
       align-items: center;
@@ -945,20 +995,31 @@
       width: auto
     }
 
+    #strategy .flm-stories-pagination .car-dot,
     #rotoballer-news .rb-news-pagination .car-dot {
       margin: 0
+    }
+
+    #rotoballer-news .rb-news-swiper {
+      overflow: hidden;
+      padding: 14px 8px 24px;
+      margin: 0 -8px
+    }
+
+    #rotoballer-news .rb-news-swiper .swiper-slide {
+      height: auto
     }
 
     #rotoballer-news .rb-news-card {
       background: #fff;
       border: 1.5px solid var(--bdr);
-      border-radius: var(--r-lg);
-      padding: 22px;
+      border-radius: 14px;
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
       transition: all .3s var(--ease-expo);
-      height: 100%;
+      height: 100%
     }
 
     #rotoballer-news .rb-news-card:hover {
@@ -993,10 +1054,14 @@
     }
 
     #rotoballer-news .rb-news-title {
-      font-size: 1rem;
+      font-size: .95rem;
       font-weight: 800;
       line-height: 1.32;
-      color: var(--tx-h)
+      color: var(--tx-h);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden
     }
 
     #rotoballer-news .rb-news-excerpt {
@@ -1066,6 +1131,15 @@
     #hot-props .odds-cell-best {
       color: var(--g-600);
       font-weight: 800
+    }
+
+    #hot-props .odds-tbl {
+      table-layout: fixed;
+    }
+
+    #hot-props .odds-tbl th:first-child,
+    #hot-props .odds-tbl td:first-child {
+      width: 22%;
     }
 
     #competition-feeds .comp-books {
@@ -1356,6 +1430,106 @@
         grid-template-columns: 1fr
       }
     }
+
+    .betmgm-offer {
+      padding: 8px 0 28px
+    }
+
+    .betmgm-banner__pixel {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      border: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0)
+    }
+
+    .betmgm-banner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px 18px 22px;
+      background: #152816;
+      border-radius: 22px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .16);
+      text-decoration: none;
+      color: inherit;
+      transition: transform .25s var(--ease-expo), box-shadow .25s var(--ease-expo)
+    }
+
+    .betmgm-banner:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .22)
+    }
+
+    .betmgm-banner__logo {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      border: 1.5px solid #e8c05d;
+      border-radius: 8px;
+      color: #e8c15f;
+      font-weight: 700;
+      background-color: #0a140b;
+      font-size: .95rem;
+      letter-spacing: .01em;
+      line-height: 1.1
+    }
+
+    .betmgm-banner__copy {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px
+    }
+
+    .betmgm-banner__title {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3
+    }
+
+    .betmgm-banner__terms {
+      color: #f9cf7f;
+      font-size: .75rem;
+      font-weight: 400;
+      line-height: 1.35
+    }
+
+    .betmgm-banner__cta {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 13px 26px;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, #ca8e13 0%, #ebc666 100%);
+      color: #1a1610;
+      font-weight: 700;
+      font-size: .95rem;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(200, 168, 75, .3);
+      transition: filter .2s ease, box-shadow .2s ease
+    }
+
+    .betmgm-banner:hover .betmgm-banner__cta {
+      filter: brightness(1.05);
+      box-shadow: 0 8px 24px rgba(200, 168, 75, .4)
+    }
+
+    @media (max-width: 900px) {
+      .betmgm-banner {
+        flex-wrap: wrap;
+        padding: 16px
+      }
+
+      .betmgm-banner__cta {
+        width: 100%;
+        margin-top: 4px
+      }
+    }
   </style>
 @endpush
 
@@ -1364,6 +1538,7 @@
   <script src="{{ asset('assets/js/live-odds.js') }}?v={{ filemtime(public_path('assets/js/live-odds.js')) }}"></script>
   <script src="{{ asset('assets/js/hot-props.js') }}?v={{ filemtime(public_path('assets/js/hot-props.js')) }}"></script>
   <script src="{{ asset('assets/js/rotoballer-news.js') }}?v={{ filemtime(public_path('assets/js/rotoballer-news.js')) }}"></script>
+  <script src="{{ asset('assets/js/flm-stories.js') }}?v={{ filemtime(public_path('assets/js/flm-stories.js')) }}"></script>
 @endpush
 
 {{-- Main content end --}}

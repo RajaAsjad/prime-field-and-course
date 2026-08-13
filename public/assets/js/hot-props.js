@@ -31,6 +31,14 @@
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
+  const BRACKET_LIMITS = {
+    top_5: 5,
+    top_10: 10,
+    top_20: 20,
+  };
+
+  const isBetMgmBook = (book) => String(book).replace(/\s+/g, '').toLowerCase() === 'betmgm';
+
   const formatDate = (iso) => {
     if (!iso) {
       return '';
@@ -67,8 +75,6 @@
     }
 
     if (!Array.isArray(brackets) || brackets.length === 0) {
-      tabsEl.innerHTML = '';
-
       return;
     }
 
@@ -87,12 +93,32 @@
     }).join('');
   };
 
-  const renderHead = () => {
+  const booksWithOdds = (rows) => {
+    const present = sportsbooks.filter((book) =>
+      rows.some((row) => Boolean(row?.odds?.[book]?.american))
+    );
+
+    return present.length ? present : sportsbooks;
+  };
+
+  const visibleBooksForBracket = (bracket) => {
+    if (!bracket) {
+      return sportsbooks;
+    }
+
+    const rows = bracket.type === 'yes_no'
+      ? (bracket.outcomes || [])
+      : (bracket.players || []);
+
+    return booksWithOdds(rows);
+  };
+
+  const renderHead = (books) => {
     if (!theadEl) {
       return;
     }
 
-    const bookHeaders = sportsbooks.map((book) => `<th>${escapeHtml(book)}</th>`).join('');
+    const bookHeaders = books.map((book) => `<th${isBetMgmBook(book) ? ' class="th-book-mgm"' : ''}>${escapeHtml(book)}</th>`).join('');
 
     theadEl.innerHTML = `
       <tr>
@@ -112,11 +138,13 @@
     return `<td class="odds-cell${bestClass}">${escapeHtml(odds.american)}</td>`;
   };
 
-  const renderBracketBody = (bracket) => {
+  const renderBracketBody = (bracket, books) => {
+    const colspan = books.length + 1;
+
     if (!bracket) {
       return `
         <tr>
-          <td colspan="${sportsbooks.length + 1}" style="text-align:center;padding:28px;color:#7a8a7e;">
+          <td colspan="${colspan}" style="text-align:center;padding:28px;color:#7a8a7e;">
             Prop odds are not available right now.
           </td>
         </tr>
@@ -129,7 +157,7 @@
       if (rows.length === 0) {
         return `
           <tr>
-            <td colspan="${sportsbooks.length + 1}" style="text-align:center;padding:28px;color:#7a8a7e;">
+            <td colspan="${colspan}" style="text-align:center;padding:28px;color:#7a8a7e;">
               Odds not available for this market yet.
             </td>
           </tr>
@@ -137,7 +165,7 @@
       }
 
       return rows.map((row) => {
-        const cells = sportsbooks.map((book) => renderOddsCell(row.odds?.[book])).join('');
+        const cells = books.map((book) => renderOddsCell(row.odds?.[book])).join('');
 
         return `
           <tr>
@@ -148,12 +176,13 @@
       }).join('');
     }
 
-    const players = bracket.players || [];
+    const limit = BRACKET_LIMITS[bracket.key];
+    const players = limit ? (bracket.players || []).slice(0, limit) : (bracket.players || []);
 
     if (players.length === 0) {
       return `
         <tr>
-          <td colspan="${sportsbooks.length + 1}" style="text-align:center;padding:28px;color:#7a8a7e;">
+          <td colspan="${colspan}" style="text-align:center;padding:28px;color:#7a8a7e;">
             Odds not available for this market yet.
           </td>
         </tr>
@@ -161,7 +190,7 @@
     }
 
     return players.map((player) => {
-      const cells = sportsbooks.map((book) => renderOddsCell(player.odds?.[book])).join('');
+      const cells = books.map((book) => renderOddsCell(player.odds?.[book])).join('');
 
       return `
         <tr>
@@ -173,6 +202,10 @@
   };
 
   const renderActiveBracket = () => {
+    if (!Array.isArray(brackets) || brackets.length === 0) {
+      return;
+    }
+
     const bracket = brackets.find((item) => item.key === activeKey) || brackets[0];
 
     if (bracket?.key) {
@@ -180,9 +213,11 @@
       panel.dataset.activeKey = activeKey;
     }
 
+    const books = sportsbooks;
+
     renderTabs();
-    renderHead();
-    bodyEl.innerHTML = renderBracketBody(bracket);
+    renderHead(books);
+    bodyEl.innerHTML = renderBracketBody(bracket, books);
   };
 
   const renderUpdated = (payload) => {
@@ -272,11 +307,19 @@
   tabsEl?.addEventListener('click', (event) => {
     const button = event.target.closest('[data-bracket-key]');
 
-    if (!button) {
+    if (!button || !tabsEl.contains(button)) {
       return;
     }
 
-    activeKey = button.dataset.bracketKey;
+    event.preventDefault();
+
+    const nextKey = button.dataset.bracketKey;
+
+    if (!nextKey || nextKey === activeKey) {
+      return;
+    }
+
+    activeKey = nextKey;
     panel.dataset.activeKey = activeKey;
     renderActiveBracket();
   });

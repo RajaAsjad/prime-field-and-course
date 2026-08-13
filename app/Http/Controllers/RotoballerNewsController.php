@@ -17,6 +17,12 @@ class RotoballerNewsController extends Controller
 
         abort_if($article === null, 404);
 
-        return view('pages.news.show', compact('article'));
+        $related = collect($this->golfOddsService->getNewsFeed()['items'] ?? [])
+            ->reject(fn (array $item) => (int) ($item['id'] ?? 0) === $newsId)
+            ->take(3)
+            ->values()
+            ->all();
+
+        return view('pages.news.show', compact('article', 'related'));
     }
 }

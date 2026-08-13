@@ -1,6 +1,6 @@
 (function () {
   const feed = document.getElementById('rotoballer-news-feed');
-  const wrapper = document.getElementById('rb-news-swiper-wrapper');
+  const wrapper = document.getElementById('rb-news-wrapper');
   const updatedEl = document.getElementById('rotoballer-news-updated');
   const descEl = document.getElementById('rotoballer-news-desc');
   const controlsEl = feed?.querySelector('.rb-news-controls');
@@ -64,7 +64,7 @@
             ${date}
           </div>
           <h3 class="rb-news-title">${escapeHtml(item.title || 'Untitled')}</h3>
-          <p class="rb-news-excerpt">${escapeHtml(truncate(item.content, 220))}</p>
+          <p class="rb-news-excerpt">${escapeHtml(truncate(item.content, 160))}</p>
           <div class="rb-news-card__foot">
             <span class="rb-news-source">${escapeHtml(item.source || 'RotoBaller')}</span>
             ${link}
@@ -72,6 +72,27 @@
         </article>
       </div>
     `;
+  };
+
+  const syncNavButtons = (swiper, prevBtn, nextBtn) => {
+    if (!swiper) {
+      return;
+    }
+
+    const atStart = swiper.isBeginning;
+    const atEnd = swiper.isEnd;
+
+    if (prevBtn) {
+      prevBtn.disabled = atStart;
+      prevBtn.classList.toggle('is-disabled', atStart);
+      prevBtn.setAttribute('aria-disabled', atStart ? 'true' : 'false');
+    }
+
+    if (nextBtn) {
+      nextBtn.disabled = atEnd;
+      nextBtn.classList.toggle('is-disabled', atEnd);
+      nextBtn.setAttribute('aria-disabled', atEnd ? 'true' : 'false');
+    }
   };
 
   const initSwiper = () => {
@@ -92,12 +113,15 @@
     }
 
     if (controlsEl) {
-      controlsEl.style.display = slides.length > 1 ? '' : 'none';
+      controlsEl.style.display = '';
     }
+
+    const prevBtn = feed.querySelector('.rb-news-prev');
+    const nextBtn = feed.querySelector('.rb-news-next');
 
     newsSwiper = new Swiper(swiperEl, {
       slidesPerView: 1,
-      spaceBetween: 20,
+      spaceBetween: 18,
       grabCursor: true,
       watchOverflow: true,
       pagination: {
@@ -106,30 +130,28 @@
         bulletClass: 'car-dot',
         bulletActiveClass: 'on',
       },
+      navigation: {
+        prevEl: prevBtn,
+        nextEl: nextBtn,
+        disabledClass: 'is-disabled',
+      },
       breakpoints: {
-        600: {
-          slidesPerView: 2,
-        },
-        900: {
-          slidesPerView: 3,
-        },
+        700: { slidesPerView: 2 },
+        1100: { slidesPerView: 3 },
+      },
+      on: {
+        init: (swiper) => syncNavButtons(swiper, prevBtn, nextBtn),
+        slideChange: (swiper) => syncNavButtons(swiper, prevBtn, nextBtn),
+        reachBeginning: (swiper) => syncNavButtons(swiper, prevBtn, nextBtn),
+        reachEnd: (swiper) => syncNavButtons(swiper, prevBtn, nextBtn),
+        fromEdge: (swiper) => syncNavButtons(swiper, prevBtn, nextBtn),
+        resize: (swiper) => syncNavButtons(swiper, prevBtn, nextBtn),
       },
     });
-
-    const prevBtn = feed.querySelector('.rb-news-prev');
-    const nextBtn = feed.querySelector('.rb-news-next');
-
-    if (prevBtn) {
-      prevBtn.onclick = () => newsSwiper?.slidePrev();
-    }
-
-    if (nextBtn) {
-      nextBtn.onclick = () => newsSwiper?.slideNext();
-    }
   };
 
   const renderItems = (items) => {
-    const latestItems = Array.isArray(items) ? items.slice(0, 6) : [];
+    const latestItems = Array.isArray(items) ? items : [];
 
     if (latestItems.length === 0) {
       wrapper.innerHTML = `
@@ -137,9 +159,7 @@
           <p class="body-lg rb-news-empty">No RotoBaller news available right now.</p>
         </div>
       `;
-
       initSwiper();
-
       return;
     }
 
@@ -152,25 +172,26 @@
       return;
     }
 
-    if (payload.error) {
+    if (payload.error && !(payload.items || []).length) {
       updatedEl.textContent = payload.error;
-
       return;
     }
 
+    const count = Array.isArray(payload.items) ? payload.items.length : 0;
     const when = payload.updated_at
       ? new Date(payload.updated_at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
       : 'just now';
 
-    updatedEl.textContent = `Last updated ${when}. Auto-refreshing every ${Math.round(refreshMs / 1000)} seconds.`;
+    updatedEl.textContent = `${count} stories · Last updated ${when}. Auto-refreshing every ${Math.round(refreshMs / 1000)} seconds.`;
   };
 
-  const updateDesc = (seconds) => {
-    if (!descEl || !seconds) {
+  const updateDesc = (seconds, count) => {
+    if (!descEl) {
       return;
     }
 
-    descEl.textContent = `Latest PGA Tour player news and matchup outlooks from RotoBaller. Auto-refreshes every ${seconds} seconds.`;
+    const countText = count ? ` Showing ${count} PGA stories from the last 2 weeks.` : '';
+    descEl.textContent = `Latest PGA Tour player news and matchup outlooks from RotoBaller.${countText} Auto-refreshes every ${seconds} seconds.`;
   };
 
   const fetchNews = async () => {
@@ -195,12 +216,17 @@
       if (payload.refresh_seconds) {
         refreshMs = Number(payload.refresh_seconds) * 1000;
         feed.dataset.refreshMs = String(refreshMs);
-        updateDesc(payload.refresh_seconds);
       }
 
       renderItems(payload.items || []);
       renderUpdated(payload);
+      updateDesc(payload.refresh_seconds || Math.round(refreshMs / 1000), (payload.items || []).length);
     } catch (error) {
+      if (!wrapper.querySelector('.rb-news-card')) {
+        wrapper.innerHTML = '<div class="swiper-slide"><p class="body-lg rb-news-empty">Unable to refresh RotoBaller news right now.</p></div>';
+        initSwiper();
+      }
+
       if (updatedEl) {
         updatedEl.textContent = 'Unable to refresh RotoBaller news right now.';
       }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tip;
+use App\Services\FieldLevelMedia\FlmContentService;
 use App\Services\SportsDataIo\GolfOddsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -11,6 +11,7 @@ class HomeController extends Controller
 {
     public function __construct(
         private readonly GolfOddsService $golfOddsService,
+        private readonly FlmContentService $flmContentService,
     ) {}
 
     public function index(): View
@@ -20,12 +21,7 @@ class HomeController extends Controller
         $hotProps = $this->golfOddsService->getHotPropsBracket();
         $competitionFeeds = $this->golfOddsService->getCompetitionFeeds();
         $newsFeed = $this->golfOddsService->getNewsFeed();
-
-        $tips = Tip::query()
-            ->with('tipsCategory')
-            ->where('status', true)
-            ->orderBy('id')
-            ->get();
+        $flmFeed = $this->flmContentService->getFeed();
 
         return view('pages.home', [
             'liveOdds' => $liveOdds,
@@ -37,7 +33,7 @@ class HomeController extends Controller
             'competitionRefreshSeconds' => $competitionFeeds['refresh_seconds'] ?? config('sportsdata.competition.refresh_seconds'),
             'newsFeed' => $newsFeed,
             'newsRefreshSeconds' => $newsFeed['refresh_seconds'] ?? config('sportsdata.news.refresh_seconds'),
-            'tips' => $tips,
+            'flmFeed' => $flmFeed,
         ]);
     }
 
@@ -53,6 +49,14 @@ class HomeController extends Controller
     {
         return response()
             ->json($this->golfOddsService->getNewsFeed())
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
+            ->header('Pragma', 'no-cache');
+    }
+
+    public function flmStories(): JsonResponse
+    {
+        return response()
+            ->json($this->flmContentService->getFeed())
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
             ->header('Pragma', 'no-cache');
     }

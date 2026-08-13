@@ -28,6 +28,8 @@
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
+  const isBetMgmBook = (book) => String(book).replace(/\s+/g, '').toLowerCase() === 'betmgm';
+
   const formatDate = (iso) => {
     if (!iso) {
       return '';
@@ -124,14 +126,11 @@
   const renderTable = (data) => {
     const players = data.players || [];
     const configuredBooks = data.sportsbooks?.length ? data.sportsbooks : sportsbooks;
-    const books = configuredBooks.filter((book) =>
-      players.some((player) => Boolean(player.odds?.[book]?.american))
-    );
-    sportsbooks = books.length ? books : configuredBooks;
+    sportsbooks = configuredBooks;
     table.dataset.sportsbooks = JSON.stringify(sportsbooks);
 
     const showScore = Boolean(data.scores_available) || players.some((player) => Boolean(player.score?.to_par));
-    const headCells = sportsbooks.map((book) => `<th>${escapeHtml(book)}</th>`).join('');
+    const headCells = sportsbooks.map((book) => `<th${isBetMgmBook(book) ? ' class="th-book-mgm"' : ''}>${escapeHtml(book)}</th>`).join('');
     const isLive = Boolean(data.is_live);
     const colspan = sportsbooks.length + 1 + (showScore ? 1 : 0);
 

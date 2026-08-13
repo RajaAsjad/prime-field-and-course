@@ -51,24 +51,7 @@ class GolfOddsService
             $tournamentId = (int) $tournament['TournamentID'];
             $isLive = (bool) ($tournament['IsInProgress'] ?? false);
             $leaderboard = $this->fetchLeaderboardScores($tournamentId, $isLive);
-
-            try {
-                $oddsRows = $this->fetchTournamentOdds($tournamentId, $isLive);
-            } catch (RuntimeException $exception) {
-                Log::warning('SportsDataIO golf odds unavailable', ['message' => $exception->getMessage()]);
-
-                return [
-                    'tournament' => $formattedTournament,
-                    'weather' => $weather,
-                    'sportsbooks' => $sportsbooks,
-                    'players' => $this->buildLiveScoreRows($leaderboard, collect(), $tournament),
-                    'is_live' => $isLive,
-                    'scores_available' => $leaderboard !== [],
-                    'refresh_seconds' => $this->refreshSeconds($isLive),
-                    'updated_at' => now()->toIso8601String(),
-                    'error' => $this->friendlyOddsError($exception->getMessage()),
-                ];
-            }
+            $oddsRows = $this->fetchTournamentOdds($tournamentId, $isLive);
 
             if ($oddsRows->isEmpty() && $leaderboard === []) {
                 return [
@@ -76,6 +59,7 @@ class GolfOddsService
                     'weather' => $weather,
                     'sportsbooks' => $sportsbooks,
                     'players' => [],
+                    'market_players' => [],
                     'is_live' => $isLive,
                     'scores_available' => false,
                     'refresh_seconds' => $this->refreshSeconds($isLive),
@@ -89,13 +73,10 @@ class GolfOddsService
                 : $this->buildPlayerRows($oddsRows, $tournament, $leaderboard, applyBestValueMarks: false);
 
             $playerLimit = (int) config('sportsdata.odds.player_limit', 10);
-            $players = array_slice(
-                $this->applyBestValueMarks($rawPlayers),
-                0,
-                $playerLimit
-            );
+            $players = $playerLimit > 0
+                ? array_slice($rawPlayers, 0, $playerLimit)
+                : $rawPlayers;
 
-            $visibleSportsbooks = $this->sportsbooksPresentInPlayers($players, $sportsbooks);
             $scoresAvailable = collect($players)->contains(
                 fn (array $player) => ! empty($player['score']['to_par'] ?? null)
             );
@@ -103,7 +84,7 @@ class GolfOddsService
             return [
                 'tournament' => $formattedTournament,
                 'weather' => $weather,
-                'sportsbooks' => $visibleSportsbooks !== [] ? $visibleSportsbooks : $sportsbooks,
+                'sportsbooks' => $sportsbooks,
                 'players' => $players,
                 'market_players' => $rawPlayers,
                 'is_live' => $isLive,
@@ -273,13 +254,165 @@ class GolfOddsService
      */
     private function fetchNewsRows(): array
     {
-        $rows = $this->getJson(
-            $this->golfUrl('News'),
-            (int) config('sportsdata.news.cache_ttl', 300),
-            'sportsdata:golf:news'
+        $ttl = (int) config('sportsdata.news.cache_ttl', 300);
+        $lookbackDays = max(1, (int) config('sportsdata.news.lookback_days', 14));
+
+        return Cache::remember('sportsdata:golf:news:combined:v3', $ttl, function () use ($lookbackDays) {
+            $cutoff = now()->subDays($lookbackDays)->startOfDay();
+            $merged = $this->fetchPremiumNewsRows($cutoff, $lookbackDays);
+
+            if ($merged === []) {
+                $merged = $this->fetchBasicNewsRows($cutoff, $lookbackDays);
+            }
+
+            return array_values($merged);
+        });
+    }
+
+    /**
+     * Full RotoBaller premium wire: latest dump plus every day in the lookback window.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function fetchPremiumNewsRows(\DateTimeInterface $cutoff, int $lookbackDays): array
+    {
+        $merged = [];
+
+        try {
+            $this->mergeNewsPayload($merged, $this->request($this->premiumNewsUrl('RotoBallerPremiumNews')), $cutoff);
+        } catch (\Throwable $exception) {
+            Log::warning('SportsDataIO premium golf news failed', [
+                'message' => $exception->getMessage(),
+            ]);
+        }
+
+        $this->mergeNewsByDateResponses(
+            $merged,
+            $this->poolNewsByDate($lookbackDays, fn (string $date) => $this->premiumNewsUrl('RotoBallerPremiumNewsByDate/'.$date)),
+            $cutoff
         );
 
-        return is_array($rows) ? $rows : [];
+        return $merged;
+    }
+
+    /**
+     * Limited SportsDataIO golf News feed — usually a handful of recent blurbs.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function fetchBasicNewsRows(\DateTimeInterface $cutoff, int $lookbackDays): array
+    {
+        $merged = [];
+
+        try {
+            $this->mergeNewsPayload($merged, $this->request($this->golfUrl('News')), $cutoff);
+        } catch (\Throwable $exception) {
+            Log::warning('SportsDataIO golf news failed', [
+                'message' => $exception->getMessage(),
+            ]);
+        }
+
+        $this->mergeNewsByDateResponses(
+            $merged,
+            $this->poolNewsByDate($lookbackDays, fn (string $date) => $this->golfUrl('NewsByDate/'.$date)),
+            $cutoff
+        );
+
+        return $merged;
+    }
+
+    /**
+     * @param  callable(string): string  $urlForDate
+     * @return array<string, mixed>
+     */
+    private function poolNewsByDate(int $lookbackDays, callable $urlForDate): array
+    {
+        $apiKey = (string) config('sportsdata.api_key');
+
+        if ($apiKey === '') {
+            return [];
+        }
+
+        $dates = [];
+
+        for ($i = 0; $i < $lookbackDays; $i++) {
+            $dates[] = strtoupper(now()->subDays($i)->format('Y-M-d'));
+        }
+
+        return Http::pool(function ($pool) use ($dates, $apiKey, $urlForDate) {
+            foreach ($dates as $date) {
+                $pool->as($date)
+                    ->timeout(30)
+                    ->withHeaders([self::HEADER => $apiKey])
+                    ->get($urlForDate($date));
+            }
+        });
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $merged
+     * @param  array<string, mixed>  $responses
+     */
+    private function mergeNewsByDateResponses(array &$merged, array $responses, \DateTimeInterface $cutoff): void
+    {
+        foreach ($responses as $date => $response) {
+            if (! $response instanceof \Illuminate\Http\Client\Response) {
+                continue;
+            }
+
+            if (! $response->successful()) {
+                Log::debug('SportsDataIO golf news by date skipped', [
+                    'date' => $date,
+                    'status' => $response->status(),
+                ]);
+
+                continue;
+            }
+
+            $this->mergeNewsPayload($merged, $response->json(), $cutoff);
+        }
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $merged
+     */
+    private function mergeNewsPayload(array &$merged, mixed $json, \DateTimeInterface $cutoff): void
+    {
+        if (! is_array($json)) {
+            return;
+        }
+
+        if (isset($json['NewsID'])) {
+            $this->mergeNewsRow($merged, $json, $cutoff);
+
+            return;
+        }
+
+        foreach ($json as $row) {
+            $this->mergeNewsRow($merged, $row, $cutoff);
+        }
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $merged
+     */
+    private function mergeNewsRow(array &$merged, mixed $row, \DateTimeInterface $cutoff): void
+    {
+        if (! is_array($row) || empty($row['NewsID'])) {
+            return;
+        }
+
+        if (! empty($row['Updated'])) {
+            try {
+                if (\Carbon\Carbon::parse($row['Updated'])->lt($cutoff)) {
+                    return;
+                }
+            } catch (\Throwable) {
+                // Keep the row if the timestamp cannot be parsed.
+            }
+        }
+
+        $merged[(int) $row['NewsID']] = $row;
     }
 
     /**
@@ -337,7 +470,7 @@ class GolfOddsService
 
             return [
                 'tournament' => $this->formatTournament($tournament),
-                'sportsbooks' => $this->sportsbooksPresentInPropBrackets($brackets, $sportsbooks),
+                'sportsbooks' => $sportsbooks,
                 'brackets' => $brackets,
                 'active_key' => $brackets[0]['key'] ?? ($empty['active_key']),
                 'refresh_seconds' => $refreshSeconds,
@@ -664,7 +797,6 @@ class GolfOddsService
      */
     public function getNewsFeed(): array
     {
-        $limit = (int) config('sportsdata.news.limit', 6);
         $refreshSeconds = (int) config('sportsdata.news.refresh_seconds', 300);
 
         $empty = [
@@ -678,7 +810,6 @@ class GolfOddsService
             $items = collect($this->fetchNewsRows())
                 ->filter(fn ($row) => is_array($row))
                 ->sortByDesc(fn (array $row) => $row['Updated'] ?? '')
-                ->take($limit)
                 ->map(fn (array $row) => $this->formatNewsItem($row))
                 ->values()
                 ->all();
@@ -788,7 +919,7 @@ class GolfOddsService
      */
     private function fetchTournamentOdds(int $tournamentId, bool $inProgress): Collection
     {
-        $cacheKey = "sportsdata:odds:{$tournamentId}:" . ($inProgress ? 'live' : 'pregame');
+        $cacheKey = "sportsdata:odds:{$tournamentId}:v5:" . ($inProgress ? 'live' : 'pregame');
         $ttl = $inProgress
             ? (int) config('sportsdata.cache.scores_ttl')
             : config('sportsdata.cache.odds_ttl');
@@ -828,9 +959,10 @@ class GolfOddsService
 
             return collect();
         } catch (RuntimeException $exception) {
-            if (str_contains($exception->getMessage(), 'not authorized')) {
-                throw $exception;
-            }
+            Log::warning('SportsDataIO odds endpoint skipped', [
+                'path' => $path,
+                'message' => $exception->getMessage(),
+            ]);
 
             return collect();
         }
@@ -857,7 +989,7 @@ class GolfOddsService
     {
         $group = trim((string) config('sportsdata.sportsbook_group', ''));
         $groupKey = $group !== '' ? $group : 'all';
-        $cacheKey = "sportsdata:props-markets:{$tournamentId}:{$groupKey}:v2:" . ($inProgress ? 'live' : 'pregame');
+        $cacheKey = "sportsdata:props-markets:{$tournamentId}:{$groupKey}:v3:" . ($inProgress ? 'live' : 'pregame');
         $ttl = $inProgress
             ? (int) config('sportsdata.cache.scores_ttl')
             : (int) config('sportsdata.props.cache_ttl', 120);
@@ -901,6 +1033,7 @@ class GolfOddsService
             $neededBetTypes = collect(config('sportsdata.props.brackets', []))
                 ->flatMap(fn ($bracket) => is_array($bracket) ? ($bracket['bet_types'] ?? []) : [])
                 ->filter()
+                ->flatMap(fn ($type) => [$type, $type.' (Including Ties)'])
                 ->unique()
                 ->values()
                 ->all();
@@ -940,7 +1073,17 @@ class GolfOddsService
         $matchedMarkets = $markets->filter(function (array $market) use ($betTypes) {
             $betType = (string) ($market['BettingBetType'] ?? '');
 
-            return $betTypes->contains($betType);
+            if ($betTypes->contains($betType)) {
+                return true;
+            }
+
+            foreach ($betTypes as $type) {
+                if ($betType === $type.' (Including Ties)') {
+                    return true;
+                }
+            }
+
+            return false;
         })->values();
 
         if ($matchedMarkets->isEmpty()) {
@@ -962,46 +1105,50 @@ class GolfOddsService
         }
 
         if ($marketFilter === 'yes_no_tournament') {
-            $market = $matchedMarkets->first(function (array $market) {
-                $types = collect($market['BettingOutcomes'] ?? [])
-                    ->pluck('BettingOutcomeType')
-                    ->filter()
-                    ->map(fn ($type) => strtolower((string) $type));
-
-                return $types->contains('yes') && $types->contains('no');
-            });
-
-            if (! is_array($market)) {
-                return [
-                    'key' => $key,
-                    'label' => $label,
-                    'type' => 'yes_no',
-                    'outcomes' => [],
-                ];
-            }
+            $merged = $this->mergeMarketOutcomes($matchedMarkets);
 
             return [
                 'key' => $key,
                 'label' => $label,
                 'type' => 'yes_no',
-                'outcomes' => $this->buildYesNoOutcomes($market, $sportsbooks),
+                'outcomes' => $this->buildYesNoOutcomes($merged, $sportsbooks),
             ];
         }
 
-        $market = $matchedMarkets->first();
-
-        if (! is_array($market)) {
-            return null;
-        }
-
-        $limit = (int) ($config['limit'] ?? config('sportsdata.props.player_limit', 20));
+        $merged = $this->mergeMarketOutcomes($matchedMarkets);
+        $limit = array_key_exists('limit', $config)
+            ? (int) $config['limit']
+            : (int) config('sportsdata.props.player_limit', 0);
 
         return [
             'key' => $key,
             'label' => $label,
             'type' => 'player',
-            'players' => $this->buildPlayerPropRows($market, $sportsbooks, $limit),
+            'players' => $this->buildPlayerPropRows($merged, $sportsbooks, $limit),
         ];
+    }
+
+    /**
+     * @param  Collection<int, array<string, mixed>>  $markets
+     * @return array{BettingOutcomes: list<array<string, mixed>>}
+     */
+    private function mergeMarketOutcomes(Collection $markets): array
+    {
+        $outcomes = [];
+
+        foreach ($markets as $market) {
+            if (! is_array($market)) {
+                continue;
+            }
+
+            foreach ($market['BettingOutcomes'] ?? [] as $outcome) {
+                if (is_array($outcome)) {
+                    $outcomes[] = $outcome;
+                }
+            }
+        }
+
+        return ['BettingOutcomes' => $outcomes];
     }
 
     /**
@@ -1064,7 +1211,7 @@ class GolfOddsService
      */
     private function buildPlayerPropRows(array $market, array $sportsbooks, ?int $limit = null): array
     {
-        $limit = max(1, $limit ?? (int) config('sportsdata.props.player_limit', 20));
+        $limit = $limit ?? (int) config('sportsdata.props.player_limit', 0);
         $grouped = [];
 
         foreach ($market['BettingOutcomes'] ?? [] as $outcome) {
@@ -1102,7 +1249,6 @@ class GolfOddsService
         return collect($grouped)
             ->map(function (array $odds, string $name) {
                 if ($odds !== []) {
-                    // Highlight best payout for the bettor (longest price).
                     $bestBook = collect($odds)->sortByDesc('decimal')->keys()->first();
                     $odds[$bestBook]['best'] = true;
                 }
@@ -1115,7 +1261,6 @@ class GolfOddsService
                 return [
                     'name' => $name,
                     'odds' => $odds,
-                    // Favorites first: Consensus ASC, then players missing Consensus by shortest book price.
                     'sort_group' => $hasConsensus ? 0 : 1,
                     'sort_decimal' => $hasConsensus
                         ? (float) $odds['Consensus']['decimal']
@@ -1127,7 +1272,7 @@ class GolfOddsService
                 ['sort_decimal', 'asc'],
                 ['name', 'asc'],
             ])
-            ->take($limit)
+            ->when($limit > 0, fn (Collection $rows) => $rows->take($limit))
             ->map(function (array $player) {
                 unset($player['sort_group'], $player['sort_decimal']);
 
@@ -1504,7 +1649,6 @@ class GolfOddsService
      */
     private function groupOddsByPlayer(Collection $oddsRows): array
     {
-        $sportsbookMap = config('sportsdata.sportsbooks', []);
         $grouped = [];
 
         foreach ($oddsRows as $row) {
@@ -1843,6 +1987,17 @@ class GolfOddsService
     private function golfUrl(string $path): string
     {
         return rtrim((string) config('sportsdata.base_urls.golf'), '/') . '/' . ltrim($path, '/');
+    }
+
+    private function premiumNewsUrl(string $path): string
+    {
+        $base = (string) config('sportsdata.base_urls.news', 'https://api.sportsdata.io/v3/golf/news-rotoballer/json');
+
+        if ($base === '') {
+            $base = 'https://api.sportsdata.io/v3/golf/news-rotoballer/json';
+        }
+
+        return rtrim($base, '/') . '/' . ltrim($path, '/');
     }
 
     private function oddsUrl(string $path): string
