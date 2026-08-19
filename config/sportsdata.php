@@ -48,22 +48,22 @@ return [
         'refresh_seconds' => (int) env('SPORTSDATA_PROPS_REFRESH_SECONDS', 120),
         'brackets' => [
             'top_5' => [
-                'label' => 'Top 5',
+                'label' => 'Top 5 Finish',
                 'bet_types' => ['Top 5 Finish'],
                 'limit' => 5,
             ],
             'top_10' => [
-                'label' => 'Top 10',
+                'label' => 'Top 10 Finish',
                 'bet_types' => ['Top 10 Finish'],
                 'limit' => 10,
             ],
             'top_20' => [
-                'label' => 'Top 20',
+                'label' => 'Top 20 Finish',
                 'bet_types' => ['Top 20 Finish'],
                 'limit' => 20,
             ],
             'all' => [
-                'label' => 'All',
+                'label' => 'All Finishes',
                 'bet_types' => ['Top 20 Finish', 'Top 10 Finish', 'Top 5 Finish'],
                 'limit' => 0,
                 'union_players' => true,
