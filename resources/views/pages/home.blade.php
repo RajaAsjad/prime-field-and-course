@@ -542,6 +542,22 @@
       </div>
     </section>
 
+    <section class="betmgm-offer">
+      <div class="wrap">
+        <div class="betmgm-banner">
+          <span class="betmgm-banner__logo">BetMGM</span>
+          <span class="betmgm-banner__copy">
+            <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
+            <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
+          </span>
+          <a href="https://www.anrdoezrs.net/click-101764042-17337458"
+            class="betmgm-banner__cta"
+            target="_blank"
+            rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
+      </div>
+    </section>
     <section id="rotoballer-news" class="section-green-pale">
       <div class="wrap">
         <div class="sec-head rev">
