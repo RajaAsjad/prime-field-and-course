@@ -1659,10 +1659,10 @@
 
 @push('scripts')
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script src="{{ asset('assets/js/live-odds.js') }}?v={{ filemtime(public_path('assets/js/live-odds.js')) }}"></script>
-  <script src="{{ asset('assets/js/hot-props.js') }}?v={{ filemtime(public_path('assets/js/hot-props.js')) }}"></script>
-  <script src="{{ asset('assets/js/rotoballer-news.js') }}?v={{ filemtime(public_path('assets/js/rotoballer-news.js')) }}"></script>
-  <script src="{{ asset('assets/js/flm-stories.js') }}?v={{ filemtime(public_path('assets/js/flm-stories.js')) }}"></script>
+  <script src="/assets/js/live-odds.js?v={{ filemtime(public_path('assets/js/live-odds.js')) }}"></script>
+  <script src="/assets/js/hot-props.js?v={{ filemtime(public_path('assets/js/hot-props.js')) }}"></script>
+  <script src="/assets/js/rotoballer-news.js?v={{ filemtime(public_path('assets/js/rotoballer-news.js')) }}"></script>
+  <script src="/assets/js/flm-stories.js?v={{ filemtime(public_path('assets/js/flm-stories.js')) }}"></script>
 @endpush
 
 {{-- Main content end --}}

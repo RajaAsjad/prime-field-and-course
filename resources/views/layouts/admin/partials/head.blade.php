@@ -10,10 +10,10 @@
       content="admin template, Cuba admin template, dashboard template, flat admin template, responsive admin template, web app"
     />
     <meta name="author" content="pixelstrap" />
-    <link rel="icon" href="{{ asset('assets/images/favicon.svg') }}" type="image/svg+xml" />
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml" />
     <link
       rel="shortcut icon"
-      href="{{ asset('assets/images/favicon.svg') }}"
+      href="/assets/images/favicon.svg"
       type="image/svg+xml"
     />
     <!-- Google font-->
@@ -29,82 +29,82 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/fontawesome.css') }}"
+      href="/assets/admin/css/vendors/fontawesome.css"
     />
     <!-- ico-font-->
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/icofont.css') }}"
+      href="/assets/admin/css/vendors/icofont.css"
     />
     <!-- Themify icon-->
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/themify.css') }}"
+      href="/assets/admin/css/vendors/themify.css"
     />
     <!-- Flag icon-->
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/flag-icon.css') }}"
+      href="/assets/admin/css/vendors/flag-icon.css"
     />
     <!-- Feather icon-->
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/feather-icon.css') }}"
+      href="/assets/admin/css/vendors/feather-icon.css"
     />
     <!-- Plugins css start-->
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/slick.css') }}"
+      href="/assets/admin/css/vendors/slick.css"
     />
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/slick-theme.css') }}"
+      href="/assets/admin/css/vendors/slick-theme.css"
     />
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/scrollbar.css') }}"
+      href="/assets/admin/css/vendors/scrollbar.css"
     />
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/animate.css') }}"
+      href="/assets/admin/css/vendors/animate.css"
     />
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/jquery.dataTables.css') }}"
+      href="/assets/admin/css/vendors/jquery.dataTables.css"
     />
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/select.bootstrap5.css') }}"
+      href="/assets/admin/css/vendors/select.bootstrap5.css"
     />
     <!-- Plugins css Ends-->
     <!-- Bootstrap css-->
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/vendors/bootstrap.css') }}"
+      href="/assets/admin/css/vendors/bootstrap.css"
     />
     <!-- App css-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="/assets/admin/css/style.css" />
     <!-- Responsive css-->
     <link
       rel="stylesheet"
       type="text/css"
-      href="{{ asset('assets/admin/css/responsive.css') }}"
+      href="/assets/admin/css/responsive.css"
     />
-    <script defer src="{{ asset('assets/admin/css/responsive.js') }}"></script>
-    <script defer src="{{ asset('assets/admin/css/style.js') }}"></script>
-    <link href="{{ asset('assets/admin/css/responsive.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/admin/css/style.css') }}" rel="stylesheet" />
+    <script defer src="/assets/admin/css/responsive.js"></script>
+    <script defer src="/assets/admin/css/style.js"></script>
+    <link href="/assets/admin/css/responsive.css" rel="stylesheet" />
+    <link href="/assets/admin/css/style.css" rel="stylesheet" />
     <style>
       .admin-brand-logo {
         display: flex;
@@ -150,5 +150,5 @@
         color: rgba(255, 255, 255, .45);
       }
     </style>
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/admin-theme.css') }}" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/admin-theme.css" />
   

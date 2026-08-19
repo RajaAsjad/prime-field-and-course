@@ -25,15 +25,15 @@
     <link rel="icon" href="{{ $dbFavicon }}" type="{{ $faviconType }}" />
     <link rel="apple-touch-icon" href="{{ $dbFavicon }}" />
   @else
-    <link rel="icon" href="{{ asset('assets/images/favicon.svg') }}" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="{{ asset('assets/images/favicon.svg') }}" />
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/images/favicon.svg" />
   @endif
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ filemtime(public_path('assets/css/style.css')) }}" />
+  <link rel="stylesheet" href="/assets/css/style.css?v={{ filemtime(public_path('assets/css/style.css')) }}" />
   @stack('styles')
 </head>
 
@@ -47,7 +47,7 @@
   @include('partials.footer')
 
   {{-- Global scripts --}}
-  <script src="{{ asset('assets/js/main.js') }}"></script>
+  <script src="/assets/js/main.js"></script>
   @stack('scripts')
 </body>
 

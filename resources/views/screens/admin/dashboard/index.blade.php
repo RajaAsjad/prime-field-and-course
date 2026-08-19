@@ -33,10 +33,10 @@
                   <div class="widget-round primary">
                     <div class="bg-round">
                       <svg aria-hidden="true">
-                        <use href="{{ asset('assets/admin/svg/icon-sprite.svg#c-customer') }}"></use>
+                        <use href="/assets/admin/svg/icon-sprite.svg#c-customer"></use>
                       </svg>
                       <svg class="half-circle svg-fill" aria-hidden="true">
-                        <use href="{{ asset('assets/admin/svg/icon-sprite.svg#halfcircle') }}"></use>
+                        <use href="/assets/admin/svg/icon-sprite.svg#halfcircle"></use>
                       </svg>
                     </div>
                   </div>

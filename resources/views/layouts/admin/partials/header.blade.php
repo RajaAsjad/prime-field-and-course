@@ -18,7 +18,7 @@
         <li>
           <div class="mode">
             <svg>
-              <use href="{{ asset('assets/admin/svg/icon-sprite.svg#moon') }}"></use>
+              <use href="/assets/admin/svg/icon-sprite.svg#moon"></use>
             </svg>
           </div>
         </li>
@@ -26,7 +26,7 @@
           <div class="d-flex profile-media">
             <img
               class="b-r-10"
-              src="{{ asset('assets/admin/images/dashboard/profile.png') }}"
+              src="/assets/admin/images/dashboard/profile.png"
               alt="" />
             <div class="flex-grow-1">
               <span>{{ Auth::user()?->name }}</span>
