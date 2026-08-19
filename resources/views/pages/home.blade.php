@@ -13,9 +13,10 @@
         <h1 class="hero-h1"><span>Golf Betting</span> <span class="gold">Made Simple.</span> <span>Expert Picks &
             Exclusive Deals.</span></h1>
         <p class="hero-sub">All your favourite sportsbooks, insider tips, and tournament updates in one place.</p>
-        <div class="hero-btns"><a href="#best-picks" class="btn btn-gold">View Best Picks</a><a href="#promos" class="btn btn-outline-hero">Sign Up & Get Bonuses</a></div>
-        </div>
-      </div>
+        <div class="hero-btns"><a href="#best-picks" class="btn btn-gold">View Best Picks</a><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
+          target="_blank" rel="sponsored noopener noreferrer" class="btn btn-outline-hero">Sign Up & Get Bonuses</a></div>
+        <p class="gambling-disclaimer">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
+      </div> 
     </section>
 
     <section id="strategy" class="section-white">
@@ -84,25 +85,22 @@
       </div>
     </section>
 
-    <section class="section-white betmgm-offer">
+    <section class="betmgm-offer">
       <div class="wrap">
-        <a
-          href="https://www.anrdoezrs.net/click-101764042-17337458"
-          class="betmgm-banner" 
-          target="_blank"
-          rel="sponsored noopener noreferrer">
+        <div class="betmgm-banner">
           <span class="betmgm-banner__logo">BetMGM</span>
           <span class="betmgm-banner__copy">
             <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
             <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
           </span>
-          <span class="betmgm-banner__cta">Claim Offer <span aria-hidden="true">&rarr;</span></span>
-        </a>
+          <a href="https://www.anrdoezrs.net/click-101764042-17337458"
+            class="betmgm-banner__cta"
+            target="_blank"
+            rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
         <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
       </div>
-    </section>
-
-
+    </section> 
 
     <section id="promos" class="section-white">
       <div class="wrap">
@@ -117,32 +115,43 @@
             <div class="promo-ribbon">TOP PICK</div>
             <div class="book-name mgm"><span>BetMGM</span></div>
             <div class="promo-bonus">$1,500 Back</div>
-            <p class="promo-desc">First bet insurance up to $1,500.</p><a href="#promos" class="btn btn-gold"
+            <p class="promo-desc">First bet insurance up to $1,500.</p>
+            <a class="btn btn-gold" href="https://www.anrdoezrs.net/click-101764042-17337458" 
+              target="_blank" rel="sponsored noopener noreferrer"  
               style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
+              <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
           </div>
           <div class="promo-card rev rev-d2">
             <div class="book-name fd">FanDuel</div>
             <div class="promo-bonus">$150 Back</div>
-            <p class="promo-desc">No Sweat First Bet up to $150.</p><a href="#promos" class="btn btn-primary"
+            <p class="promo-desc">No Sweat First Bet up to $150.</p><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
+            target="_blank" rel="sponsored noopener noreferrer"  class="btn btn-primary"
             style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
+            <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
           </div>
           <div class="promo-card rev rev-d3"> 
             <div class="book-name dk">DraftKings</div>
             <div class="promo-bonus">$200 Bonus</div>
-            <p class="promo-desc">Bet $5, get $200 in bonus bets instantly.</p><a href="#promos" class="btn btn-primary"
+            <p class="promo-desc">Bet $5, get $200 in bonus bets instantly.</p><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
+            target="_blank" rel="sponsored noopener noreferrer"  class="btn btn-primary"
               style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
+            <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
           </div>
           <div class="promo-card rev rev-d4">
             <div class="book-name cz">Caesars</div>
             <div class="promo-bonus">$1,000 Back</div>
-            <p class="promo-desc">First bet up to $1,000 back as bonus.</p><a href="#promos" class="btn btn-primary"
+            <p class="promo-desc">First bet up to $1,000 back as bonus.</p><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
+            target="_blank" rel="sponsored noopener noreferrer"  class="btn btn-primary"
               style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
+            <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
           </div>
           <div class="promo-card rev rev-d5">
             <div class="book-name b365">Bet365</div>
             <div class="promo-bonus">$200 Bonus</div>
-            <p class="promo-desc">Bet $5 and receive $200 in bonus bets.</p><a href="#promos" class="btn btn-primary"
+            <p class="promo-desc">Bet $5 and receive $200 in bonus bets.</p><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
+            target="_blank" rel="sponsored noopener noreferrer"  class="btn btn-primary"
               style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
+            <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
           </div>
         </div>
       </div>
@@ -183,6 +192,23 @@
             </p>
           @endforelse
         </div>
+      </div>
+    </section>
+
+    <section class="betmgm-offer betmgm-offer-mt">
+      <div class="wrap">
+        <div class="betmgm-banner">
+          <span class="betmgm-banner__logo">BetMGM</span>
+          <span class="betmgm-banner__copy">
+            <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
+            <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
+          </span>
+          <a href="https://www.anrdoezrs.net/click-101764042-17337458"
+            class="betmgm-banner__cta"
+            target="_blank"
+            rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+        <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
       </div>
     </section>
 
@@ -362,7 +388,22 @@
             </div>
           </div>
         </div>
-
+        <section class="betmgm-offer betmgm-offer-mt">
+          <div class="wrap">
+            <div class="betmgm-banner">
+              <span class="betmgm-banner__logo">BetMGM</span>
+              <span class="betmgm-banner__copy">
+                <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
+                <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
+              </span>
+              <a href="https://www.anrdoezrs.net/click-101764042-17337458"
+                class="betmgm-banner__cta"
+                target="_blank"
+                rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
+            </div>
+            <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
+          </div>
+        </section>
         <div class="comp-grid rev" style="margin-top:22px;">
           <div class="comp-panel" style="grid-column:1 / -1;">
             <div class="comp-panel__head">
@@ -611,7 +652,25 @@
           </div>
         </div>
       </div>
+      <section class="betmgm-offer betmgm-offer-mt">
+        <div class="wrap">
+          <div class="betmgm-banner">
+            <span class="betmgm-banner__logo">BetMGM</span>
+            <span class="betmgm-banner__copy">
+              <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
+              <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
+            </span>
+            <a href="https://www.anrdoezrs.net/click-101764042-17337458"
+              class="betmgm-banner__cta"
+              target="_blank"
+              rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
+          </div>
+          <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
+        </div>
+      </section>
     </section>
+
+    
 
     <section id="tournaments" class="section-white">
       <div class="wrap">
@@ -1450,16 +1509,9 @@
       gap: 16px;
       padding: 18px 20px 18px 22px;
       background: #152816;
+      margin-top: 20px;
       border-radius: 22px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .16);
-      text-decoration: none;
-      color: inherit;
-      transition: transform .25s var(--ease-expo), box-shadow .25s var(--ease-expo)
-    }
-
-    .betmgm-banner:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, .22)
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .16)
     }
 
     .betmgm-banner__logo {
@@ -1498,6 +1550,9 @@
     }
 
     .betmgm-banner__cta {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
       flex-shrink: 0;
       display: inline-flex;
       align-items: center;
@@ -1510,13 +1565,66 @@
       font-weight: 700;
       font-size: .95rem;
       white-space: nowrap;
+      text-decoration: none;
       box-shadow: 0 4px 20px rgba(200, 168, 75, .3);
-      transition: filter .2s ease, box-shadow .2s ease
+      transform: translateY(0);
+      transition: transform .28s var(--ease-expo), box-shadow .28s var(--ease-expo), filter .28s ease
     }
 
-    .betmgm-banner:hover .betmgm-banner__cta {
-      filter: brightness(1.05);
-      box-shadow: 0 8px 24px rgba(200, 168, 75, .4)
+    .betmgm-banner__cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .5) 50%, transparent 65%);
+      transform: translateX(-130%);
+      pointer-events: none
+    }
+
+    .betmgm-banner__cta-label,
+    .betmgm-banner__cta-arrow {
+      position: relative;
+      z-index: 2
+    }
+
+    .betmgm-banner__cta-arrow {
+      display: inline-block;
+      transition: transform .28s var(--ease-expo)
+    }
+
+    .betmgm-banner__cta:hover {
+      transform: translateY(-3px) scale(1.04);
+      filter: brightness(1.08);
+      box-shadow: 0 12px 30px rgba(200, 168, 75, .55)
+    }
+
+    .betmgm-banner__cta:hover::before {
+      animation: betmgmShine .65s ease forwards
+    }
+
+    .betmgm-banner__cta:hover .betmgm-banner__cta-arrow {
+      transform: translateX(5px)
+    }
+
+    .betmgm-banner__cta:active {
+      transform: translateY(-1px) scale(1.02)
+    }
+
+    @keyframes betmgmShine {
+      to {
+        transform: translateX(130%)
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .betmgm-banner__cta,
+      .betmgm-banner__cta-arrow {
+        transition: none
+      }
+
+      .betmgm-banner__cta:hover::before {
+        animation: none
+      }
     }
 
     @media (max-width: 900px) {

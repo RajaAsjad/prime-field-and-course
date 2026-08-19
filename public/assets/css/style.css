@@ -568,6 +568,34 @@
       min-width: 200px
     }
 
+    .gambling-disclaimer {
+      font-size: .82rem;
+      color: rgba(255, 255, 255, .7);
+      line-height: 1.5;
+      letter-spacing: .01em;
+      opacity: 0;
+      animation: riseUp .5s var(--ease-expo) 1.2s forwards
+    }
+
+    .gambling-disclaimer a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px
+    }
+    .gambling-note {
+      font-size: .59rem;
+      color: var(--tx-m);
+      line-height: 1.5;
+      letter-spacing: .01em;
+      opacity: 0;
+      animation: riseUp .5s var(--ease-expo) 1.2s forwards
+    }
+
+    .betmgm-offer-mt {
+      margin-top: 20px;
+      padding-top: 20px;
+    }
+
     @keyframes riseUp {
       from {
         opacity: 0;

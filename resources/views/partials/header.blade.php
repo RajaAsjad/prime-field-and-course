@@ -20,8 +20,8 @@
           <li><a href="{{ $navHref('#tournaments') }}" class="nv">Tournaments</a></li>
           <li><a href="{{ $navHref('#faq') }}" class="nv">FAQ</a></li>
         </ul>
-        <div class="nav-cta"><a href="{{ $navHref('#premium') }}" class="btn btn-primary btn-sm">Get Insider Picks</a><a href="{{ $navHref('#promos') }}"
-            class="btn btn-gold btn-sm">Claim Bonus</a></div><button class="ham" id="ham"
+        <div class="nav-cta"><a href="{{ $navHref('#premium') }}" class="btn btn-primary btn-sm">Get Insider Picks</a><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
+            target="_blank" rel="sponsored noopener noreferrer" class="btn btn-gold btn-sm">Claim Bonus</a></div><button class="ham" id="ham"
           aria-expanded="false"><span></span><span></span><span></span></button>
       </div>
     </div>
@@ -38,6 +38,6 @@
       <li><a href="{{ $navHref('#tournaments') }}" class="mob-nv">Tournaments</a></li>
       <li><a href="{{ $navHref('#faq') }}" class="mob-nv">FAQ</a></li>
     </ul>
-    <div class="mob-cta"><a href="{{ $navHref('#premium') }}" class="btn btn-primary">Get Insider Picks</a><a href="{{ $navHref('#promos') }}"
-        class="btn btn-gold">Claim Bonus</a></div>
+    <div class="mob-cta"><a href="{{ $navHref('#premium') }}" class="btn btn-primary">Get Insider Picks</a><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
+            target="_blank" rel="sponsored noopener noreferrer" class="btn btn-gold">Claim Bonus</a></div>
   </div>

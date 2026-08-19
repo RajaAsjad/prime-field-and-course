@@ -36,3 +36,10 @@
 <script src="{{ asset('assets/admin/js/script.js') }}"></script>
 <script src="{{ asset('assets/admin/js/script1.js') }}"></script>
 <!-- <script src="{{ asset('assets/admin/js/theme-customizer/customizer.js') }}"></script> -->
+<script>
+  document.querySelectorAll('.alert-success.alert-dismissible').forEach(function (alertEl) {
+    setTimeout(function () {
+      bootstrap.Alert.getOrCreateInstance(alertEl).close();
+    }, 5000);
+  });
+</script>

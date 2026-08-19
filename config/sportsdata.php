@@ -62,6 +62,12 @@ return [
                 'bet_types' => ['Top 20 Finish'],
                 'limit' => 20,
             ],
+            'all' => [
+                'label' => 'All',
+                'bet_types' => ['Top 20 Finish', 'Top 10 Finish', 'Top 5 Finish'],
+                'limit' => 0,
+                'union_players' => true,
+            ],
             'hole_in_one' => [
                 'label' => 'One Hole in One',
                 'bet_types' => ['To Make A Hole In One'],

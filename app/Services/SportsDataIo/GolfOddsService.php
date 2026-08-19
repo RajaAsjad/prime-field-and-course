@@ -1070,21 +1070,7 @@ class GolfOddsService
             return null;
         }
 
-        $matchedMarkets = $markets->filter(function (array $market) use ($betTypes) {
-            $betType = (string) ($market['BettingBetType'] ?? '');
-
-            if ($betTypes->contains($betType)) {
-                return true;
-            }
-
-            foreach ($betTypes as $type) {
-                if ($betType === $type.' (Including Ties)') {
-                    return true;
-                }
-            }
-
-            return false;
-        })->values();
+        $matchedMarkets = $this->marketsMatchingBetTypes($markets, $betTypes);
 
         if ($matchedMarkets->isEmpty()) {
             if ($marketFilter === 'yes_no_tournament') {
@@ -1115,17 +1101,100 @@ class GolfOddsService
             ];
         }
 
-        $merged = $this->mergeMarketOutcomes($matchedMarkets);
         $limit = array_key_exists('limit', $config)
             ? (int) $config['limit']
             : (int) config('sportsdata.props.player_limit', 0);
+
+        $players = ! empty($config['union_players'])
+            ? $this->buildUnionPlayerPropRows($markets, $betTypes, $sportsbooks)
+            : $this->buildPlayerPropRows($this->mergeMarketOutcomes($matchedMarkets), $sportsbooks, $limit);
 
         return [
             'key' => $key,
             'label' => $label,
             'type' => 'player',
-            'players' => $this->buildPlayerPropRows($merged, $sportsbooks, $limit),
+            'players' => $players,
         ];
+    }
+
+    /**
+     * @param  Collection<int, array<string, mixed>>  $markets
+     * @param  Collection<int, string>  $betTypes
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function marketsMatchingBetTypes(Collection $markets, Collection $betTypes): Collection
+    {
+        return $markets->filter(function (array $market) use ($betTypes) {
+            $betType = (string) ($market['BettingBetType'] ?? '');
+
+            if ($betTypes->contains($betType)) {
+                return true;
+            }
+
+            foreach ($betTypes as $type) {
+                if ($betType === $type.' (Including Ties)') {
+                    return true;
+                }
+            }
+
+            return false;
+        })->values();
+    }
+
+    /**
+     * Merge unique players across finish markets without mixing odds from different bet types.
+     *
+     * @param  Collection<int, array<string, mixed>>  $markets
+     * @param  Collection<int, string>  $betTypes
+     * @param  list<string>  $sportsbooks
+     * @return list<array{name: string, odds: array<string, array{american: string, decimal: float, best: bool}>}>
+     */
+    private function buildUnionPlayerPropRows(Collection $markets, Collection $betTypes, array $sportsbooks): array
+    {
+        $playersByName = [];
+
+        foreach ($betTypes as $type) {
+            $typeMarkets = $this->marketsMatchingBetTypes($markets, collect([$type]));
+
+            if ($typeMarkets->isEmpty()) {
+                continue;
+            }
+
+            foreach ($this->buildPlayerPropRows($this->mergeMarketOutcomes($typeMarkets), $sportsbooks, 0) as $row) {
+                $name = (string) ($row['name'] ?? '');
+
+                if ($name === '' || isset($playersByName[$name])) {
+                    continue;
+                }
+
+                $playersByName[$name] = $row;
+            }
+        }
+
+        return collect($playersByName)
+            ->map(function (array $player) {
+                $odds = $player['odds'] ?? [];
+                $hasConsensus = isset($odds['Consensus']['decimal']);
+
+                $player['sort_group'] = $hasConsensus ? 0 : 1;
+                $player['sort_decimal'] = $hasConsensus
+                    ? (float) $odds['Consensus']['decimal']
+                    : (float) (min(array_column($odds, 'decimal') ?: [PHP_FLOAT_MAX]));
+
+                return $player;
+            })
+            ->sortBy([
+                ['sort_group', 'asc'],
+                ['sort_decimal', 'asc'],
+                ['name', 'asc'],
+            ])
+            ->map(function (array $player) {
+                unset($player['sort_group'], $player['sort_decimal']);
+
+                return $player;
+            })
+            ->values()
+            ->all();
     }
 
     /**
