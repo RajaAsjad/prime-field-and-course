@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 06, 2026 at 01:23 AM
+-- Generation Time: Aug 26, 2026 at 01:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -78,12 +78,17 @@ CREATE TABLE `cms_modules` (
 
 INSERT INTO `cms_modules` (`id`, `parent_id`, `name`, `route_name`, `icon`, `sort_order`, `status`, `created_at`, `updated_at`) VALUES
 (1, 0, 'Dashboard', 'admin.dashboard', 'fa-solid fa-house', 1, 'active', '2026-08-05 12:46:07', '2026-08-05 16:21:21'),
-(2, 0, 'Users', 'users.index', 'fa-solid fa-users', 2, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
+(2, 0, 'Users', 'users.index', 'fa-solid fa-users', 2, 'inactive', '2026-08-05 12:46:07', '2026-08-25 17:47:35'),
 (3, 0, 'Site Settings', 'site-settings.edit', 'fa-solid fa-gear', 3, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
 (4, 0, 'Tips Management', 'admin.tips-management', 'fa-solid fa-lightbulb', 4, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
 (5, 4, 'Tip', 'admin.tips.index', 'fa-solid fa-lightbulb', 1, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
 (6, 4, 'Tips Category', 'admin.tips-categories.index', 'fa-solid fa-tags', 2, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
-(7, 0, 'Promos', 'admin.promos.index', 'fa-solid fa-gift', 5, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07');
+(7, 0, 'Promos', 'admin.promos.index', 'fa-solid fa-gift', 5, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
+(8, 0, 'Website Content', 'admin.website-content', 'fa-solid fa-globe', 6, 'active', '2026-08-24 15:44:40', '2026-08-24 15:44:40'),
+(9, 8, 'Homepage', 'admin.homepage.edit', 'fa-solid fa-house-chimney', 1, 'active', '2026-08-24 15:44:40', '2026-08-24 15:44:40'),
+(10, 8, 'Content Pages', 'admin.content-pages.index', 'fa-solid fa-file-lines', 2, 'active', '2026-08-24 15:44:41', '2026-08-24 15:44:41'),
+(11, 8, 'Navigation Links', 'admin.navigation-links.index', 'fa-solid fa-link', 3, 'active', '2026-08-24 15:44:41', '2026-08-24 15:44:41'),
+(12, 8, 'FAQs', 'admin.faqs.index', 'fa-solid fa-circle-question', 4, 'active', '2026-08-24 15:44:41', '2026-08-24 15:44:41');
 
 -- --------------------------------------------------------
 
@@ -109,14 +114,53 @@ CREATE TABLE `cms_module_permissions` (
 --
 
 INSERT INTO `cms_module_permissions` (`id`, `role`, `module_id`, `is_add`, `is_view`, `is_update`, `is_delete`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 1, 1, 1, 1, 1, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
-(2, 'admin', 2, 1, 1, 1, 1, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
-(3, 'admin', 3, 0, 1, 1, 0, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
-(4, 'admin', 4, 0, 1, 0, 0, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
-(5, 'admin', 5, 1, 1, 1, 1, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
-(6, 'admin', 6, 1, 1, 1, 1, 'active', '2026-08-05 12:46:07', '2026-08-05 12:46:07'),
-(7, 'admin', 7, 1, 1, 1, 1, 'active', '2026-08-05 12:46:08', '2026-08-05 12:46:08'),
-(8, 'user', 1, 0, 1, 0, 0, 'active', '2026-08-05 12:46:08', '2026-08-05 12:46:08');
+(1, 'admin', 1, 1, 1, 1, 1, 'active', '2026-08-24 15:44:44', '2026-08-24 15:44:44'),
+(2, 'admin', 2, 1, 1, 1, 1, 'active', '2026-08-24 15:44:44', '2026-08-24 15:44:44'),
+(3, 'admin', 3, 0, 1, 1, 0, 'active', '2026-08-24 15:44:44', '2026-08-24 15:44:44'),
+(4, 'admin', 4, 0, 1, 0, 0, 'active', '2026-08-24 15:44:44', '2026-08-24 15:44:44'),
+(5, 'admin', 5, 1, 1, 1, 1, 'active', '2026-08-24 15:44:44', '2026-08-24 15:44:44'),
+(6, 'admin', 6, 1, 1, 1, 1, 'active', '2026-08-24 15:44:44', '2026-08-24 15:44:44'),
+(7, 'admin', 7, 1, 1, 1, 1, 'active', '2026-08-24 15:44:45', '2026-08-24 15:44:45'),
+(8, 'admin', 8, 0, 1, 0, 0, 'active', '2026-08-24 15:44:45', '2026-08-24 15:44:45'),
+(9, 'admin', 9, 0, 1, 1, 0, 'active', '2026-08-24 15:44:45', '2026-08-24 15:44:45'),
+(10, 'admin', 10, 1, 1, 1, 1, 'active', '2026-08-24 15:44:45', '2026-08-24 15:44:45'),
+(11, 'admin', 11, 1, 1, 1, 1, 'active', '2026-08-24 15:44:45', '2026-08-24 15:44:45'),
+(12, 'admin', 12, 1, 1, 1, 1, 'active', '2026-08-24 15:44:45', '2026-08-24 15:44:45'),
+(13, 'user', 1, 0, 1, 0, 0, 'active', '2026-08-24 15:44:45', '2026-08-24 15:44:45');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `content_pages`
+--
+
+CREATE TABLE `content_pages` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `subtitle` varchar(255) DEFAULT NULL,
+  `meta_description` varchar(500) DEFAULT NULL,
+  `eyebrow` varchar(255) DEFAULT NULL,
+  `intro` text DEFAULT NULL,
+  `type` varchar(255) NOT NULL DEFAULT 'generic',
+  `body` longtext DEFAULT NULL,
+  `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`content`)),
+  `is_published` tinyint(1) NOT NULL DEFAULT 1,
+  `show_in_footer` tinyint(1) NOT NULL DEFAULT 0,
+  `footer_label` varchar(255) DEFAULT NULL,
+  `sort_order` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `content_pages`
+--
+
+INSERT INTO `content_pages` (`id`, `slug`, `title`, `subtitle`, `meta_description`, `eyebrow`, `intro`, `type`, `body`, `content`, `is_published`, `show_in_footer`, `footer_label`, `sort_order`, `created_at`, `updated_at`) VALUES
+(9, 'golf-glossary', 'Golf Glossary: Essential Terms Every Bettor Should Know', NULL, 'Alphabetical glossary of golf terms, from ace and albatross to scramble and wire-to-wire. Learn the language of golf before you place your next wager.', 'Reference Guide', 'Whether you are new to golf betting or just need a quick refresher, this alphabetical glossary covers the terms you will hear on broadcasts, in sportsbooks, and around the course.', 'glossary', NULL, '{\"terms\":[{\"term\":\"Ace\",\"definition\":\"A hole-in-one (scoring a 1 on a par-3 or par-4).\",\"example\":\"A pro aces the famous 17th at TPC Sawgrass.\"},{\"term\":\"Albatross\",\"definition\":\"Three strokes under par on a hole.\",\"alias\":\"Double Eagle\",\"example\":\"Scoring a 2 on a par-5 hole.\"},{\"term\":\"Approach Shot\",\"definition\":\"Any shot played toward the green, usually from the fairway or rough.\"},{\"term\":\"Birdie\",\"definition\":\"One stroke under par on a hole.\",\"example\":\"Scoring a 3 on a par-4.\"},{\"term\":\"Bogey\",\"definition\":\"One stroke over par.\",\"example\":\"Scoring a 5 on a par-4.\"},{\"term\":\"Double Bogey\",\"definition\":\"Two strokes over par (and so on for triple, etc.).\"},{\"term\":\"Bunker\",\"definition\":\"A hazard filled with sand.\",\"alias\":\"Sand Trap\",\"example\":\"Landing in the greenside bunker requires a sand shot to get out.\"},{\"term\":\"Caddie\",\"definition\":\"A player\'s assistant who carries clubs, reads greens, and offers advice.\"},{\"term\":\"Divot\",\"definition\":\"A chunk of turf dug out by a club.\",\"example\":\"Good etiquette requires replacing your divot or using sand\\/seed mix.\"},{\"term\":\"Draw\",\"definition\":\"A gentle right-to-left curve (for right-handed players). Opposite of a fade.\"},{\"term\":\"Drive\",\"definition\":\"The first shot off the tee on a hole, usually with a driver.\"},{\"term\":\"Eagle\",\"definition\":\"Two strokes under par.\",\"example\":\"Scoring a 3 on a par-5.\"},{\"term\":\"Fairway\",\"definition\":\"The closely mowed area between the tee and green. Ideal landing zone.\"},{\"term\":\"Fade\",\"definition\":\"A gentle left-to-right curve (for right-handed players).\"},{\"term\":\"Gimme\",\"definition\":\"A short putt conceded by an opponent (common in casual play).\"},{\"term\":\"Green\",\"definition\":\"The smooth, closely cut area where you putt.\"},{\"term\":\"Handicap\",\"definition\":\"A numerical measure of a player\'s skill (lower = better). Allows fair play against stronger golfers by giving strokes.\"},{\"term\":\"Hazard\",\"definition\":\"Any obstacle (bunker, water, trees, rough).\"},{\"term\":\"Hook\",\"definition\":\"A sharp right-to-left curve (right-hander), often unintentional.\"},{\"term\":\"Lie\",\"definition\":\"The position of the ball on the ground.\",\"example\":\"A \\\"good lie\\\" in the fairway vs. a \\\"buried lie\\\" in deep rough.\"},{\"term\":\"Match Play\",\"definition\":\"Format where the lowest score on each hole wins the hole (first to win more holes wins the match).\"},{\"term\":\"Mulligan\",\"definition\":\"A do-over shot (unofficial, common in friendly rounds).\"},{\"term\":\"Par\",\"definition\":\"The expected score for a skilled golfer on a hole (usually 3, 4, or 5).\",\"example\":\"A par-72 course has 18 holes totaling 72 strokes expected.\"},{\"term\":\"Putt\",\"definition\":\"A stroke on the green using a putter.\"},{\"term\":\"Rough\",\"definition\":\"Longer grass bordering the fairway, harder to hit from.\"},{\"term\":\"Scramble\",\"definition\":\"A popular team format (usually 2 or 4 players per team) where all players hit from the same spot each time. The team tees off individually, selects the best shot, then everyone plays their next shot from that location (within one club-length, no closer to the hole, same lie conditions). This repeats until the ball is holed. The team records one score per hole.\",\"example\":\"Great for mixed-skill groups, charity events, and fun outings as it reduces pressure and bad shots.\"},{\"term\":\"Slice\",\"definition\":\"A sharp left-to-right curve (right-hander), often unintentional.\"},{\"term\":\"Stance\",\"definition\":\"How you position your feet when addressing the ball.\"},{\"term\":\"Stroke Play\",\"definition\":\"Format where total strokes over all holes determine the winner (standard PGA Tour format).\"},{\"term\":\"Tee Box\",\"definition\":\"The starting area for each hole.\"},{\"term\":\"Wire-to-Wire\",\"definition\":\"Leading after every round of a tournament.\"}]}', 1, 1, 'Golf Glossary', 1, '2026-08-24 15:51:41', '2026-08-25 17:15:40'),
+(10, 'best-golf-betting-apps', 'Best Golf Betting Apps in 2025', 'FanDuel vs. DraftKings vs. bet365 vs. BetMGM', 'Head-to-head comparison of the top golf betting apps — FanDuel, DraftKings, bet365, and BetMGM. Markets, odds, live betting, promos, and Missouri betting tips.', 'App Comparison', 'With sports betting now live across Missouri, pairing your love of golf with smart wagers on PGA Tour events, majors, or LIV Golf adds another layer of thrill to every round. Here is a head-to-head comparison of the top golf betting apps available in Missouri — all fully licensed, mobile-friendly (iOS/Android), and perfect for betting from the course, a watch party, or home.', 'apps', NULL, '{\"apps\":[{\"name\":\"FanDuel\",\"tagline\":\"Perfect for Casual Golf Fans & On-Course Bettors\",\"description\":\"FanDuel\'s app is super intuitive \\u2014 ideal if you\'re at a charity scramble or watching the PGA Tour locally. It excels at placement bets (top 5\\/10\\/20 finishes \\u2014 lower risk than picking the outright winner) and head-to-head matchups. Live betting feels seamless with quick updates after every hole.\",\"pros\":[\"Clean design\",\"Fast cash-outs\",\"Great for new bettors\"],\"cons\":[\"Longshot odds can be a touch higher (less value on huge underdogs)\"],\"tip\":\"Use it for safer bets like top-10 finishes during major tournament weekends.\"},{\"name\":\"DraftKings\",\"tagline\":\"The Promo King for Big Events\",\"description\":\"DraftKings loads up on golf-specific promotions, especially around majors like The Masters or The Players Championship. You\'ll find boosted odds, profit boosts, free pools, and creative parlays (e.g., same-tournament combos). Markets are deep: hole-in-one props, make\\/miss cut, nationality winners.\",\"pros\":[\"Endless specials\",\"Huge variety of bets\"],\"cons\":[\"Can feel busy for first-timers\"],\"tip\":\"Great for boosted odds during major championship weekends.\"},{\"name\":\"bet365\",\"tagline\":\"Sharp Odds & Live Betting Leader\",\"description\":\"bet365 often has the best pricing on outright winners and futures \\u2014 meaning better potential payouts. Their in-play betting is unmatched: lines adjust hole-by-hole with minimal delay, perfect for catching momentum shifts (e.g., a hot putter on the back nine).\",\"pros\":[\"Sharpest lines\",\"Excellent live tools\"],\"cons\":[\"Interface is straightforward but less \\\"fun\\\" than FanDuel\\/DraftKings\"],\"tip\":\"Shop here first for value on underdogs during televised events.\"},{\"name\":\"BetMGM\",\"tagline\":\"Comprehensive & Major-Focused\",\"description\":\"BetMGM shines for big tournaments with frequent odds boost tokens (e.g., enhance a player\'s top-10 payout) and strong player props. It ties into MGM rewards if you\'re traveling, and markets cover everything from group betting to round scores.\",\"pros\":[\"Balanced features\",\"Reliable boosts for majors\"],\"cons\":[\"Promo volume sometimes lags behind DraftKings\"],\"tip\":\"Ideal for betting on pro events while following the tour all season.\"}],\"tips\":[{\"title\":\"Always shop lines\",\"text\":\"A +350 on Scottie Scheffler at one app might be +400 at another. Check all four before locking in.\"},{\"title\":\"Leverage welcome offers\",\"text\":\"Bonus bets are perfect for low-risk golf wagers like top-10 finishes or make-the-cut props.\"},{\"title\":\"Live betting shines in golf\",\"text\":\"Volatility is high; bet365 and FanDuel lead here for in-round action.\"},{\"title\":\"Responsible fun\",\"text\":\"Set deposit\\/time limits in-app. Call 1-800-GAMBLER if needed. Bet for entertainment, not income.\"}]}', 1, 1, 'Best Betting Apps', 2, '2026-08-24 15:51:41', '2026-08-24 15:51:41'),
+(11, 'how-to-bet-on-golf', 'How to Bet on Golf', NULL, 'Complete guide to golf betting — outright winners, matchups, finishing position, futures, live hole-by-hole bets, tournament props, strategies, and how to read odds.', 'Betting Guide', 'Golf offers some of the most exciting betting opportunities in sports — from picking a tournament winner to live hole-by-hole wagers. This guide walks you through every major bet type, how to place them, and strategies to bet smarter.', 'guide', NULL, '{\"sections\":[{\"id\":\"bet-types\",\"title\":\"Types of Golf Bets\",\"content\":\"There are several main types of golf bets, with some of the most popular being outright winner, round leaders, finishing position, matchups, futures, live hole-by-hole betting and tournament props.\",\"list\":[\"Outright winner \\u2014 who will win the tournament.\",\"Round leader \\u2014 who is leading at the end of a given round, not the entire tournament.\",\"Finishing position \\u2014 choosing a player to finish top 5, top 10, top 20 or top 40.\",\"Matchup \\u2014 who will win between a pair of players; the rest of the field is irrelevant.\",\"Futures \\u2014 tournaments months from now, or props like whether a player will win a major.\",\"Live hole-by-hole \\u2014 who wins the hole, a birdie, or hitting the fairway\\/green.\",\"Tournament props \\u2014 winning score, hole-in-one, best finisher by country, and more.\"]},{\"id\":\"matchup-bets\",\"title\":\"How to Place a Matchup Bet\",\"paragraphs\":[\"In golf betting, a matchup bet pairs two players together and you select who will win only between those two. The rest of the competitors in the tournament are not relevant. These bets can take place over one round or the entire tournament.\",\"For example, Jon Rahm at -115 could be matched up with Collin Morikawa at -105 for the first round. If Rahm shoots a better score, a $115 bet wins $100. If Morikawa beats Rahm, a $105 bet wins $100. If the two tie, it is a push and the bet is refunded.\",\"Matchup bets are valuable because you can directly compare recent form as well as how each player fits the course.\"]},{\"id\":\"finishing-position\",\"title\":\"How to Place a Finishing Position Bet\",\"paragraphs\":[\"A finishing position bet is based on where the player finishes at the end of the tournament. Common bets include top 5, top 10, top 20, or top 40.\",\"This is a great way to bet on a player you think will do well but do not want to count on winning the whole tournament. With over 150 golfers competing most weeks, picking a winner is incredibly hard.\",\"Finishing position bets provide room for error. If a player is playing well and has a good history at the course, a top 5 bet may be best. For an under-the-radar breakout pick, top 20 or 40 is safer.\",\"Dead heat rules apply on most sportsbooks. If your top 10 bet finishes in a three-way tie for 10th, 11th and 12th, the payout for 10th is split three ways.\"]},{\"id\":\"outright-winner\",\"title\":\"How to Place an Outright Winner Bet\",\"paragraphs\":[\"An outright golf bet is simply choosing who will win the tournament. With over 150 golfers, even the favorite is usually at least +1000.\",\"There is often value in good players priced between +3000 and +5000 (30-1 to 50-1). Winning an outright bet can seriously boost your bankroll while risking a half unit or less \\u2014 but it is incredibly difficult to win.\"]},{\"id\":\"futures\",\"title\":\"How to Bet on Golf Futures\",\"paragraphs\":[\"A golf future bet is wagering on tournaments \\u2014 often major championships like The Masters, PGA Championship, U.S. Open and Open Championship \\u2014 weeks or months in advance.\",\"Many sportsbooks offer futures on whether a golfer will win any of the four majors, or even two or more majors in a season. Betting on a player to win any major is a fun way to follow the biggest tournaments all year.\"]},{\"id\":\"live-betting\",\"title\":\"How to Live Bet on Golf\",\"paragraphs\":[\"Live betting in golf is exploding in popularity. Whether on TV or in person, it is fun to place a bet for a specific hole and watch it play out in 10\\u201315 minutes.\",\"Common hole-by-hole live bets include selecting a player to win the hole, two players to tie, a birdie or better, the exact number of shots, and whether a player hits the fairway or green in regulation.\",\"There is often value in betting on end-of-round leaders once a good shot has been hit that could lead to a birdie. Sportsbooks are occasionally slow to update odds before the score is recorded.\"]},{\"id\":\"tournament-props\",\"title\":\"How to Bet Golf Tournament Props\",\"paragraphs\":[\"Tournament props are a fun way to follow a golf tournament throughout the weekend. There are more props during major championships, but opportunities exist every week.\"],\"list\":[\"Who will be the top English player?\",\"Will an American player win the tournament?\",\"Who will be the top continental European player?\",\"Who will be the top amateur player?\",\"Which left-handed player will finish highest?\",\"Will there be a hole-in-one?\",\"What will the winning score be?\",\"Will there be a playoff to determine the champion?\"]},{\"id\":\"strategies\",\"title\":\"Golf Betting Strategies\",\"paragraphs\":[\"Golf is one of the hardest sports to bet on because so little is predictable. Fluky bounces, tee times leading to different weather, course conditions and other factors create far more variables than most sports.\",\"Consider how the course fits the player you are betting on. Are most dogleg holes to the right? If the player moves the ball left-to-right off the tee, that could be an advantage. Is there thick rough? Driving accuracy may be crucial.\",\"The strokes gained stat gives a great idea of how each golfer is performing in various aspects of their game.\",\"Live betting can be one of the most effective strategies if you notice a tendency on a specific hole or stretch. A player one shot back coming up on an easy stretch they excel on can be a profitable opportunity.\"]},{\"id\":\"reading-odds\",\"title\":\"How to Read Golf Odds\",\"paragraphs\":[\"A (-) sign means you risk more than your potential winnings; a (+) sign means winnings exceed your stake. In golf, outright bets are almost always plus-money, except live betting when one player has pulled away.\",\"American odds are based on a $100 bet. An outright winner at +2500 wins $2,500 for every $100 wagered.\"]},{\"id\":\"moneylines\",\"title\":\"How to Read Golf Moneylines\",\"paragraphs\":[\"Books create head-to-head matchups even though players compete against the entire field. A (+) denotes the underdog and (-) the favorite.\",\"Example: Abraham Ancer (+113) vs Paul Casey (-135). A $100 bet on Ancer wins $113; you must bet $135 on Casey to win $100.\"]},{\"id\":\"line-shopping\",\"title\":\"Line Shopping & Odds Comparison\",\"paragraphs\":[\"Getting the best odds on your golf bets cannot be overstated. Line shopping means finding the sportsbook offering the best price on the bet you want.\",\"Since books set matchups independently, it is critical to compare golf moneyline odds. One book may have Ancer at +113 vs Casey, while another has Ancer at +150 \\u2014 a $37 difference on a $100 bet.\",\"Profitable bettors check lines across all available sportsbooks and maintain accounts at each so they can always bet at the best number.\"]},{\"id\":\"sportsbooks\",\"title\":\"Where to Bet on Golf\",\"paragraphs\":[\"Popular sportsbooks for golf betting include:\"],\"list\":[\"Caesars\",\"BetMGM\",\"BetRivers\\/SugarHouse\",\"Unibet\",\"DraftKings\",\"FanDuel\",\"PointsBet\"]},{\"id\":\"popular-golfers\",\"title\":\"Who Are the Most Popular Golfers?\",\"paragraphs\":[\"Tiger Woods remains the most popular golfer worldwide for both fame and betting handle. Rory McIlroy and Jordan Spieth are also heavily wagered. Golf is global \\u2014 players like Hideki Matsuyama are hugely popular in Japan.\",\"High-profile golfers often receive a disproportionate share of bets, which can drive their odds down as sportsbooks manage exposure.\"]}]}', 1, 1, 'How to Bet on Golf', 3, '2026-08-24 15:51:41', '2026-08-24 15:51:41');
 
 -- --------------------------------------------------------
 
@@ -133,6 +177,34 @@ CREATE TABLE `failed_jobs` (
   `exception` longtext NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `faqs`
+--
+
+CREATE TABLE `faqs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `question` varchar(255) NOT NULL,
+  `answer` text NOT NULL,
+  `sort_order` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `open_by_default` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `faqs`
+--
+
+INSERT INTO `faqs` (`id`, `question`, `answer`, `sort_order`, `is_active`, `open_by_default`, `created_at`, `updated_at`) VALUES
+(1, 'Is Prime Field & Course free?', 'Yes. Core picks, odds, and news are free. Premium is optional for exclusive analysis and early access.', 1, 1, 1, '2026-08-24 15:44:52', '2026-08-24 15:44:52'),
+(2, 'How do affiliate bonuses work?', 'Click a Claim Bonus button and complete signup with the partner. The offer applies automatically at no extra cost to you.', 2, 1, 0, '2026-08-24 15:44:52', '2026-08-24 15:44:52'),
+(3, 'How are picks selected?', 'We combine course fit, recent form, weather, and SportsDataIO odds/value signals. Every pick is reviewed before it goes live.', 3, 1, 0, '2026-08-24 15:44:52', '2026-08-24 15:44:52'),
+(4, 'How often are odds updated?', 'Live odds refresh about every 30–120 seconds depending on the feed. Best available prices are highlighted in green.', 4, 1, 0, '2026-08-24 15:44:52', '2026-08-24 15:44:52'),
+(5, 'Can I cancel my subscription?', 'Yes. Cancel anytime with no long-term contract. You keep access through the end of your billing period.', 5, 1, 0, '2026-08-24 15:44:52', '2026-08-24 15:44:52');
 
 -- --------------------------------------------------------
 
@@ -195,7 +267,59 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (7, '2026_06_19_000002_create_tips_table', 1),
 (8, '2026_07_03_000001_create_tips_category_table', 1),
 (9, '2026_07_03_000002_update_tips_table_add_category_remove_slogan', 1),
-(10, '2026_07_03_000003_create_promos_table', 1);
+(10, '2026_07_03_000003_create_promos_table', 1),
+(11, '2026_08_25_000001_create_content_pages_table', 2),
+(12, '2026_08_25_000002_create_navigation_links_table', 2),
+(13, '2026_08_25_000003_create_faqs_table', 2),
+(14, '2026_08_25_000004_extend_promos_for_homepage', 2),
+(15, '2026_08_25_000005_extend_site_settings_for_homepage', 2),
+(16, '2026_08_26_000001_add_disclaimer_to_promos_table', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `navigation_links`
+--
+
+CREATE TABLE `navigation_links` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `location` varchar(255) NOT NULL,
+  `sort_order` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `open_new_tab` tinyint(1) NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `navigation_links`
+--
+
+INSERT INTO `navigation_links` (`id`, `label`, `url`, `location`, `sort_order`, `open_new_tab`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'Strategy', '#strategy', 'header', 1, 0, 1, '2026-08-24 15:44:49', '2026-08-24 15:44:49'),
+(2, 'Promos', '#promos', 'header', 2, 0, 1, '2026-08-24 15:44:49', '2026-08-24 15:44:49'),
+(3, 'Best Picks', '#best-picks', 'header', 3, 0, 1, '2026-08-24 15:44:49', '2026-08-24 15:44:49'),
+(4, 'Rankings', '#competition-feeds', 'header', 4, 0, 1, '2026-08-24 15:44:49', '2026-08-24 15:44:49'),
+(5, 'Live Odds', '#running-odds', 'header', 5, 0, 1, '2026-08-24 15:44:49', '2026-08-24 15:44:49'),
+(6, 'Golf Betting', '#golf-betting', 'header', 6, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(7, 'Tournaments', '#tournaments', 'header', 7, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(8, 'FAQ', '#faq', 'header', 8, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(9, 'Strategy', '#strategy', 'footer_quick', 1, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(10, 'Promos', '#promos', 'footer_quick', 2, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(11, 'Best Picks', '#best-picks', 'footer_quick', 3, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(12, 'Live Odds', '#running-odds', 'footer_quick', 4, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(13, 'Golf Betting', '#golf-betting', 'footer_quick', 5, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(14, 'Tournaments', '#tournaments', 'footer_quick', 6, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(15, 'FAQ', '#faq', 'footer_quick', 7, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(16, 'How to Bet on Golf', '/how-to-bet-on-golf', 'footer_guides', 1, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(17, 'Best Betting Apps', '/best-golf-betting-apps', 'footer_guides', 2, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(18, 'Golf Glossary', '/golf-glossary', 'footer_guides', 3, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(19, 'Terms & Conditions', '#', 'footer_legal', 1, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(20, 'Privacy Policy', '#', 'footer_legal', 2, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(21, 'Responsible Gambling', '#', 'footer_legal', 3, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50'),
+(22, 'Contact', '#', 'footer_legal', 4, 0, 1, '2026-08-24 15:44:50', '2026-08-24 15:44:50');
 
 -- --------------------------------------------------------
 
@@ -218,15 +342,35 @@ CREATE TABLE `password_reset_tokens` (
 CREATE TABLE `promos` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
+  `book_name` varchar(255) DEFAULT NULL,
+  `book_class` varchar(255) DEFAULT NULL,
+  `bonus_text` varchar(255) DEFAULT NULL,
+  `cta_url` varchar(255) DEFAULT NULL,
+  `cta_label` varchar(255) NOT NULL DEFAULT 'Claim Bonus →',
   `slug` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
+  `disclaimer` varchar(255) DEFAULT NULL,
   `image_url` varchar(255) DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL,
   `discount_price` decimal(10,2) DEFAULT NULL,
   `status` tinyint(1) NOT NULL DEFAULT 1,
+  `is_featured` tinyint(1) NOT NULL DEFAULT 0,
+  `ribbon_text` varchar(255) DEFAULT NULL,
+  `sort_order` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `promos`
+--
+
+INSERT INTO `promos` (`id`, `title`, `book_name`, `book_class`, `bonus_text`, `cta_url`, `cta_label`, `slug`, `description`, `disclaimer`, `image_url`, `price`, `discount_price`, `status`, `is_featured`, `ribbon_text`, `sort_order`, `created_at`, `updated_at`) VALUES
+(1, 'BetMGM Promo', 'BetMGM', 'mgm', '$1,500 Back', 'https://www.anrdoezrs.net/click-101764042-17337458', 'Claim Bonus →', 'betmgm-promo', 'First bet insurance up to $1,500.', '21+ only. Gambling problem? Call 1-800-GAMBLER', NULL, NULL, NULL, 1, 1, 'TOP PICK', 1, '2026-08-24 15:44:54', '2026-08-24 15:44:54'),
+(2, 'FanDuel Promo', 'FanDuel', 'fd', '$150 Back', 'https://www.anrdoezrs.net/click-101764042-17337458', 'Claim Bonus →', 'fanduel-promo', 'No Sweat First Bet up to $150.', '21+ only. Gambling problem? Call 1-800-GAMBLER', NULL, NULL, NULL, 1, 0, NULL, 2, '2026-08-24 15:44:54', '2026-08-24 15:44:54'),
+(3, 'DraftKings Promo', 'DraftKings', 'dk', '$200 Bonus', 'https://www.anrdoezrs.net/click-101764042-17337458', 'Claim Bonus →', 'draftkings-promo', 'Bet $5, get $200 in bonus bets instantly.', '21+ only. Gambling problem? Call 1-800-GAMBLER', NULL, NULL, NULL, 1, 0, NULL, 3, '2026-08-24 15:44:54', '2026-08-24 15:44:54'),
+(4, 'Caesars Promo', 'Caesars', 'cz', '$1,000 Back', 'https://www.anrdoezrs.net/click-101764042-17337458', 'Claim Bonus →', 'caesars-promo', 'First bet up to $1,000 back as bonus.', '21+ only. Gambling problem? Call 1-800-GAMBLER', NULL, NULL, NULL, 1, 0, NULL, 4, '2026-08-24 15:44:54', '2026-08-24 15:44:54'),
+(5, 'Bet365 Promo', 'Bet365', 'b365', '$200 Bonus', 'https://www.anrdoezrs.net/click-101764042-17337458', 'Claim Bonus →', 'bet365-promo', 'Bet $5 and receive $200 in bonus bets.', '21+ only. Gambling problem? Call 1-800-GAMBLER', NULL, NULL, NULL, 1, 0, NULL, 5, '2026-08-24 15:44:54', '2026-08-24 15:44:54');
 
 -- --------------------------------------------------------
 
@@ -252,6 +396,7 @@ CREATE TABLE `sessions` (
 CREATE TABLE `site_settings` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `site_name` varchar(255) DEFAULT NULL,
+  `site_tagline` varchar(255) DEFAULT NULL,
   `site_logo` varchar(255) DEFAULT NULL,
   `footer_logo` varchar(255) DEFAULT NULL,
   `favicon` varchar(255) DEFAULT NULL,
@@ -265,6 +410,7 @@ CREATE TABLE `site_settings` (
   `linkedin_url` varchar(255) DEFAULT NULL,
   `youtube_url` varchar(255) DEFAULT NULL,
   `twitter_url` varchar(255) DEFAULT NULL,
+  `homepage_content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`homepage_content`)),
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -273,8 +419,8 @@ CREATE TABLE `site_settings` (
 -- Dumping data for table `site_settings`
 --
 
-INSERT INTO `site_settings` (`id`, `site_name`, `site_logo`, `footer_logo`, `favicon`, `footer_copyright`, `footer_description`, `contact_email`, `contact_phone`, `address`, `facebook_url`, `instagram_url`, `linkedin_url`, `youtube_url`, `twitter_url`, `created_at`, `updated_at`) VALUES
-(1, 'Prime Field & Course', NULL, NULL, NULL, '© 2026 Prime Field & Course Solutions LLC. All rights reserved.', 'Expert picks, exclusive bonuses, smart strategies for serious golf bettors.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-08-05 12:46:07', '2026-08-05 12:46:07');
+INSERT INTO `site_settings` (`id`, `site_name`, `site_tagline`, `site_logo`, `footer_logo`, `favicon`, `footer_copyright`, `footer_description`, `contact_email`, `contact_phone`, `address`, `facebook_url`, `instagram_url`, `linkedin_url`, `youtube_url`, `twitter_url`, `homepage_content`, `created_at`, `updated_at`) VALUES
+(1, 'Prime Field & Course', NULL, NULL, NULL, NULL, '© 2026 Prime Field & Course Solutions LLC. All rights reserved.', 'Expert picks, exclusive bonuses, smart strategies for serious golf bettors.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '{\"hero\":{\"subtitle\":\"All your favourite sportsbooks, insider tips, and tournament updates in one place.\",\"cta_primary\":{\"label\":\"View Best Picks\",\"url\":\"#best-picks\"},\"cta_secondary\":{\"label\":\"Sign Up & Get Bonuses\",\"url\":\"https:\\/\\/www.anrdoezrs.net\\/click-101764042-17337458\"},\"disclaimer\":\"21+ only. Gambling problem? Call 1-800-GAMBLER\",\"headline_html\":\"<span>Golf Betting<\\/span> <span class=\\\"gold\\\">Made Simple.<\\/span> <span>Expert Picks &amp; Exclusive Deals.<\\/span>\",\"image_url\":\"https:\\/\\/images.unsplash.com\\/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=1920&q=85\"},\"header_ctas\":{\"primary\":{\"label\":\"Get Insider Picks\",\"url\":\"#premium\"},\"secondary\":{\"label\":\"Claim Bonus\",\"url\":\"https:\\/\\/www.anrdoezrs.net\\/click-101764042-17337458\"}},\"affiliate_banner\":{\"enabled\":false},\"sections\":{\"promos\":{\"eyebrow\":\"Partner Offers\",\"title\":\"Exclusive Sign-Up Bonuses\",\"subtitle\":\"Verified offers updated weekly. All bonuses for new users only. Must be 21+.\"},\"faq\":{\"eyebrow\":\"Got Questions?\",\"title\":\"Frequently Asked Questions\"}},\"premium\":{\"subtitle\":\"Get exclusive weekly picks, deep analysis, and bonus alerts delivered straight to your inbox.\",\"price\":\"9.99\",\"price_unit\":\"\\/month\",\"features\":[\"Weekly expert picks every Tuesday\",\"Deep tournament analysis & projections\",\"Exclusive sportsbook bonus alerts\"],\"form_note\":\"7 days free, then $9.99\\/month. Cancel anytime.\",\"title_html\":\"<span>Unlock<\\/span> <span class=\\\"gold\\\">Insider<\\/span> <span>Information<\\/span>\",\"form_title_html\":\"<span>Start Your<\\/span> <span class=\\\"gold\\\">Free Trial<\\/span>\"},\"testimonials\":[{\"quote\":\"Hit three of their top five picks last week. Completely changed how I approach betting.\",\"author\":\"Marcus T.\",\"stars\":\"5\"},{\"quote\":\"The DraftKings bonus alone paid for six months. Their odds table saves me hours weekly.\",\"author\":\"Sarah K.\",\"stars\":\"5\"},{\"quote\":\"Finally a golf betting site that goes beyond basic picks. I\'ve recommended it to everyone.\",\"author\":\"Derek W.\",\"stars\":\"5\"}]}', '2026-08-05 12:46:07', '2026-08-25 17:43:40');
 
 -- --------------------------------------------------------
 
@@ -386,11 +532,24 @@ ALTER TABLE `cms_module_permissions`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `content_pages`
+--
+ALTER TABLE `content_pages`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `content_pages_slug_unique` (`slug`);
+
+--
 -- Indexes for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Indexes for table `faqs`
+--
+ALTER TABLE `faqs`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `jobs`
@@ -409,6 +568,12 @@ ALTER TABLE `job_batches`
 -- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `navigation_links`
+--
+ALTER TABLE `navigation_links`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -468,19 +633,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cms_modules`
 --
 ALTER TABLE `cms_modules`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `cms_module_permissions`
 --
 ALTER TABLE `cms_module_permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `content_pages`
+--
+ALTER TABLE `content_pages`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `faqs`
+--
+ALTER TABLE `faqs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -492,13 +669,19 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `navigation_links`
+--
+ALTER TABLE `navigation_links`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `promos`
 --
 ALTER TABLE `promos`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `site_settings`

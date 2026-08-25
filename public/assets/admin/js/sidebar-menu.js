@@ -260,58 +260,53 @@
   });
 
   // page active
+  var current = window.location.pathname.replace(/\/+$/, "") || "/";
+
+  function sidebarLinkMatches(linkPath) {
+    if (!linkPath || linkPath === "/" || linkPath === "#") {
+      return false;
+    }
+    var normalized = linkPath.replace(/\/+$/, "") || "/";
+    if (normalized === "/admin") {
+      return current === "/admin";
+    }
+    return current === normalized || current.indexOf(normalized + "/") === 0;
+  }
+
+  function markSidebarActive($link) {
+    $link.addClass("active");
+    $link.parents("li").addClass("active");
+    $link.parents("ul.sidebar-submenu").css("display", "block");
+    $link.closest("li.sidebar-list").children("a.sidebar-title").addClass("active");
+    $link
+      .closest("li.sidebar-list")
+      .children("a")
+      .find("div.according-menu")
+      .replaceWith('<div class="according-menu"><i class="fa-solid fa-angle-down"></i></div>');
+  }
+
   if ($("#pageWrapper").hasClass("compact-wrapper")) {
     $(".sidebar-wrapper nav").find("a").removeClass("active");
     $(".sidebar-wrapper nav").find("li").removeClass("active");
 
-    var current = window.location.pathname;
-    $(".sidebar-wrapper nav ul li a").filter(function () {
-      var link = $(this).attr("href");
-      if (link) {
-        var linkPath = new URL(link, window.location.origin).pathname;
-        if (current === linkPath) {
-          $(this).parents().children("a").addClass("active");
-          $(this).parents().parents().children("ul").css("display", "block");
-          $(this).addClass("active");
-          $(this).parent().parent().parent().children("a").find("div").replaceWith('<div class="according-menu"><i class="fa-solid fa-angle-down"></i></div>');
-          $(this).parent().parent().parent().parent().parent().children("a").find("div").replaceWith('<div class="according-menu"><i class="fa-solid fa-angle-down"></i></div>');
-          return false;
-        }
+    var $best = null;
+    var bestLen = -1;
+    $(".sidebar-wrapper nav ul li a").each(function () {
+      var href = $(this).attr("href");
+      if (!href || href === "#") {
+        return;
+      }
+      var linkPath = new URL(href, window.location.origin).pathname;
+      if (sidebarLinkMatches(linkPath) && linkPath.length > bestLen) {
+        bestLen = linkPath.length;
+        $best = $(this);
       }
     });
-  }
 
-      // For same url module active page
-      $(".sidebar-wrapper nav ul.sidebar-links li a").each(function() {
-        var menuUrl = $(this).attr("href");
-        var linkPathName = new URL(menuUrl, window.location.origin).pathname;
-        if (current.includes(linkPathName)) {
-          $(this).parents().children("a").addClass("active");
-          $(this).parents().parents().children("ul").css("display", "block");
-          $(this).addClass("active");
-          $(this)
-            .parent()
-            .parent()
-            .parent()
-            .children("a")
-            .find("div")
-            .replaceWith(
-              '<div class="according-menu"><i class="fa fa-angle-down"></i></div>'
-            );
-          $(this)
-            .parent()
-            .parent()
-            .parent()
-            .parent()
-            .parent()
-            .children("a")
-            .find("div")
-            .replaceWith(
-              '<div class="according-menu"><i class="fa fa-angle-down"></i></div>'
-            );
-          return false;
-        }
-      });
+    if ($best) {
+      markSidebarActive($best);
+    }
+  }
 
   $(".left-header .mega-menu .nav-link").on("click", function (event) {
     event.stopPropagation();

@@ -64,7 +64,11 @@ class PromoSeeder extends Seeder
         foreach ($promos as $promo) {
             Promo::updateOrCreate(
                 ['book_name' => $promo['book_name']],
-                array_merge($promo, ['status' => true, 'cta_label' => 'Claim Bonus →'])
+                array_merge($promo, [
+                    'status' => true,
+                    'cta_label' => 'Claim Bonus →',
+                    'disclaimer' => Promo::DEFAULT_DISCLAIMER,
+                ])
             );
         }
     }

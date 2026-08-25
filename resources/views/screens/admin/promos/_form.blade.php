@@ -140,6 +140,22 @@
       <div class="invalid-feedback">{{ $message }}</div>
     @enderror
   </div>
+
+  <div class="col-md-12">
+    <label class="form-label" for="disclaimer">Disclaimer</label>
+    <input
+      type="text"
+      class="form-control @error('disclaimer') is-invalid @enderror"
+      id="disclaimer"
+      name="disclaimer"
+      value="{{ old('disclaimer', $promo->disclaimer ?? \App\Models\Promo::DEFAULT_DISCLAIMER) }}"
+      placeholder="{{ \App\Models\Promo::DEFAULT_DISCLAIMER }}"
+    />
+    <small class="text-muted">Shown under the Claim Bonus button on homepage promo cards.</small>
+    @error('disclaimer')
+      <div class="invalid-feedback d-block">{{ $message }}</div>
+    @enderror
+  </div>
 </div>
 
 <script>

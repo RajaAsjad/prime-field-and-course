@@ -92,22 +92,8 @@
       </div>
     </section>
 
-    <section class="betmgm-offer">
-      <div class="wrap">
-        <div class="betmgm-banner">
-          <span class="betmgm-banner__logo">BetMGM</span>
-          <span class="betmgm-banner__copy">
-            <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
-            <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
-          </span>
-          <a href="https://www.anrdoezrs.net/click-101764042-17337458"
-            class="betmgm-banner__cta"
-            target="_blank"
-            rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
-        </div>
-        <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
-      </div>
-    </section> 
+    @include('pages.partials.affiliate-banner', ['placement' => 'after_strategy'])
+
 
     <section id="promos" class="section-white">
       <div class="wrap">
@@ -130,7 +116,7 @@
               @endif
               <a class="btn {{ $promo->is_featured ? 'btn-gold' : 'btn-primary' }}" href="{{ $promo->cta_url ?? '#' }}"
                 target="_blank" rel="sponsored noopener noreferrer" style="width:100%;justify-content:center;">{{ $promo->cta_label ?? 'Claim Bonus →' }}</a>
-              <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
+              <p class="gambling-note">{!! $promo->disclaimerHtml() !!}</p>
             </div>
           @empty
             <p class="body-lg">No promos available right now. Check back soon.</p>
@@ -177,22 +163,7 @@
       </div>
     </section>
 
-    <section class="betmgm-offer betmgm-offer-mt">
-      <div class="wrap">
-        <div class="betmgm-banner">
-          <span class="betmgm-banner__logo">BetMGM</span>
-          <span class="betmgm-banner__copy">
-            <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
-            <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
-          </span>
-          <a href="https://www.anrdoezrs.net/click-101764042-17337458"
-            class="betmgm-banner__cta"
-            target="_blank"
-            rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
-        </div>
-        <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
-      </div>
-    </section>
+    @include('pages.partials.affiliate-banner', ['placement' => 'after_picks', 'spacingClass' => 'betmgm-offer-mt'])
 
     <section id="hot-props" class="section-white">
       <div class="wrap">
@@ -370,22 +341,7 @@
             </div>
           </div>
         </div>
-        <section class="betmgm-offer betmgm-offer-mt">
-          <div class="wrap">
-            <div class="betmgm-banner">
-              <span class="betmgm-banner__logo">BetMGM</span>
-              <span class="betmgm-banner__copy">
-                <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
-                <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
-              </span>
-              <a href="https://www.anrdoezrs.net/click-101764042-17337458"
-                class="betmgm-banner__cta"
-                target="_blank"
-                rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
-            </div>
-            <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
-          </div>
-        </section>
+        @include('pages.partials.affiliate-banner', ['placement' => 'after_rankings', 'spacingClass' => 'betmgm-offer-mt'])
         <div class="comp-grid rev" style="margin-top:22px;">
           <div class="comp-panel" style="grid-column:1 / -1;">
             <div class="comp-panel__head">
@@ -524,22 +480,7 @@
       </div>
     </section>
 
-    <section class="betmgm-offer">
-      <div class="wrap">
-        <div class="betmgm-banner">
-          <span class="betmgm-banner__logo">BetMGM</span>
-          <span class="betmgm-banner__copy">
-            <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
-            <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
-          </span>
-          <a href="https://www.anrdoezrs.net/click-101764042-17337458"
-            class="betmgm-banner__cta"
-            target="_blank"
-            rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
-        </div>
-        <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
-      </div>
-    </section>
+    @include('pages.partials.affiliate-banner', ['placement' => 'after_odds'])
     <section id="rotoballer-news" class="section-green-pale">
       <div class="wrap">
         <div class="sec-head rev">
@@ -650,22 +591,7 @@
           </div>
         </div>
       </div>
-      <section class="betmgm-offer betmgm-offer-mt">
-        <div class="wrap">
-          <div class="betmgm-banner">
-            <span class="betmgm-banner__logo">BetMGM</span>
-            <span class="betmgm-banner__copy">
-              <span class="betmgm-banner__title">BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don't Win*</span>
-              <span class="betmgm-banner__terms">*Bonus Bets expire in 7 days. One New Customer Offer Only. Add'l terms. Live in All States (minus NV, PR, NY).</span>
-            </span>
-            <a href="https://www.anrdoezrs.net/click-101764042-17337458"
-              class="betmgm-banner__cta"
-              target="_blank"
-              rel="sponsored noopener noreferrer"><span class="betmgm-banner__cta-label">Claim Offer</span><span class="betmgm-banner__cta-arrow" aria-hidden="true">&rarr;</span></a>
-          </div>
-          <img class="betmgm-banner__pixel" src="https://www.ftjcfx.com/image-101764042-17337458" width="1" height="1" border="0" alt="" />
-        </div>
-      </section>
+      @include('pages.partials.affiliate-banner', ['placement' => 'after_guides', 'spacingClass' => 'betmgm-offer-mt'])
     </section>
 
     

@@ -2,15 +2,19 @@
     $modules = dynamic_sidebar();
 
     $isRouteActive = function (string $routeName): bool {
-        $pattern = str_ends_with($routeName, '.index')
-            ? preg_replace('/\.index$/', '.*', $routeName)
-            : (str_ends_with($routeName, '.edit')
-                ? preg_replace('/\.edit$/', '.*', $routeName)
-                : $routeName);
+        if (request()->routeIs($routeName)) {
+            return true;
+        }
 
-        return str_contains($pattern, '*')
-            ? request()->routeIs($pattern)
-            : request()->routeIs($routeName);
+        foreach (['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'] as $action) {
+            if (str_ends_with($routeName, '.'.$action)) {
+                $prefix = substr($routeName, 0, -strlen('.'.$action));
+
+                return $prefix !== '' && request()->routeIs($prefix.'.*');
+            }
+        }
+
+        return false;
     };
 
     $routePath = function (string $routeName): string {

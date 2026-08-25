@@ -12,9 +12,31 @@
           <option value="{{ $value }}" @selected($location === $value)>{{ $label }}</option>
         @endforeach
       </select></form>
-      <table class="table"><thead><tr><th>Label</th><th>URL</th><th>Location</th><th>Order</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>@forelse($links as $link)<tr><td>{{ $link->label }}</td><td><code>{{ $link->url }}</code></td><td>{{ \App\Models\NavigationLink::LOCATIONS[$link->location] ?? $link->location }}</td><td>{{ $link->sort_order }}</td><td>{{ $link->is_active ? 'Active' : 'Hidden' }}</td><td class="d-flex gap-2"><a href="{{ route('admin.navigation-links.edit', $link) }}" class="btn btn-primary btn-sm">Edit</a><form method="POST" action="{{ route('admin.navigation-links.destroy', $link) }}">@csrf @method('DELETE')<button class="btn btn-danger btn-sm">Delete</button></form></td></tr>@empty<tr><td colspan="6" class="text-muted text-center">No links.</td></tr>@endforelse</tbody></table>
-      {{ $links->links() }}
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Label</th><th>URL</th><th>Location</th><th>Order</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            @forelse($links as $link)
+              <tr>
+                <td>{{ $link->label }}</td>
+                <td><code>{{ $link->url }}</code></td>
+                <td>{{ \App\Models\NavigationLink::LOCATIONS[$link->location] ?? $link->location }}</td>
+                <td>{{ $link->sort_order }}</td>
+                <td>{{ $link->is_active ? 'Active' : 'Hidden' }}</td>
+                <td class="d-flex gap-2">
+                  <a href="{{ route('admin.navigation-links.edit', $link) }}" class="btn btn-primary btn-sm">Edit</a>
+                  <form method="POST" action="{{ route('admin.navigation-links.destroy', $link) }}">@csrf @method('DELETE')<button class="btn btn-danger btn-sm">Delete</button></form>
+                </td>
+              </tr>
+            @empty
+              <tr><td colspan="6" class="text-muted text-center">No links.</td></tr>
+            @endforelse
+          </tbody>
+        </table>
+      </div>
+      @if ($links->hasPages())
+        {{ $links->links() }}
+      @endif
     </div>
   </div>
 </div>

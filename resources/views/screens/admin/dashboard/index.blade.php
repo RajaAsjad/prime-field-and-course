@@ -3,100 +3,90 @@
 @section('title', 'Dashboard')
 
 @section('content')
-  <div class="container-fluid default-dashboard">
-    <div class="row mb-3">
-      <div class="col-12">
-        <div class="card dashboard-welcome-card border-0">
-          <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-              <h4 class="mb-1 text-white">Welcome back, {{ $user->name }}</h4>
-              <p class="mb-0 dashboard-welcome-sub">Manage your golf platform from here.</p>
-            </div>
-            <div class="d-flex flex-wrap gap-2">
-              @if ($user->hasRole(config('roles.admin')))
-                <a href="{{ route('users.index') }}" class="btn btn-sm dashboard-welcome-btn dashboard-welcome-btn--solid">Manage Users</a>
-              @endif
-              <a href="{{ route('home') }}" class="btn btn-sm dashboard-welcome-btn dashboard-welcome-btn--ghost" target="_blank">View Website</a>
+  <div class="container-fluid admin-home">
+    <div class="admin-home-hero">
+      <div>
+        <p class="admin-home-kicker">{{ now()->format('l, F j') }}</p>
+        <h2 class="admin-home-title">Welcome back, {{ explode(' ', $user->name)[0] }}</h2>
+        <p class="admin-home-copy">Manage tips, promos, and website content for Prime Field &amp; Course.</p>
+      </div>
+      <div class="admin-home-hero-actions">
+        <a href="{{ route('admin.homepage.edit') }}" class="btn dashboard-welcome-btn dashboard-welcome-btn--solid">Edit Homepage</a>
+        <a href="{{ route('home') }}" class="btn dashboard-welcome-btn dashboard-welcome-btn--ghost" target="_blank" rel="noopener">View Website</a>
+      </div>
+    </div>
+
+    <div class="admin-home-stats">
+      @foreach ($stats as $stat)
+        <a href="{{ $stat['url'] }}" class="admin-stat">
+          <span class="admin-stat-icon" aria-hidden="true"><i class="{{ $stat['icon'] }}"></i></span>
+          <span class="admin-stat-value">{{ number_format((int) $stat['value']) }}</span>
+          <span class="admin-stat-label">{{ $stat['label'] }}</span>
+          <span class="admin-stat-meta">{{ $stat['meta'] }}</span>
+        </a>
+      @endforeach
+    </div>
+
+    <div class="row g-3">
+      <div class="col-xl-7">
+        <div class="card admin-home-panel h-100">
+          <div class="card-header border-0 pb-0">
+            <h5 class="mb-0">Quick actions</h5>
+            <p class="admin-home-panel-sub mb-0">Jump into the sections you use most.</p>
+          </div>
+          <div class="card-body">
+            <div class="admin-home-shortcuts">
+              @foreach ($shortcuts as $shortcut)
+                <a href="{{ $shortcut['url'] }}" class="admin-shortcut">
+                  <span class="admin-shortcut-icon" aria-hidden="true"><i class="{{ $shortcut['icon'] }}"></i></span>
+                  <span>
+                    <strong>{{ $shortcut['label'] }}</strong>
+                    <small>{{ $shortcut['desc'] }}</small>
+                  </span>
+                </a>
+              @endforeach
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="row widget-grid">
-      @if ($user->hasRole(config('roles.admin')))
-        <div class="col-xxl-3 col-md-6 box-col-6">
-          <a href="{{ route('users.index') }}" class="text-decoration-none">
-            <div class="card widget-1">
-              <div class="card-body">
-                <div class="widget-content">
-                  <div class="widget-round primary">
-                    <div class="bg-round">
-                      <svg aria-hidden="true">
-                        <use href="/assets/admin/svg/icon-sprite.svg#c-customer"></use>
-                      </svg>
-                      <svg class="half-circle svg-fill" aria-hidden="true">
-                        <use href="/assets/admin/svg/icon-sprite.svg#halfcircle"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 class="mb-0">{{ number_format((int) ($stats['totalUsers'] ?? 0)) }}</h4>
-                    <span class="f-light">Users</span>
-                  </div>
-                </div>
-              </div>
+      <div class="col-xl-5">
+        <div class="card admin-home-panel h-100">
+          <div class="card-header border-0 pb-0 d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-0">Latest tips</h5>
+              <p class="admin-home-panel-sub mb-0">Recently added strategy content.</p>
             </div>
-          </a>
+            <a href="{{ route('admin.tips.index') }}" class="admin-home-link">View all</a>
+          </div>
+          <div class="card-body">
+            @forelse ($recentTips as $tip)
+              <a href="{{ route('admin.tips.edit', $tip) }}" class="admin-home-row">
+                <span>
+                  <strong>{{ $tip->title }}</strong>
+                  <small>{{ $tip->created_at?->format('d M Y') }} · {{ $tip->statusLabel() }}</small>
+                </span>
+                <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+              </a>
+            @empty
+              <p class="admin-home-empty mb-0">No tips yet. <a href="{{ route('admin.tips.create') }}">Create one</a>.</p>
+            @endforelse
+
+            <h6 class="admin-home-split">Active promos</h6>
+            @forelse ($recentPromos as $promo)
+              <a href="{{ route('admin.promos.edit', $promo) }}" class="admin-home-row">
+                <span>
+                  <strong>{{ $promo->displayBookName() }}</strong>
+                  <small>{{ $promo->displayBonus() }} · {{ $promo->statusLabel() }}</small>
+                </span>
+                <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+              </a>
+            @empty
+              <p class="admin-home-empty mb-0">No promos yet. <a href="{{ route('admin.promos.create') }}">Add a promo</a>.</p>
+            @endforelse
+          </div>
         </div>
-      @endif
+      </div>
     </div>
   </div>
-
-  <style>
-    .dashboard-welcome-card {
-      background: linear-gradient(135deg, #1a5c28 0%, #0d1e10 100%);
-      box-shadow: 0 12px 32px rgba(26, 92, 40, .18);
-    }
-
-    .dashboard-welcome-sub {
-      color: rgba(255, 255, 255, .72);
-    }
-
-    .dashboard-welcome-btn {
-      font-weight: 700;
-      border-radius: 8px;
-      padding: .45rem .9rem;
-    }
-
-    .dashboard-welcome-btn--solid {
-      background: #fff !important;
-      border: 1px solid #fff !important;
-      color: #1a5c28 !important;
-    }
-
-    .dashboard-welcome-btn--solid:hover,
-    .dashboard-welcome-btn--solid:focus {
-      background: #f3f7f4 !important;
-      border-color: #f3f7f4 !important;
-      color: #0d1e10 !important;
-    }
-
-    .dashboard-welcome-btn--ghost {
-      background: transparent !important;
-      border: 1px solid rgba(255, 255, 255, .85) !important;
-      color: #fff !important;
-    }
-
-    .dashboard-welcome-btn--ghost:hover,
-    .dashboard-welcome-btn--ghost:focus {
-      background: rgba(255, 255, 255, .12) !important;
-      border-color: #fff !important;
-      color: #fff !important;
-    }
-
-    .default-dashboard .widget-round.primary .bg-round svg {
-      fill: #1a5c28;
-    }
-  </style>
 @endsection

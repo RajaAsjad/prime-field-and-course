@@ -9,6 +9,7 @@ use App\Models\ContentPage;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ContentPageController extends Controller
 {
@@ -73,23 +74,152 @@ class ContentPageController extends Controller
 
     private function prepareData(StoreContentPageRequest|UpdateContentPageRequest $request): array
     {
-        $data = $request->safe()->except(['content', 'content_json']);
+        $data = $request->safe()->except(['content']);
         $data['is_published'] = $request->boolean('is_published');
         $data['show_in_footer'] = $request->boolean('show_in_footer');
-
-        if ($request->filled('content_json')) {
-            $decoded = json_decode($request->input('content_json'), true);
-            $data['content'] = is_array($decoded) ? $decoded : [];
-        } else {
-            $data['content'] = $request->input('content', []);
-        }
+        $content = $request->input('content', []);
+        $data['content'] = $this->normalizeContent(
+            (string) $request->input('type'),
+            is_array($content) ? $content : []
+        );
 
         if (! empty($data['slug'])) {
-            $data['slug'] = \Illuminate\Support\Str::slug($data['slug']);
+            $data['slug'] = Str::slug($data['slug']);
         } else {
             unset($data['slug']);
         }
 
         return $data;
+    }
+
+    private function normalizeContent(string $type, array $content): array
+    {
+        return match ($type) {
+            'glossary' => ['terms' => $this->normalizeTerms($content['terms'] ?? [])],
+            'apps' => [
+                'apps' => $this->normalizeApps($content['apps'] ?? []),
+                'tips' => $this->normalizeTips($content['tips'] ?? []),
+            ],
+            'guide' => ['sections' => $this->normalizeSections($content['sections'] ?? [])],
+            default => [],
+        };
+    }
+
+    private function normalizeTerms(array $rows): array
+    {
+        return collect($rows)
+            ->map(function ($row) {
+                $row = is_array($row) ? $row : [];
+                $term = trim((string) ($row['term'] ?? ''));
+                $definition = trim((string) ($row['definition'] ?? ''));
+                $example = trim((string) ($row['example'] ?? ''));
+                $alias = trim((string) ($row['alias'] ?? ''));
+
+                if ($term === '' && $definition === '') {
+                    return null;
+                }
+
+                $item = compact('term', 'definition');
+                if ($alias !== '') {
+                    $item['alias'] = $alias;
+                }
+                if ($example !== '') {
+                    $item['example'] = $example;
+                }
+
+                return $item;
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    private function normalizeApps(array $rows): array
+    {
+        return collect($rows)
+            ->map(function ($row) {
+                $row = is_array($row) ? $row : [];
+                $name = trim((string) ($row['name'] ?? ''));
+                $tagline = trim((string) ($row['tagline'] ?? ''));
+                $description = trim((string) ($row['description'] ?? ''));
+                $tip = trim((string) ($row['tip'] ?? ''));
+                $pros = $this->linesToArray($row['pros'] ?? '');
+                $cons = $this->linesToArray($row['cons'] ?? '');
+
+                if ($name === '' && $tagline === '' && $description === '' && $tip === '' && $pros === [] && $cons === []) {
+                    return null;
+                }
+
+                return compact('name', 'tagline', 'description', 'pros', 'cons', 'tip');
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    private function normalizeTips(array $rows): array
+    {
+        return collect($rows)
+            ->map(function ($row) {
+                $row = is_array($row) ? $row : [];
+                $title = trim((string) ($row['title'] ?? ''));
+                $text = trim((string) ($row['text'] ?? ''));
+
+                if ($title === '' && $text === '') {
+                    return null;
+                }
+
+                return compact('title', 'text');
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    private function normalizeSections(array $rows): array
+    {
+        return collect($rows)
+            ->map(function ($row) {
+                $row = is_array($row) ? $row : [];
+                $title = trim((string) ($row['title'] ?? ''));
+                $lead = trim((string) ($row['content'] ?? ''));
+                $id = trim((string) ($row['id'] ?? ''));
+                $paragraphs = $this->linesToArray($row['paragraphs'] ?? '');
+                $list = $this->linesToArray($row['list'] ?? '');
+
+                if ($title === '' && $lead === '' && $paragraphs === [] && $list === []) {
+                    return null;
+                }
+
+                $item = [
+                    'id' => $id !== '' ? Str::slug($id) : Str::slug($title),
+                    'title' => $title,
+                ];
+                if ($lead !== '') {
+                    $item['content'] = $lead;
+                }
+                if ($paragraphs !== []) {
+                    $item['paragraphs'] = $paragraphs;
+                }
+                if ($list !== []) {
+                    $item['list'] = $list;
+                }
+
+                return $item;
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    private function linesToArray(mixed $value): array
+    {
+        if (is_array($value)) {
+            return array_values(array_filter(array_map('trim', $value), fn (string $line) => $line !== ''));
+        }
+
+        $lines = preg_split('/\R/u', (string) $value) ?: [];
+
+        return array_values(array_filter(array_map('trim', $lines), fn (string $line) => $line !== ''));
     }
 }

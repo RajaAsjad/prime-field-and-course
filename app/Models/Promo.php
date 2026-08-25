@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 
 class Promo extends Model
 {
+    public const DEFAULT_DISCLAIMER = '21+ only. Gambling problem? Call 1-800-GAMBLER';
+
     protected $fillable = [
         'slug',
         'title',
@@ -15,6 +17,7 @@ class Promo extends Model
         'book_class',
         'bonus_text',
         'description',
+        'disclaimer',
         'image_url',
         'price',
         'discount_price',
@@ -111,5 +114,23 @@ class Promo extends Model
     public function displayBonus(): string
     {
         return $this->bonus_text ?: ($this->discount_price ? '$'.$this->discount_price.' Bonus' : $this->title);
+    }
+
+    public function displayDisclaimer(): string
+    {
+        $text = trim((string) $this->disclaimer);
+
+        return $text !== '' ? $text : self::DEFAULT_DISCLAIMER;
+    }
+
+    public function disclaimerHtml(): string
+    {
+        $escaped = e($this->displayDisclaimer());
+
+        return preg_replace(
+            '/1-800-GAMBLER/i',
+            '<a href="tel:18004262537">$0</a>',
+            $escaped
+        ) ?: $escaped;
     }
 }

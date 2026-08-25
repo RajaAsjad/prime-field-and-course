@@ -21,10 +21,19 @@ class HomepageDefaults
             ],
             'affiliate_banner' => [
                 'enabled' => true,
-                'title' => 'BetMGM — First Bet Offer Up To $1,500 Paid Back in Bonus Bets If You Don\'t Win',
-                'description' => 'New customers only. Must be 21+. Gambling problem? Call 1-800-GAMBLER.',
+                'brand_name' => 'BetMGM',
+                'title' => 'BetMGM First Bet Offer: $1500 Paid Back in Bonus Bets, if You Don\'t Win*',
+                'description' => '*Bonus Bets expire in 7 days. One New Customer Offer Only. Add\'l terms. Live in All States (minus NV, PR, NY).',
+                'cta_label' => 'Claim Offer',
                 'cta_url' => 'https://www.anrdoezrs.net/click-101764042-17337458',
                 'pixel_url' => 'https://www.ftjcfx.com/image-101764042-17337458',
+                'placements' => [
+                    'after_strategy' => true,
+                    'after_picks' => true,
+                    'after_rankings' => true,
+                    'after_odds' => true,
+                    'after_guides' => true,
+                ],
             ],
             'sections' => [
                 'promos' => [
@@ -56,5 +65,68 @@ class HomepageDefaults
                 ['quote' => 'Finally a golf betting site that goes beyond basic picks. I\'ve recommended it to everyone.', 'author' => 'Derek W.', 'stars' => 5],
             ],
         ];
+    }
+
+    public static function parseHighlightedHtml(?string $html): array
+    {
+        $html = trim((string) $html);
+
+        if ($html !== '' && preg_match('/^(.*?)<span[^>]*class="[^"]*\bgold\b[^"]*"[^>]*>(.*?)<\/span>(.*)$/is', $html, $matches)) {
+            return [
+                'before' => self::plainText($matches[1]),
+                'highlight' => self::plainText($matches[2]),
+                'after' => self::plainText($matches[3]),
+            ];
+        }
+
+        return [
+            'before' => self::plainText($html),
+            'highlight' => '',
+            'after' => '',
+        ];
+    }
+
+    public static function buildHighlightedHtml(string $before, string $highlight, string $after): string
+    {
+        $parts = [];
+
+        foreach ([
+            ['text' => trim($before), 'class' => null],
+            ['text' => trim($highlight), 'class' => 'gold'],
+            ['text' => trim($after), 'class' => null],
+        ] as $part) {
+            if ($part['text'] === '') {
+                continue;
+            }
+
+            $class = $part['class'] ? ' class="'.$part['class'].'"' : '';
+            $parts[] = '<span'.$class.'>'.e($part['text']).'</span>';
+        }
+
+        return implode(' ', $parts);
+    }
+
+    public const BANNER_PLACEMENTS = [
+        'after_strategy' => 'After Strategy / latest stories',
+        'after_picks' => 'After Best Picks',
+        'after_rankings' => 'Inside Rankings (before schedule)',
+        'after_odds' => 'After Live Odds',
+        'after_guides' => 'After Golf Betting guides',
+    ];
+
+    public static function bannerVisible(array $homepage, string $placement): bool
+    {
+        $banner = $homepage['affiliate_banner'] ?? [];
+
+        if (empty($banner['enabled'])) {
+            return false;
+        }
+
+        return ! empty($banner['placements'][$placement]);
+    }
+
+    private static function plainText(string $value): string
+    {
+        return trim(html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }
 }

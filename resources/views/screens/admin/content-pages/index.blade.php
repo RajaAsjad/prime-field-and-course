@@ -36,7 +36,9 @@
           </tbody>
         </table>
       </div>
-      {{ $pages->links() }}
+      @if ($pages->hasPages())
+        {{ $pages->links() }}
+      @endif
     </div>
   </div>
 </div>

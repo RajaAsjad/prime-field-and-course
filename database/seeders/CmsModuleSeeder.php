@@ -29,7 +29,7 @@ class CmsModuleSeeder extends Seeder
                 'name' => 'Users',
                 'icon' => 'fa-solid fa-users',
                 'sort_order' => 2,
-                'status' => 'active',
+                'status' => 'inactive',
                 'parent_id' => 0,
             ]
         );

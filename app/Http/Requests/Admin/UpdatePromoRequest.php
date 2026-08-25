@@ -19,6 +19,7 @@ class UpdatePromoRequest extends FormRequest
             'book_class' => ['nullable', 'string', 'max:50'],
             'bonus_text' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'disclaimer' => ['nullable', 'string', 'max:255'],
             'cta_url' => ['nullable', 'string', 'max:500'],
             'cta_label' => ['nullable', 'string', 'max:255'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],

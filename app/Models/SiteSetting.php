@@ -82,10 +82,23 @@ class SiteSetting extends Model
 
     public function homepage(): array
     {
-        return array_replace_recursive(
+        $homepage = array_replace_recursive(
             \App\Support\HomepageDefaults::all(),
             $this->homepage_content ?? []
         );
+
+        $homepage['hero']['image_url'] = $this->heroImageUrl();
+        $homepage['affiliate_banner'] = $this->normalizedAffiliateBanner($this->homepage_content['affiliate_banner'] ?? []);
+
+        return $homepage;
+    }
+
+    public function heroImageUrl(): string
+    {
+        $stored = $this->homepage_content['hero']['image_url'] ?? null;
+        $fallback = \App\Support\HomepageDefaults::all()['hero']['image_url'];
+
+        return $this->assetUrl($stored) ?: $fallback;
     }
 
     public function homepageSection(string $key): array
@@ -113,7 +126,7 @@ class SiteSetting extends Model
 
     public function deleteStoredFile(?string $path): void
     {
-        if (! $path || ! str_starts_with($path, 'site-settings/')) {
+        if (! $path || (! str_starts_with($path, 'site-settings/') && ! str_starts_with($path, 'homepage/'))) {
             return;
         }
 
@@ -133,5 +146,21 @@ class SiteSetting extends Model
         }
 
         return Storage::disk('public')->url($path);
+    }
+
+    private function normalizedAffiliateBanner(array $banner): array
+    {
+        $defaults = \App\Support\HomepageDefaults::all()['affiliate_banner'];
+
+        if (trim((string) ($banner['title'] ?? '')) === '' && trim((string) ($banner['cta_url'] ?? '')) === '') {
+            return $defaults;
+        }
+
+        $banner['placements'] = array_replace(
+            $defaults['placements'],
+            $banner['placements'] ?? []
+        );
+
+        return array_replace($defaults, $banner);
     }
 }

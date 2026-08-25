@@ -55,8 +55,7 @@
               </article>
             @endforeach
           </div>
-        </div>
-
+        </div> 
         @include('pages.content._related')
       </div>
     </section>
