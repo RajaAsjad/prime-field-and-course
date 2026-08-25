@@ -1,0 +1,232 @@
+<?php
+
+return [
+    'golf-glossary' => [
+        'slug' => 'golf-glossary',
+        'title' => 'Golf Glossary: Essential Terms Every Bettor Should Know',
+        'meta_description' => 'Alphabetical glossary of golf terms, from ace and albatross to scramble and wire-to-wire. Learn the language of golf before you place your next wager.',
+        'eyebrow' => 'Reference Guide',
+        'intro' => 'Whether you are new to golf betting or just need a quick refresher, this alphabetical glossary covers the terms you will hear on broadcasts, in sportsbooks, and around the course.',
+        'terms' => [
+            ['term' => 'Ace', 'definition' => 'A hole-in-one (scoring a 1 on a par-3 or par-4).', 'example' => 'A pro aces the famous 17th at TPC Sawgrass.'],
+            ['term' => 'Albatross', 'alias' => 'Double Eagle', 'definition' => 'Three strokes under par on a hole.', 'example' => 'Scoring a 2 on a par-5 hole.'],
+            ['term' => 'Approach Shot', 'definition' => 'Any shot played toward the green, usually from the fairway or rough.'],
+            ['term' => 'Birdie', 'definition' => 'One stroke under par on a hole.', 'example' => 'Scoring a 3 on a par-4.'],
+            ['term' => 'Bogey', 'definition' => 'One stroke over par.', 'example' => 'Scoring a 5 on a par-4.'],
+            ['term' => 'Double Bogey', 'definition' => 'Two strokes over par (and so on for triple, etc.).'],
+            ['term' => 'Bunker', 'alias' => 'Sand Trap', 'definition' => 'A hazard filled with sand.', 'example' => 'Landing in the greenside bunker requires a sand shot to get out.'],
+            ['term' => 'Caddie', 'definition' => 'A player\'s assistant who carries clubs, reads greens, and offers advice.'],
+            ['term' => 'Divot', 'definition' => 'A chunk of turf dug out by a club.', 'example' => 'Good etiquette requires replacing your divot or using sand/seed mix.'],
+            ['term' => 'Draw', 'definition' => 'A gentle right-to-left curve (for right-handed players). Opposite of a fade.'],
+            ['term' => 'Drive', 'definition' => 'The first shot off the tee on a hole, usually with a driver.'],
+            ['term' => 'Eagle', 'definition' => 'Two strokes under par.', 'example' => 'Scoring a 3 on a par-5.'],
+            ['term' => 'Fairway', 'definition' => 'The closely mowed area between the tee and green. Ideal landing zone.'],
+            ['term' => 'Fade', 'definition' => 'A gentle left-to-right curve (for right-handed players).'],
+            ['term' => 'Gimme', 'definition' => 'A short putt conceded by an opponent (common in casual play).'],
+            ['term' => 'Green', 'definition' => 'The smooth, closely cut area where you putt.'],
+            ['term' => 'Handicap', 'definition' => 'A numerical measure of a player\'s skill (lower = better). Allows fair play against stronger golfers by giving strokes.'],
+            ['term' => 'Hazard', 'definition' => 'Any obstacle (bunker, water, trees, rough).'],
+            ['term' => 'Hook', 'definition' => 'A sharp right-to-left curve (right-hander), often unintentional.'],
+            ['term' => 'Lie', 'definition' => 'The position of the ball on the ground.', 'example' => 'A "good lie" in the fairway vs. a "buried lie" in deep rough.'],
+            ['term' => 'Match Play', 'definition' => 'Format where the lowest score on each hole wins the hole (first to win more holes wins the match).'],
+            ['term' => 'Mulligan', 'definition' => 'A do-over shot (unofficial, common in friendly rounds).'],
+            ['term' => 'Par', 'definition' => 'The expected score for a skilled golfer on a hole (usually 3, 4, or 5).', 'example' => 'A par-72 course has 18 holes totaling 72 strokes expected.'],
+            ['term' => 'Putt', 'definition' => 'A stroke on the green using a putter.'],
+            ['term' => 'Rough', 'definition' => 'Longer grass bordering the fairway, harder to hit from.'],
+            ['term' => 'Scramble', 'definition' => 'A popular team format (usually 2 or 4 players per team) where all players hit from the same spot each time. The team tees off individually, selects the best shot, then everyone plays their next shot from that location (within one club-length, no closer to the hole, same lie conditions). This repeats until the ball is holed. The team records one score per hole.', 'example' => 'Great for mixed-skill groups, charity events, and fun outings as it reduces pressure and bad shots.'],
+            ['term' => 'Slice', 'definition' => 'A sharp left-to-right curve (right-hander), often unintentional.'],
+            ['term' => 'Stance', 'definition' => 'How you position your feet when addressing the ball.'],
+            ['term' => 'Stroke Play', 'definition' => 'Format where total strokes over all holes determine the winner (standard PGA Tour format).'],
+            ['term' => 'Tee Box', 'definition' => 'The starting area for each hole.'],
+            ['term' => 'Wire-to-Wire', 'definition' => 'Leading after every round of a tournament.'],
+        ],
+    ],
+
+    'best-golf-betting-apps' => [
+        'slug' => 'best-golf-betting-apps',
+        'title' => 'Best Golf Betting Apps in 2025',
+        'subtitle' => 'FanDuel vs. DraftKings vs. bet365 vs. BetMGM',
+        'meta_description' => 'Head-to-head comparison of the top golf betting apps — FanDuel, DraftKings, bet365, and BetMGM. Markets, odds, live betting, promos, and Missouri betting tips.',
+        'eyebrow' => 'App Comparison',
+        'intro' => 'With sports betting now live across Missouri, pairing your love of golf with smart wagers on PGA Tour events, majors, or LIV Golf adds another layer of thrill to every round. Here is a head-to-head comparison of the top golf betting apps available in Missouri — all fully licensed, mobile-friendly (iOS/Android), and perfect for betting from the course, a watch party, or home.',
+        'apps' => [
+            [
+                'name' => 'FanDuel',
+                'tagline' => 'Perfect for Casual Golf Fans & On-Course Bettors',
+                'description' => 'FanDuel\'s app is super intuitive — ideal if you\'re at a charity scramble or watching the PGA Tour locally. It excels at placement bets (top 5/10/20 finishes — lower risk than picking the outright winner) and head-to-head matchups. Live betting feels seamless with quick updates after every hole.',
+                'pros' => ['Clean design', 'Fast cash-outs', 'Great for new bettors'],
+                'cons' => ['Longshot odds can be a touch higher (less value on huge underdogs)'],
+                'tip' => 'Use it for safer bets like top-10 finishes during major tournament weekends.',
+            ],
+            [
+                'name' => 'DraftKings',
+                'tagline' => 'The Promo King for Big Events',
+                'description' => 'DraftKings loads up on golf-specific promotions, especially around majors like The Masters or The Players Championship. You\'ll find boosted odds, profit boosts, free pools, and creative parlays (e.g., same-tournament combos). Markets are deep: hole-in-one props, make/miss cut, nationality winners.',
+                'pros' => ['Endless specials', 'Huge variety of bets'],
+                'cons' => ['Can feel busy for first-timers'],
+                'tip' => 'Great for boosted odds during major championship weekends.',
+            ],
+            [
+                'name' => 'bet365',
+                'tagline' => 'Sharp Odds & Live Betting Leader',
+                'description' => 'bet365 often has the best pricing on outright winners and futures — meaning better potential payouts. Their in-play betting is unmatched: lines adjust hole-by-hole with minimal delay, perfect for catching momentum shifts (e.g., a hot putter on the back nine).',
+                'pros' => ['Sharpest lines', 'Excellent live tools'],
+                'cons' => ['Interface is straightforward but less "fun" than FanDuel/DraftKings'],
+                'tip' => 'Shop here first for value on underdogs during televised events.',
+            ],
+            [
+                'name' => 'BetMGM',
+                'tagline' => 'Comprehensive & Major-Focused',
+                'description' => 'BetMGM shines for big tournaments with frequent odds boost tokens (e.g., enhance a player\'s top-10 payout) and strong player props. It ties into MGM rewards if you\'re traveling, and markets cover everything from group betting to round scores.',
+                'pros' => ['Balanced features', 'Reliable boosts for majors'],
+                'cons' => ['Promo volume sometimes lags behind DraftKings'],
+                'tip' => 'Ideal for betting on pro events while following the tour all season.',
+            ],
+        ],
+        'tips' => [
+            ['title' => 'Always shop lines', 'text' => 'A +350 on Scottie Scheffler at one app might be +400 at another. Check all four before locking in.'],
+            ['title' => 'Leverage welcome offers', 'text' => 'Bonus bets are perfect for low-risk golf wagers like top-10 finishes or make-the-cut props.'],
+            ['title' => 'Live betting shines in golf', 'text' => 'Volatility is high; bet365 and FanDuel lead here for in-round action.'],
+            ['title' => 'Responsible fun', 'text' => 'Set deposit/time limits in-app. Call 1-800-GAMBLER if needed. Bet for entertainment, not income.'],
+        ],
+    ],
+
+    'how-to-bet-on-golf' => [
+        'slug' => 'how-to-bet-on-golf',
+        'title' => 'How to Bet on Golf',
+        'meta_description' => 'Complete guide to golf betting — outright winners, matchups, finishing position, futures, live hole-by-hole bets, tournament props, strategies, and how to read odds.',
+        'eyebrow' => 'Betting Guide',
+        'intro' => 'Golf offers some of the most exciting betting opportunities in sports — from picking a tournament winner to live hole-by-hole wagers. This guide walks you through every major bet type, how to place them, and strategies to bet smarter.',
+        'sections' => [
+            [
+                'id' => 'bet-types',
+                'title' => 'Types of Golf Bets',
+                'content' => 'There are several main types of golf bets, with some of the most popular being outright winner, round leaders, finishing position, matchups, futures, live hole-by-hole betting and tournament props.',
+                'list' => [
+                    'Outright winner — who will win the tournament.',
+                    'Round leader — who is leading at the end of a given round, not the entire tournament.',
+                    'Finishing position — choosing a player to finish top 5, top 10, top 20 or top 40.',
+                    'Matchup — who will win between a pair of players; the rest of the field is irrelevant.',
+                    'Futures — tournaments months from now, or props like whether a player will win a major.',
+                    'Live hole-by-hole — who wins the hole, a birdie, or hitting the fairway/green.',
+                    'Tournament props — winning score, hole-in-one, best finisher by country, and more.',
+                ],
+            ],
+            [
+                'id' => 'matchup-bets',
+                'title' => 'How to Place a Matchup Bet',
+                'paragraphs' => [
+                    'In golf betting, a matchup bet pairs two players together and you select who will win only between those two. The rest of the competitors in the tournament are not relevant. These bets can take place over one round or the entire tournament.',
+                    'For example, Jon Rahm at -115 could be matched up with Collin Morikawa at -105 for the first round. If Rahm shoots a better score, a $115 bet wins $100. If Morikawa beats Rahm, a $105 bet wins $100. If the two tie, it is a push and the bet is refunded.',
+                    'Matchup bets are valuable because you can directly compare recent form as well as how each player fits the course.',
+                ],
+            ],
+            [
+                'id' => 'finishing-position',
+                'title' => 'How to Place a Finishing Position Bet',
+                'paragraphs' => [
+                    'A finishing position bet is based on where the player finishes at the end of the tournament. Common bets include top 5, top 10, top 20, or top 40.',
+                    'This is a great way to bet on a player you think will do well but do not want to count on winning the whole tournament. With over 150 golfers competing most weeks, picking a winner is incredibly hard.',
+                    'Finishing position bets provide room for error. If a player is playing well and has a good history at the course, a top 5 bet may be best. For an under-the-radar breakout pick, top 20 or 40 is safer.',
+                    'Dead heat rules apply on most sportsbooks. If your top 10 bet finishes in a three-way tie for 10th, 11th and 12th, the payout for 10th is split three ways.',
+                ],
+            ],
+            [
+                'id' => 'outright-winner',
+                'title' => 'How to Place an Outright Winner Bet',
+                'paragraphs' => [
+                    'An outright golf bet is simply choosing who will win the tournament. With over 150 golfers, even the favorite is usually at least +1000.',
+                    'There is often value in good players priced between +3000 and +5000 (30-1 to 50-1). Winning an outright bet can seriously boost your bankroll while risking a half unit or less — but it is incredibly difficult to win.',
+                ],
+            ],
+            [
+                'id' => 'futures',
+                'title' => 'How to Bet on Golf Futures',
+                'paragraphs' => [
+                    'A golf future bet is wagering on tournaments — often major championships like The Masters, PGA Championship, U.S. Open and Open Championship — weeks or months in advance.',
+                    'Many sportsbooks offer futures on whether a golfer will win any of the four majors, or even two or more majors in a season. Betting on a player to win any major is a fun way to follow the biggest tournaments all year.',
+                ],
+            ],
+            [
+                'id' => 'live-betting',
+                'title' => 'How to Live Bet on Golf',
+                'paragraphs' => [
+                    'Live betting in golf is exploding in popularity. Whether on TV or in person, it is fun to place a bet for a specific hole and watch it play out in 10–15 minutes.',
+                    'Common hole-by-hole live bets include selecting a player to win the hole, two players to tie, a birdie or better, the exact number of shots, and whether a player hits the fairway or green in regulation.',
+                    'There is often value in betting on end-of-round leaders once a good shot has been hit that could lead to a birdie. Sportsbooks are occasionally slow to update odds before the score is recorded.',
+                ],
+            ],
+            [
+                'id' => 'tournament-props',
+                'title' => 'How to Bet Golf Tournament Props',
+                'paragraphs' => [
+                    'Tournament props are a fun way to follow a golf tournament throughout the weekend. There are more props during major championships, but opportunities exist every week.',
+                ],
+                'list' => [
+                    'Who will be the top English player?',
+                    'Will an American player win the tournament?',
+                    'Who will be the top continental European player?',
+                    'Who will be the top amateur player?',
+                    'Which left-handed player will finish highest?',
+                    'Will there be a hole-in-one?',
+                    'What will the winning score be?',
+                    'Will there be a playoff to determine the champion?',
+                ],
+            ],
+            [
+                'id' => 'strategies',
+                'title' => 'Golf Betting Strategies',
+                'paragraphs' => [
+                    'Golf is one of the hardest sports to bet on because so little is predictable. Fluky bounces, tee times leading to different weather, course conditions and other factors create far more variables than most sports.',
+                    'Consider how the course fits the player you are betting on. Are most dogleg holes to the right? If the player moves the ball left-to-right off the tee, that could be an advantage. Is there thick rough? Driving accuracy may be crucial.',
+                    'The strokes gained stat gives a great idea of how each golfer is performing in various aspects of their game.',
+                    'Live betting can be one of the most effective strategies if you notice a tendency on a specific hole or stretch. A player one shot back coming up on an easy stretch they excel on can be a profitable opportunity.',
+                ],
+            ],
+            [
+                'id' => 'reading-odds',
+                'title' => 'How to Read Golf Odds',
+                'paragraphs' => [
+                    'A (-) sign means you risk more than your potential winnings; a (+) sign means winnings exceed your stake. In golf, outright bets are almost always plus-money, except live betting when one player has pulled away.',
+                    'American odds are based on a $100 bet. An outright winner at +2500 wins $2,500 for every $100 wagered.',
+                ],
+            ],
+            [
+                'id' => 'moneylines',
+                'title' => 'How to Read Golf Moneylines',
+                'paragraphs' => [
+                    'Books create head-to-head matchups even though players compete against the entire field. A (+) denotes the underdog and (-) the favorite.',
+                    'Example: Abraham Ancer (+113) vs Paul Casey (-135). A $100 bet on Ancer wins $113; you must bet $135 on Casey to win $100.',
+                ],
+            ],
+            [
+                'id' => 'line-shopping',
+                'title' => 'Line Shopping & Odds Comparison',
+                'paragraphs' => [
+                    'Getting the best odds on your golf bets cannot be overstated. Line shopping means finding the sportsbook offering the best price on the bet you want.',
+                    'Since books set matchups independently, it is critical to compare golf moneyline odds. One book may have Ancer at +113 vs Casey, while another has Ancer at +150 — a $37 difference on a $100 bet.',
+                    'Profitable bettors check lines across all available sportsbooks and maintain accounts at each so they can always bet at the best number.',
+                ],
+            ],
+            [
+                'id' => 'sportsbooks',
+                'title' => 'Where to Bet on Golf',
+                'paragraphs' => [
+                    'Popular sportsbooks for golf betting include:',
+                ],
+                'list' => [
+                    'Caesars', 'BetMGM', 'BetRivers/SugarHouse', 'Unibet',
+                    'DraftKings', 'FanDuel', 'PointsBet',
+                ],
+            ],
+            [
+                'id' => 'popular-golfers',
+                'title' => 'Who Are the Most Popular Golfers?',
+                'paragraphs' => [
+                    'Tiger Woods remains the most popular golfer worldwide for both fame and betting handle. Rory McIlroy and Jordan Spieth are also heavily wagered. Golf is global — players like Hideki Matsuyama are hugely popular in Japan.',
+                    'High-profile golfers often receive a disproportionate share of bets, which can drive their odds down as sportsbooks manage exposure.',
+                ],
+            ],
+        ],
+    ],
+];

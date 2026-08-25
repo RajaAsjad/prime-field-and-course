@@ -2,7 +2,19 @@
 @php
   $isHome = request()->routeIs('home');
   $homeUrl = route('home');
-  $navHref = fn (string $hash): string => $isHome ? $hash : $homeUrl . $hash;
+  $headerLinks = ($navigationLinks['header'] ?? collect());
+  $headerCtas = $siteSettings->homepage()['header_ctas'] ?? [];
+  $resolveNavUrl = function (string $url) use ($isHome, $homeUrl): string {
+      if (str_starts_with($url, '#')) {
+          return $isHome ? $url : $homeUrl.$url;
+      }
+
+      if (str_starts_with($url, '/')) {
+          return url($url);
+      }
+
+      return $url;
+  };
 @endphp
   <nav id="nav" class="{{ $isHome ? '' : 'solid' }}" @if (! $isHome) data-force-solid="1" @endif>
     <div class="wrap">
@@ -11,33 +23,41 @@
           @include('partials.site-brand', ['context' => 'header'])
         </a>
         <ul class="nav-links" role="list">
-          <li><a href="{{ $navHref('#strategy') }}" class="nv">Strategy</a></li>
-          <li><a href="{{ $navHref('#promos') }}" class="nv">Promos</a></li>
-          <li><a href="{{ $navHref('#best-picks') }}" class="nv">Best Picks</a></li>
-          <li><a href="{{ $navHref('#competition-feeds') }}" class="nv">Rankings</a></li>
-          <li><a href="{{ $navHref('#running-odds') }}" class="nv">Live Odds</a></li>
-          <li><a href="{{ $navHref('#golf-betting') }}" class="nv">Golf Betting</a></li>
-          <li><a href="{{ $navHref('#tournaments') }}" class="nv">Tournaments</a></li>
-          <li><a href="{{ $navHref('#faq') }}" class="nv">FAQ</a></li>
+          @foreach ($headerLinks as $link)
+            <li>
+              <a href="{{ $resolveNavUrl($link->url) }}" class="nv"
+                @if ($link->open_new_tab) target="_blank" rel="noopener noreferrer" @endif>{{ $link->label }}</a>
+            </li>
+          @endforeach
         </ul>
-        <div class="nav-cta"><a href="{{ $navHref('#premium') }}" class="btn btn-primary btn-sm">Get Insider Picks</a><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
-            target="_blank" rel="sponsored noopener noreferrer" class="btn btn-gold btn-sm">Claim Bonus</a></div><button class="ham" id="ham"
-          aria-expanded="false"><span></span><span></span><span></span></button>
+        <div class="nav-cta">
+          @if (!empty($headerCtas['primary']['label']))
+            <a href="{{ $resolveNavUrl($headerCtas['primary']['url'] ?? '#premium') }}" class="btn btn-primary btn-sm">{{ $headerCtas['primary']['label'] }}</a>
+          @endif
+          @if (!empty($headerCtas['secondary']['label']))
+            <a href="{{ $headerCtas['secondary']['url'] ?? '#' }}" target="_blank" rel="sponsored noopener noreferrer" class="btn btn-gold btn-sm">{{ $headerCtas['secondary']['label'] }}</a>
+          @endif
+        </div>
+        <button class="ham" id="ham" aria-expanded="false"><span></span><span></span><span></span></button>
       </div>
     </div>
   </nav>
 
   <div id="mob" role="dialog">
     <ul class="mob-links" role="list">
-      <li><a href="{{ $navHref('#strategy') }}" class="mob-nv">Strategy</a></li>
-      <li><a href="{{ $navHref('#promos') }}" class="mob-nv">Promos</a></li>
-      <li><a href="{{ $navHref('#best-picks') }}" class="mob-nv">Best Picks</a></li>
-      <li><a href="{{ $navHref('#competition-feeds') }}" class="mob-nv">Rankings</a></li>
-      <li><a href="{{ $navHref('#running-odds') }}" class="mob-nv">Live Odds</a></li>
-      <li><a href="{{ $navHref('#golf-betting') }}" class="mob-nv">Golf Betting</a></li>
-      <li><a href="{{ $navHref('#tournaments') }}" class="mob-nv">Tournaments</a></li>
-      <li><a href="{{ $navHref('#faq') }}" class="mob-nv">FAQ</a></li>
+      @foreach ($headerLinks as $link)
+        <li>
+          <a href="{{ $resolveNavUrl($link->url) }}" class="mob-nv"
+            @if ($link->open_new_tab) target="_blank" rel="noopener noreferrer" @endif>{{ $link->label }}</a>
+        </li>
+      @endforeach
     </ul>
-    <div class="mob-cta"><a href="{{ $navHref('#premium') }}" class="btn btn-primary">Get Insider Picks</a><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
-            target="_blank" rel="sponsored noopener noreferrer" class="btn btn-gold">Claim Bonus</a></div>
+    <div class="mob-cta">
+      @if (!empty($headerCtas['primary']['label']))
+        <a href="{{ $resolveNavUrl($headerCtas['primary']['url'] ?? '#premium') }}" class="btn btn-primary">{{ $headerCtas['primary']['label'] }}</a>
+      @endif
+      @if (!empty($headerCtas['secondary']['label']))
+        <a href="{{ $headerCtas['secondary']['url'] ?? '#' }}" target="_blank" rel="sponsored noopener noreferrer" class="btn btn-gold">{{ $headerCtas['secondary']['label'] }}</a>
+      @endif
+    </div>
   </div>

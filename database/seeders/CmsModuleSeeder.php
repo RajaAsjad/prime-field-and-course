@@ -89,6 +89,61 @@ class CmsModuleSeeder extends Seeder
             ]
         );
 
+        $websiteContent = CmsModule::updateOrCreate(
+            ['route_name' => 'admin.website-content'],
+            [
+                'name' => 'Website Content',
+                'icon' => 'fa-solid fa-globe',
+                'sort_order' => 6,
+                'status' => 'active',
+                'parent_id' => 0,
+            ]
+        );
+
+        CmsModule::updateOrCreate(
+            ['route_name' => 'admin.homepage.edit'],
+            [
+                'name' => 'Homepage',
+                'icon' => 'fa-solid fa-house-chimney',
+                'sort_order' => 1,
+                'status' => 'active',
+                'parent_id' => $websiteContent->id,
+            ]
+        );
+
+        CmsModule::updateOrCreate(
+            ['route_name' => 'admin.content-pages.index'],
+            [
+                'name' => 'Content Pages',
+                'icon' => 'fa-solid fa-file-lines',
+                'sort_order' => 2,
+                'status' => 'active',
+                'parent_id' => $websiteContent->id,
+            ]
+        );
+
+        CmsModule::updateOrCreate(
+            ['route_name' => 'admin.navigation-links.index'],
+            [
+                'name' => 'Navigation Links',
+                'icon' => 'fa-solid fa-link',
+                'sort_order' => 3,
+                'status' => 'active',
+                'parent_id' => $websiteContent->id,
+            ]
+        );
+
+        CmsModule::updateOrCreate(
+            ['route_name' => 'admin.faqs.index'],
+            [
+                'name' => 'FAQs',
+                'icon' => 'fa-solid fa-circle-question',
+                'sort_order' => 4,
+                'status' => 'active',
+                'parent_id' => $websiteContent->id,
+            ]
+        );
+
         $allowed = [
             'admin.dashboard',
             'users.index',
@@ -97,6 +152,11 @@ class CmsModuleSeeder extends Seeder
             'admin.tips.index',
             'admin.tips-categories.index',
             'admin.promos.index',
+            'admin.website-content',
+            'admin.homepage.edit',
+            'admin.content-pages.index',
+            'admin.navigation-links.index',
+            'admin.faqs.index',
         ];
 
         CmsModule::query()

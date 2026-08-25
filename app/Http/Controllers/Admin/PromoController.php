@@ -20,9 +20,11 @@ class PromoController extends Controller
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($builder) use ($search) {
                     $builder->where('title', 'like', "%{$search}%")
+                        ->orWhere('book_name', 'like', "%{$search}%")
                         ->orWhere('slug', 'like', "%{$search}%");
                 });
             })
+            ->orderBy('sort_order')
             ->orderByDesc('id')
             ->paginate(10)
             ->withQueryString();
@@ -41,6 +43,7 @@ class PromoController extends Controller
     {
         $data = $request->safe()->except('image');
         $data['status'] = $request->boolean('status');
+        $data['is_featured'] = $request->boolean('is_featured');
 
         $promo = new Promo($data);
 
@@ -64,6 +67,7 @@ class PromoController extends Controller
     {
         $data = $request->safe()->except('image');
         $data['status'] = $request->boolean('status');
+        $data['is_featured'] = $request->boolean('is_featured');
 
         $promo->fill($data);
 

@@ -1,4 +1,51 @@
 <div class="row g-3">
+  <div class="col-md-4">
+    <label class="form-label" for="book_name">Sportsbook Name</label>
+    <input type="text" class="form-control" id="book_name" name="book_name" value="{{ old('book_name', $promo->book_name ?? '') }}" placeholder="BetMGM">
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label" for="book_class">Book CSS Class</label>
+    <select class="form-select" id="book_class" name="book_class">
+      <option value="">Default</option>
+      @foreach (['mgm','fd','dk','cz','b365'] as $class)
+        <option value="{{ $class }}" @selected(old('book_class', $promo->book_class ?? '') === $class)>{{ strtoupper($class) }}</option>
+      @endforeach
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label" for="bonus_text">Bonus Text</label>
+    <input type="text" class="form-control" id="bonus_text" name="bonus_text" value="{{ old('bonus_text', $promo->bonus_text ?? '') }}" placeholder="$1,500 Back">
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label" for="cta_url">CTA URL</label>
+    <input type="url" class="form-control" id="cta_url" name="cta_url" value="{{ old('cta_url', $promo->cta_url ?? '') }}">
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label" for="cta_label">CTA Label</label>
+    <input type="text" class="form-control" id="cta_label" name="cta_label" value="{{ old('cta_label', $promo->cta_label ?? 'Claim Bonus →') }}">
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label" for="sort_order">Sort Order</label>
+    <input type="number" min="0" class="form-control" id="sort_order" name="sort_order" value="{{ old('sort_order', $promo->sort_order ?? 0) }}">
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label" for="ribbon_text">Ribbon Text</label>
+    <input type="text" class="form-control" id="ribbon_text" name="ribbon_text" value="{{ old('ribbon_text', $promo->ribbon_text ?? '') }}" placeholder="TOP PICK">
+  </div>
+
+  <div class="col-md-4 d-flex align-items-end pb-2">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured" value="1" @checked(old('is_featured', $promo->is_featured ?? false))>
+      <label class="form-check-label" for="is_featured">Featured (Top Pick styling)</label>
+    </div>
+  </div>
+
   <div class="col-md-8">
     <label class="form-label" for="title">Title <span class="text-danger">*</span></label>
     <input

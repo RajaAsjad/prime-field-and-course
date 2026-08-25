@@ -11,11 +11,19 @@ class Promo extends Model
     protected $fillable = [
         'slug',
         'title',
+        'book_name',
+        'book_class',
+        'bonus_text',
         'description',
         'image_url',
         'price',
         'discount_price',
+        'cta_url',
+        'cta_label',
         'status',
+        'is_featured',
+        'ribbon_text',
+        'sort_order',
     ];
 
     protected function casts(): array
@@ -24,6 +32,8 @@ class Promo extends Model
             'price' => 'decimal:2',
             'discount_price' => 'decimal:2',
             'status' => 'boolean',
+            'is_featured' => 'boolean',
+            'sort_order' => 'integer',
         ];
     }
 
@@ -86,5 +96,20 @@ class Promo extends Model
     public function statusLabel(): string
     {
         return $this->status ? 'Active' : 'Inactive';
+    }
+
+    public function scopeHomepage($query)
+    {
+        return $query->where('status', true)->orderBy('sort_order')->orderByDesc('is_featured');
+    }
+
+    public function displayBookName(): string
+    {
+        return $this->book_name ?: $this->title;
+    }
+
+    public function displayBonus(): string
+    {
+        return $this->bonus_text ?: ($this->discount_price ? '$'.$this->discount_price.' Bonus' : $this->title);
     }
 }

@@ -6,16 +6,23 @@
 
     <section id="hero">
       <div class="hero-bg"><img
-          src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=1920&q=85"
+          src="{{ $homepage['hero']['image_url'] ?? 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=1920&q=85' }}"
           alt="Golf course" width="1920" height="1080" loading="eager" fetchpriority="high" /></div>
       <div class="hero-overlay"></div>
       <div class="hero-content">
-        <h1 class="hero-h1"><span>Golf Betting</span> <span class="gold">Made Simple.</span> <span>Expert Picks &
-            Exclusive Deals.</span></h1>
-        <p class="hero-sub">All your favourite sportsbooks, insider tips, and tournament updates in one place.</p>
-        <div class="hero-btns"><a href="#best-picks" class="btn btn-gold">View Best Picks</a><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
-          target="_blank" rel="sponsored noopener noreferrer" class="btn btn-outline-hero">Sign Up & Get Bonuses</a></div>
-        <p class="gambling-disclaimer">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
+        <h1 class="hero-h1">{!! $homepage['hero']['headline_html'] ?? '' !!}</h1>
+        <p class="hero-sub">{{ $homepage['hero']['subtitle'] ?? '' }}</p>
+        <div class="hero-btns">
+          @if (!empty($homepage['hero']['cta_primary']['label']))
+            <a href="{{ $homepage['hero']['cta_primary']['url'] ?? '#best-picks' }}" class="btn btn-gold">{{ $homepage['hero']['cta_primary']['label'] }}</a>
+          @endif
+          @if (!empty($homepage['hero']['cta_secondary']['label']))
+            <a href="{{ $homepage['hero']['cta_secondary']['url'] ?? '#' }}" target="_blank" rel="sponsored noopener noreferrer" class="btn btn-outline-hero">{{ $homepage['hero']['cta_secondary']['label'] }}</a>
+          @endif
+        </div>
+        @if (!empty($homepage['hero']['disclaimer']))
+          <p class="gambling-disclaimer">{{ $homepage['hero']['disclaimer'] }}</p>
+        @endif
       </div> 
     </section>
 
@@ -106,53 +113,28 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Partner Offers</div>
-          <h2 class="h-section">Exclusive <em>Sign-Up Bonuses</em></h2>
-          <p class="body-lg">Verified offers updated weekly. All bonuses for new users only. Must be 21+.</p>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['promos']['eyebrow'] ?? 'Partner Offers' }}</div>
+          <h2 class="h-section">Exclusive <em>{{ $homepage['sections']['promos']['title'] ?? 'Sign-Up Bonuses' }}</em></h2>
+          <p class="body-lg">{{ $homepage['sections']['promos']['subtitle'] ?? 'Verified offers updated weekly. All bonuses for new users only. Must be 21+.' }}</p>
         </div>
         <div class="promos-grid">
-          <div class="promo-card featured rev rev-d1">
-            <div class="promo-ribbon">TOP PICK</div>
-            <div class="book-name mgm"><span>BetMGM</span></div>
-            <div class="promo-bonus">$1,500 Back</div>
-            <p class="promo-desc">First bet insurance up to $1,500.</p>
-            <a class="btn btn-gold" href="https://www.anrdoezrs.net/click-101764042-17337458" 
-              target="_blank" rel="sponsored noopener noreferrer"  
-              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
+          @forelse ($promos as $promo)
+            <div class="promo-card {{ $promo->is_featured ? 'featured' : '' }} rev rev-d{{ ($loop->iteration - 1) % 5 + 1 }}">
+              @if ($promo->ribbon_text)
+                <div class="promo-ribbon">{{ $promo->ribbon_text }}</div>
+              @endif
+              <div class="book-name {{ $promo->book_class }}"><span>{{ $promo->displayBookName() }}</span></div>
+              <div class="promo-bonus">{{ $promo->displayBonus() }}</div>
+              @if ($promo->description)
+                <p class="promo-desc">{{ $promo->description }}</p>
+              @endif
+              <a class="btn {{ $promo->is_featured ? 'btn-gold' : 'btn-primary' }}" href="{{ $promo->cta_url ?? '#' }}"
+                target="_blank" rel="sponsored noopener noreferrer" style="width:100%;justify-content:center;">{{ $promo->cta_label ?? 'Claim Bonus →' }}</a>
               <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
-          </div>
-          <div class="promo-card rev rev-d2">
-            <div class="book-name fd">FanDuel</div>
-            <div class="promo-bonus">$150 Back</div>
-            <p class="promo-desc">No Sweat First Bet up to $150.</p><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
-            target="_blank" rel="sponsored noopener noreferrer"  class="btn btn-primary"
-            style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
-            <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
-          </div>
-          <div class="promo-card rev rev-d3"> 
-            <div class="book-name dk">DraftKings</div>
-            <div class="promo-bonus">$200 Bonus</div>
-            <p class="promo-desc">Bet $5, get $200 in bonus bets instantly.</p><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
-            target="_blank" rel="sponsored noopener noreferrer"  class="btn btn-primary"
-              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
-            <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
-          </div>
-          <div class="promo-card rev rev-d4">
-            <div class="book-name cz">Caesars</div>
-            <div class="promo-bonus">$1,000 Back</div>
-            <p class="promo-desc">First bet up to $1,000 back as bonus.</p><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
-            target="_blank" rel="sponsored noopener noreferrer"  class="btn btn-primary"
-              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
-            <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
-          </div>
-          <div class="promo-card rev rev-d5">
-            <div class="book-name b365">Bet365</div>
-            <div class="promo-bonus">$200 Bonus</div>
-            <p class="promo-desc">Bet $5 and receive $200 in bonus bets.</p><a href="https://www.anrdoezrs.net/click-101764042-17337458" 
-            target="_blank" rel="sponsored noopener noreferrer"  class="btn btn-primary"
-              style="width:100%;justify-content:center;">Claim Bonus &rarr;</a>
-            <p class="gambling-note">21+ only. Gambling problem? Call <a href="tel:18004262537">1-800-GAMBLER</a></p>
-          </div>
+            </div>
+          @empty
+            <p class="body-lg">No promos available right now. Check back soon.</p>
+          @endforelse
         </div>
       </div>
     </section>
@@ -756,21 +738,23 @@
       <div class="wrap">
         <div class="cta-grid-2">
           <div class="rev">
-            <h2 class="cta-h">Unlock <span class="gold">Insider</span> Information</h2>
-            <p class="cta-p">Get exclusive weekly picks, deep analysis, and bonus alerts delivered straight to your inbox.</p>
+            <h2 class="cta-h">{!! $homepage['premium']['title_html'] ?? 'Unlock <span class="gold">Insider</span> Information' !!}</h2>
+            <p class="cta-p">{{ $homepage['premium']['subtitle'] ?? '' }}</p>
             <div class="cta-price-row">
-              <span class="price-big">$9.99</span><span class="price-unit">/month</span>
+              <span class="price-big">${{ $homepage['premium']['price'] ?? '9.99' }}</span><span class="price-unit">{{ $homepage['premium']['price_unit'] ?? '/month' }}</span>
             </div>
             <div class="cta-feats">
-              <div class="cta-feat"><span class="cta-feat-check">✅</span>Weekly expert picks every Tuesday</div>
-              <div class="cta-feat"><span class="cta-feat-check">✅</span>Deep tournament analysis &amp; projections</div>
-              <div class="cta-feat"><span class="cta-feat-check">✅</span>Exclusive sportsbook bonus alerts</div>
+              @foreach ($homepage['premium']['features'] ?? [] as $feature)
+                @if ($feature)
+                  <div class="cta-feat"><span class="cta-feat-check">✅</span>{{ $feature }}</div>
+                @endif
+              @endforeach
             </div>
           </div>
           <div class="rev rev-d2">
             <div class="cta-form-card">
-              <h3 class="cta-form-h">Start Your <span class="gold">Free Trial</span></h3>
-              <p class="cta-form-note">7 days free, then $9.99/month. Cancel anytime.</p>
+              <h3 class="cta-form-h">{!! $homepage['premium']['form_title_html'] ?? 'Start Your <span class="gold">Free Trial</span>' !!}</h3>
+              <p class="cta-form-note">{{ $homepage['premium']['form_note'] ?? '' }}</p>
               <form action="#" method="post">
                 <div class="form-grp">
                   <label class="form-lbl cta-form-lbl" for="p-email">Email</label>
@@ -782,36 +766,13 @@
           </div>
         </div>
         <div class="testi-grid">
-          <div class="testi-card rev rev-d1">
-            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-            <p class="testi-q">"Hit three of their top five picks last week. Completely changed how I approach betting."
-            </p>
-            <div class="testi-auth">
-              <div>
-                <div class="testi-name">Marcus T.</div>
-              </div>
+          @foreach ($homepage['testimonials'] ?? [] as $index => $testimonial)
+            <div class="testi-card rev rev-d{{ ($index % 3) + 1 }}">
+              <div class="testi-stars">{{ str_repeat('⭐', (int) ($testimonial['stars'] ?? 5)) }}</div>
+              <p class="testi-q">"{{ $testimonial['quote'] ?? '' }}"</p>
+              <div class="testi-auth"><div><div class="testi-name">{{ $testimonial['author'] ?? '' }}</div></div></div>
             </div>
-          </div>
-          <div class="testi-card rev rev-d2">
-            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-            <p class="testi-q">"The DraftKings bonus alone paid for six months. Their odds table saves me hours weekly."
-            </p>
-            <div class="testi-auth">
-              <div>
-                <div class="testi-name">Sarah K.</div>
-              </div>
-            </div>
-          </div>
-          <div class="testi-card rev rev-d3">
-            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
-            <p class="testi-q">"Finally a golf betting site that goes beyond basic picks. I've recommended it to
-              everyone."</p>
-            <div class="testi-auth">
-              <div>
-                <div class="testi-name">Derek W.</div>
-              </div>
-            </div>
-          </div>
+          @endforeach
         </div>
       </div>
     </section>
@@ -820,56 +781,21 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Got
-            Questions?</div>
-          <h2 class="h-section">Frequently Asked <em>Questions</em></h2>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['faq']['eyebrow'] ?? 'Got Questions?' }}</div>
+          <h2 class="h-section">Frequently Asked <em>{{ $homepage['sections']['faq']['title'] ?? 'Questions' }}</em></h2>
         </div>
         <div class="faq-wrap rev" role="list">
-          <div class="faq-item open" role="listitem">
-            <button type="button" class="faq-q" aria-expanded="true">
-              <span class="faq-q-text">Is Prime Field &amp; Course free?</span>
-              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
-            </button>
-            <div class="faq-a">
-              <div class="faq-a-inner">Yes. Core picks, odds, and news are free. Premium is optional for exclusive analysis and early access.</div>
+          @foreach ($faqs as $faq)
+            <div class="faq-item {{ $faq->open_by_default ? 'open' : '' }}" role="listitem">
+              <button type="button" class="faq-q" aria-expanded="{{ $faq->open_by_default ? 'true' : 'false' }}">
+                <span class="faq-q-text">{{ $faq->question }}</span>
+                <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
+              </button>
+              <div class="faq-a">
+                <div class="faq-a-inner">{{ $faq->answer }}</div>
+              </div>
             </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button type="button" class="faq-q" aria-expanded="false">
-              <span class="faq-q-text">How do affiliate bonuses work?</span>
-              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
-            </button>
-            <div class="faq-a">
-              <div class="faq-a-inner">Click a Claim Bonus button and complete signup with the partner. The offer applies automatically at no extra cost to you.</div>
-            </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button type="button" class="faq-q" aria-expanded="false">
-              <span class="faq-q-text">How are picks selected?</span>
-              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
-            </button>
-            <div class="faq-a">
-              <div class="faq-a-inner">We combine course fit, recent form, weather, and SportsDataIO odds/value signals. Every pick is reviewed before it goes live.</div>
-            </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button type="button" class="faq-q" aria-expanded="false">
-              <span class="faq-q-text">How often are odds updated?</span>
-              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
-            </button>
-            <div class="faq-a">
-              <div class="faq-a-inner">Live odds refresh about every 30–120 seconds depending on the feed. Best available prices are highlighted in green.</div>
-            </div>
-          </div>
-          <div class="faq-item" role="listitem">
-            <button type="button" class="faq-q" aria-expanded="false">
-              <span class="faq-q-text">Can I cancel my subscription?</span>
-              <span class="faq-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg></span>
-            </button>
-            <div class="faq-a">
-              <div class="faq-a-inner">Yes. Cancel anytime with no long-term contract. You keep access through the end of your billing period.</div>
-            </div>
-          </div>
+          @endforeach
         </div>
       </div>
     </section>

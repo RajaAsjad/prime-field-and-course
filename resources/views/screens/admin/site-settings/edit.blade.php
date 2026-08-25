@@ -55,6 +55,20 @@
                   @enderror
                 </div>
                 <div class="col-md-6">
+                  <label class="form-label" for="site_tagline">Site Tagline</label>
+                  <input
+                    type="text"
+                    class="form-control @error('site_tagline') is-invalid @enderror"
+                    id="site_tagline"
+                    name="site_tagline"
+                    value="{{ old('site_tagline', $settings->site_tagline) }}"
+                    placeholder="Solutions LLC"
+                  />
+                  @error('site_tagline')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+                <div class="col-md-6">
                   <label class="form-label" for="footer_copyright">Footer Copyright Text</label>
                   <input
                     type="text"

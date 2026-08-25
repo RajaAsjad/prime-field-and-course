@@ -15,6 +15,7 @@ class UpdateSiteSettingRequest extends FormRequest
     {
         return [
             'site_name' => ['nullable', 'string', 'max:255'],
+            'site_tagline' => ['nullable', 'string', 'max:255'],
             'site_logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg', 'max:5120'],
             'footer_logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg', 'max:5120'],
             'favicon' => ['nullable', 'file', 'mimes:ico,png,jpg,jpeg,svg', 'max:2048'],

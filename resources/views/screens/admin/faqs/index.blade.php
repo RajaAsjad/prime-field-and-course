@@ -1,0 +1,5 @@
+@extends('layouts.admin.master')
+@section('title', 'FAQs')
+@section('content')
+<div class="container-fluid">@include('screens.admin.partials.alerts')<div class="card"><div class="card-header d-flex justify-content-between"><h5 class="mb-0">FAQs</h5><a href="{{ route('admin.faqs.create') }}" class="btn btn-primary btn-sm">Add FAQ</a></div><div class="card-body"><table class="table"><thead><tr><th>Question</th><th>Order</th><th>Status</th><th>Actions</th></tr></thead><tbody>@forelse($faqs as $faq)<tr><td>{{ $faq->question }}</td><td>{{ $faq->sort_order }}</td><td>{{ $faq->is_active ? 'Active' : 'Hidden' }}</td><td class="d-flex gap-2"><a href="{{ route('admin.faqs.edit', $faq) }}" class="btn btn-primary btn-sm">Edit</a><form method="POST" action="{{ route('admin.faqs.destroy', $faq) }}">@csrf @method('DELETE')<button class="btn btn-danger btn-sm">Delete</button></form></td></tr>@empty<tr><td colspan="4" class="text-center text-muted">No FAQs.</td></tr>@endforelse</tbody></table>{{ $faqs->links() }}</div></div></div>
+@endsection

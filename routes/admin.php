@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\ContentPageController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\HomepageController;
+use App\Http\Controllers\Admin\NavigationLinkController;
 use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\TipController;
@@ -34,5 +38,20 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('promos', PromoController::class)
         ->names('admin.promos')
+        ->except(['show']);
+
+    Route::get('/homepage', [HomepageController::class, 'edit'])->name('admin.homepage.edit');
+    Route::put('/homepage', [HomepageController::class, 'update'])->name('admin.homepage.update');
+
+    Route::resource('content-pages', ContentPageController::class)
+        ->names('admin.content-pages')
+        ->except(['show']);
+
+    Route::resource('navigation-links', NavigationLinkController::class)
+        ->names('admin.navigation-links')
+        ->except(['show']);
+
+    Route::resource('faqs', FaqController::class)
+        ->names('admin.faqs')
         ->except(['show']);
 });

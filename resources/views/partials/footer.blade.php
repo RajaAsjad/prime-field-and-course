@@ -1,4 +1,13 @@
 {{-- Footer include --}}
+@php
+  $homeUrl = route('home');
+  $footHref = fn (string $url): string => str_starts_with($url, '#')
+      ? (request()->routeIs('home') ? $url : $homeUrl.$url)
+      : (str_starts_with($url, '/') ? url($url) : $url);
+  $quickLinks = $navigationLinks['footer_quick'] ?? collect();
+  $guideLinks = $navigationLinks['footer_guides'] ?? collect();
+  $legalLinks = $navigationLinks['footer_legal'] ?? collect();
+@endphp
   <footer>
     <div class="wrap">
       <div class="foot-grid">
@@ -44,27 +53,36 @@
             </div>
           @endif
         </div>
-        <div>
-          <p class="foot-col-title">Quick Links</p>
-          <ul class="foot-links">
-            <li><a href="#strategy">Strategy</a></li>
-            <li><a href="#promos">Promos</a></li>
-            <li><a href="#best-picks">Best Picks</a></li>
-            <li><a href="#running-odds">Live Odds</a></li>
-            <li><a href="#golf-betting">Golf Betting</a></li>
-            <li><a href="#tournaments">Tournaments</a></li>
-            <li><a href="#faq">FAQ</a></li>
-          </ul>
-        </div>
-        <div>
-          <p class="foot-col-title">Legal</p>
-          <ul class="foot-links">
-            <li><a href="#">Terms & Conditions</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Responsible Gambling</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
-        </div>
+        @if ($quickLinks->isNotEmpty())
+          <div>
+            <p class="foot-col-title">Quick Links</p>
+            <ul class="foot-links">
+              @foreach ($quickLinks as $link)
+                <li><a href="{{ $footHref($link->url) }}" @if($link->open_new_tab) target="_blank" rel="noopener noreferrer" @endif>{{ $link->label }}</a></li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+        @if ($guideLinks->isNotEmpty())
+          <div>
+            <p class="foot-col-title">Guides</p>
+            <ul class="foot-links">
+              @foreach ($guideLinks as $link)
+                <li><a href="{{ $footHref($link->url) }}" @if($link->open_new_tab) target="_blank" rel="noopener noreferrer" @endif>{{ $link->label }}</a></li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+        @if ($legalLinks->isNotEmpty())
+          <div>
+            <p class="foot-col-title">Legal</p>
+            <ul class="foot-links">
+              @foreach ($legalLinks as $link)
+                <li><a href="{{ $footHref($link->url) }}" @if($link->open_new_tab) target="_blank" rel="noopener noreferrer" @endif>{{ $link->label }}</a></li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
         <div>
           <p class="foot-col-title">Newsletter</p>
           <p style="font-size:.82rem;color:rgba(255,255,255,.4);line-height:1.62;margin-bottom:14px">Top 5 picks every

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FlmStoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RotoballerNewsController;
 use App\Http\Controllers\TipController;
@@ -11,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 
 // web routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/golf-glossary', fn () => app(PageController::class)->show('golf-glossary'));
+Route::get('/best-golf-betting-apps', fn () => app(PageController::class)->show('best-golf-betting-apps'));
+Route::get('/how-to-bet-on-golf', fn () => app(PageController::class)->show('how-to-bet-on-golf'));
+Route::get('/page/{slug}', [PageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('pages.show');
 Route::get('/tips/{tip:slug}', [TipController::class, 'show'])->name('tips.show');
 Route::get('/stories/{storyId}', [FlmStoryController::class, 'show'])->name('stories.show');
 Route::get('/news/{newsId}', [RotoballerNewsController::class, 'show'])->name('news.show');

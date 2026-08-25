@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Faq;
+use App\Models\Promo;
+use App\Models\SiteSetting;
 use App\Services\FieldLevelMedia\FlmContentService;
 use App\Services\SportsDataIo\GolfOddsService;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +25,8 @@ class HomeController extends Controller
         $competitionFeeds = $this->golfOddsService->getCompetitionFeeds();
         $newsFeed = $this->golfOddsService->getNewsFeed();
         $flmFeed = $this->flmContentService->getFeed();
+        $settings = SiteSetting::getSettings();
+        $homepage = $settings->homepage();
 
         return view('pages.home', [
             'liveOdds' => $liveOdds,
@@ -34,6 +39,9 @@ class HomeController extends Controller
             'newsFeed' => $newsFeed,
             'newsRefreshSeconds' => $newsFeed['refresh_seconds'] ?? config('sportsdata.news.refresh_seconds'),
             'flmFeed' => $flmFeed,
+            'homepage' => $homepage,
+            'promos' => Promo::query()->homepage()->get(),
+            'faqs' => Faq::activeList(),
         ]);
     }
 

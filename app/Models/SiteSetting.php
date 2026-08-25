@@ -12,6 +12,7 @@ class SiteSetting extends Model
 
     protected $fillable = [
         'site_name',
+        'site_tagline',
         'site_logo',
         'footer_logo',
         'favicon',
@@ -25,7 +26,15 @@ class SiteSetting extends Model
         'linkedin_url',
         'youtube_url',
         'twitter_url',
+        'homepage_content',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'homepage_content' => 'array',
+        ];
+    }
 
     public static function getSettings(): self
     {
@@ -68,7 +77,22 @@ class SiteSetting extends Model
 
     public function displayTagline(): string
     {
-        return 'Solutions LLC';
+        return $this->site_tagline ?: 'Solutions LLC';
+    }
+
+    public function homepage(): array
+    {
+        return array_replace_recursive(
+            \App\Support\HomepageDefaults::all(),
+            $this->homepage_content ?? []
+        );
+    }
+
+    public function homepageSection(string $key): array
+    {
+        $homepage = $this->homepage();
+
+        return $homepage['sections'][$key] ?? [];
     }
 
     public function displayCopyright(): string

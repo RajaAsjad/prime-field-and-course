@@ -16,6 +16,11 @@
       class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
       <ul class="nav-menus">
         <li>
+          <a href="{{ route('home') }}" target="_blank" title="View website">
+              <i data-feather="external-link"></i>
+          </a>
+        </li>
+        <li>
           <div class="mode">
             <svg>
               <use href="/assets/admin/svg/icon-sprite.svg#moon"></use>

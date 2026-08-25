@@ -8,9 +8,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>{{ $settings->displaySiteName() }} & Promotions</title>
+  <title>@yield('title', $settings->displaySiteName() . ' & Promotions')</title>
   <meta name="description"
-    content="Golf betting tips, expert picks, exclusive sportsbook bonuses, live odds comparison." />
+    content="@yield('meta_description', 'Golf betting tips, expert picks, exclusive sportsbook bonuses, live odds comparison.')" />
   @if ($dbFavicon)
     @php
         $faviconExt = strtolower(pathinfo(parse_url($dbFavicon, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
