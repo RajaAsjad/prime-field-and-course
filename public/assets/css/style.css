@@ -197,7 +197,7 @@
       z-index: 900;
       height: var(--nav-h);
       transition: all .4s;
-      padding-top: 0px;
+      padding-top: 12px;
     }
 
     #nav.solid {
