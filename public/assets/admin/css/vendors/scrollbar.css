@@ -59,6 +59,7 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding-bottom: 30px;
+  margin-top: 50px;
 }
 
 .simplebar-content-wrapper::-webkit-scrollbar,
