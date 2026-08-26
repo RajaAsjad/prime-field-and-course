@@ -70,6 +70,24 @@ class SiteSetting extends Model
         return $this->assetUrl($this->favicon);
     }
 
+    public function faviconType(): string
+    {
+        $url = $this->faviconUrl();
+        if (! $url) {
+            return 'image/svg+xml';
+        }
+
+        $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
+
+        return match ($extension) {
+            'ico' => 'image/x-icon',
+            'png' => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'webp' => 'image/webp',
+            default => 'image/svg+xml',
+        };
+    }
+
     public function displaySiteName(): string
     {
         return $this->site_name ?: 'Prime Field & Course';

@@ -52,7 +52,7 @@
       --tx-m: #6a8070;
       --tx-b: #2a3d2e;
       --bdr: #e8e8e0;
-      --nav-h: 72px;
+      --nav-h: 104px;
       --container: 1280px;
       --py: clamp(72px, 9vw, 130px);
       --ease-expo: cubic-bezier(.16, 1, .3, 1);
@@ -197,7 +197,7 @@
       z-index: 900;
       height: var(--nav-h);
       transition: all .4s;
-      padding-top: 14px;
+      padding-top: 0px;
     }
 
     #nav.solid {
@@ -229,8 +229,8 @@
 
     .logo-mark svg {
       display: block;
-      width: 40px;
-      height: 40px
+      width: 52px;
+      height: 52px
     }
 
     .nav-logo:hover .logo-mark {
@@ -239,9 +239,9 @@
 
     .site-logo-img--header {
       display: block;
-      height: 52px;
+      height: auto;
       width: auto;
-      max-width: 220px;
+      max-width: 160px;
       object-fit: contain
     }
 
@@ -253,7 +253,7 @@
     }
 
     .logo-name {
-      font-size: .92rem;
+      font-size: 1.05rem;
       font-weight: 800;
       color: var(--g-700);
       letter-spacing: -.02em;
@@ -1848,7 +1848,7 @@
 
     .site-logo-img--footer {
       display: block;
-      height: 48px;
+      height: auto;
       width: auto;
       max-width: 220px;
       object-fit: contain

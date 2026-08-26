@@ -10,7 +10,7 @@
         src="{{ $logoUrl }}"
         alt="{{ $name }}"
         class="site-logo-img {{ $context === 'footer' ? 'site-logo-img--footer' : 'site-logo-img--header' }}"
-        style="height:{{ $context === 'footer' ? '48' : '52' }}px;width:auto;max-width:220px;object-fit:contain;display:block;"
+        style="height:{{ $context === 'footer' ? '48' : '96' }}px;width:auto;max-width:{{ $context === 'footer' ? '220' : '420' }}px;object-fit:contain;display:block;"
     />
 @else
 <span class="logo-mark" aria-hidden="true">

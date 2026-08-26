@@ -1,6 +1,5 @@
 @php
     $settings = $siteSettings ?? site_settings();
-    $dbFavicon = $settings->faviconUrl();
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -11,23 +10,7 @@
   <title>@yield('title', $settings->displaySiteName() . ' & Promotions')</title>
   <meta name="description"
     content="@yield('meta_description', 'Golf betting tips, expert picks, exclusive sportsbook bonuses, live odds comparison.')" />
-  @if ($dbFavicon)
-    @php
-        $faviconExt = strtolower(pathinfo(parse_url($dbFavicon, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
-        $faviconType = match ($faviconExt) {
-            'ico' => 'image/x-icon',
-            'png' => 'image/png',
-            'jpg', 'jpeg' => 'image/jpeg',
-            'webp' => 'image/webp',
-            default => 'image/svg+xml',
-        };
-    @endphp
-    <link rel="icon" href="{{ $dbFavicon }}" type="{{ $faviconType }}" />
-    <link rel="apple-touch-icon" href="{{ $dbFavicon }}" />
-  @else
-    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/assets/images/favicon.svg" />
-  @endif
+  @include('partials.favicon')
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
