@@ -22,6 +22,7 @@
         <table class="table">
           <thead>
             <tr>
+              <th>Logo</th>
               <th>Brand</th>
               <th>Headline</th>
               <th>Shown on</th>
@@ -34,6 +35,13 @@
             @forelse ($banners as $banner)
               @php $labels = \App\Support\AffiliateBannerPlacements::labelsFor($banner->placements ?? []); @endphp
               <tr>
+                <td>
+                  @if ($banner->brandImageUrl())
+                    <img src="{{ $banner->brandImageUrl() }}" alt="" style="height:36px;width:auto;max-width:80px;object-fit:contain;background:#0a140b;border-radius:6px;padding:4px;">
+                  @else
+                    —
+                  @endif
+                </td>
                 <td>{{ $banner->brand_name ?: '—' }}</td>
                 <td>{{ $banner->title }}</td>
                 <td>{{ $labels ? implode(', ', $labels) : 'Nowhere yet' }}</td>
@@ -48,7 +56,7 @@
                 </td>
               </tr>
             @empty
-              <tr><td colspan="6" class="text-center text-muted">No offer banners yet.</td></tr>
+              <tr><td colspan="7" class="text-center text-muted">No offer banners yet.</td></tr>
             @endforelse
           </tbody>
         </table>

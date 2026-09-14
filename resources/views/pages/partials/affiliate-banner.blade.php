@@ -3,10 +3,15 @@
   $spacingClass = $spacingClass ?? '';
 @endphp
 @foreach ($banners as $banner)
+  @php $brandImage = $banner->brandImageUrl(); @endphp
   <section class="betmgm-offer {{ $spacingClass }}">
     <div class="wrap">
       <div class="betmgm-banner">
-        @if (!empty($banner->brand_name))
+        @if ($brandImage)
+          <span class="betmgm-banner__logo betmgm-banner__logo--image">
+            <img src="{{ $brandImage }}" alt="{{ $banner->brand_name ?: 'Brand logo' }}" />
+          </span>
+        @elseif (!empty($banner->brand_name))
           <span class="betmgm-banner__logo">{{ $banner->brand_name }}</span>
         @endif
         <span class="betmgm-banner__copy">

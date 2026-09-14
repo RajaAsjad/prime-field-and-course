@@ -49,7 +49,13 @@ class AffiliateBannerController extends Controller
 
     public function store(StoreAffiliateBannerRequest $request): RedirectResponse
     {
-        AffiliateBanner::create($this->prepareData($request));
+        $banner = new AffiliateBanner($this->prepareData($request));
+
+        if ($request->hasFile('brand_image')) {
+            $banner->brand_image = $request->file('brand_image')->store('affiliate-banners', 'public');
+        }
+
+        $banner->save();
 
         return redirect()
             ->route('admin.affiliate-banners.index')
@@ -66,7 +72,19 @@ class AffiliateBannerController extends Controller
 
     public function update(UpdateAffiliateBannerRequest $request, AffiliateBanner $affiliateBanner): RedirectResponse
     {
-        $affiliateBanner->update($this->prepareData($request));
+        $affiliateBanner->fill($this->prepareData($request));
+
+        if ($request->boolean('remove_brand_image') && ! $request->hasFile('brand_image')) {
+            $affiliateBanner->deleteStoredImage();
+            $affiliateBanner->brand_image = null;
+        }
+
+        if ($request->hasFile('brand_image')) {
+            $affiliateBanner->deleteStoredImage();
+            $affiliateBanner->brand_image = $request->file('brand_image')->store('affiliate-banners', 'public');
+        }
+
+        $affiliateBanner->save();
 
         return redirect()
             ->route('admin.affiliate-banners.index')
@@ -84,7 +102,7 @@ class AffiliateBannerController extends Controller
 
     private function prepareData(StoreAffiliateBannerRequest|UpdateAffiliateBannerRequest $request): array
     {
-        $data = $request->safe()->except('placements');
+        $data = $request->safe()->except(['placements', 'brand_image', 'remove_brand_image']);
         $data['is_active'] = $request->boolean('is_active');
         $data['sort_order'] = (int) $request->input('sort_order', 0);
         $data['placements'] = array_values(array_intersect(

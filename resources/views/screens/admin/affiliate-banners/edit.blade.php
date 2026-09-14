@@ -6,7 +6,7 @@
   <div class="card">
     <div class="card-header"><h5>Edit Offer Banner</h5></div>
     <div class="card-body">
-      <form method="POST" action="{{ route('admin.affiliate-banners.update', $banner) }}">
+      <form method="POST" action="{{ route('admin.affiliate-banners.update', $banner) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         @include('screens.admin.affiliate-banners._form')

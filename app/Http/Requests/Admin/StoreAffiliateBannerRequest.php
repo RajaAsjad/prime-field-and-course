@@ -17,6 +17,8 @@ class StoreAffiliateBannerRequest extends FormRequest
     {
         return [
             'brand_name' => ['nullable', 'string', 'max:255'],
+            'brand_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
+            'remove_brand_image' => ['nullable', 'boolean'],
             'title' => ['required', 'string', 'max:500'],
             'description' => ['nullable', 'string'],
             'cta_label' => ['nullable', 'string', 'max:255'],

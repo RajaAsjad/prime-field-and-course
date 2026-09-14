@@ -5,10 +5,34 @@
   <div class="col-md-4">
     <label class="form-label">Brand name</label>
     <input class="form-control" name="brand_name" value="{{ old('brand_name', $banner->brand_name ?? '') }}" placeholder="BetMGM">
+    <small class="text-muted">Shown if no brand image is uploaded.</small>
   </div>
   <div class="col-md-8">
     <label class="form-label">Headline <span class="text-danger">*</span></label>
     <input class="form-control" name="title" value="{{ old('title', $banner->title ?? '') }}" required>
+  </div>
+  <div class="col-md-12">
+    <label class="form-label" for="brand_image">Brand image / logo</label>
+    @if ($banner->exists && $banner->brandImageUrl())
+      <div class="mb-2 d-flex align-items-center gap-3">
+        <img src="{{ $banner->brandImageUrl() }}" alt="{{ $banner->brand_name ?: 'Brand logo' }}" class="img-thumbnail" style="max-height:64px;width:auto;background:#0a140b;">
+        <div class="form-check mb-0">
+          <input class="form-check-input" type="checkbox" name="remove_brand_image" id="remove_brand_image" value="1">
+          <label class="form-check-label" for="remove_brand_image">Remove current image</label>
+        </div>
+      </div>
+    @endif
+    <input
+      type="file"
+      class="form-control @error('brand_image') is-invalid @enderror"
+      id="brand_image"
+      name="brand_image"
+      accept=".jpg,.jpeg,.png,.webp,.svg,image/jpeg,image/png,image/webp,image/svg+xml"
+    />
+    <small class="text-muted">Optional logo for the left box. JPG, PNG, WEBP, SVG. Max 2MB.</small>
+    @error('brand_image')
+      <div class="invalid-feedback d-block">{{ $message }}</div>
+    @enderror
   </div>
   <div class="col-md-12">
     <label class="form-label">Fine print</label>

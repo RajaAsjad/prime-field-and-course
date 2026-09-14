@@ -6,7 +6,7 @@
   <div class="card">
     <div class="card-header"><h5>Create Offer Banner</h5></div>
     <div class="card-body">
-      <form method="POST" action="{{ route('admin.affiliate-banners.store') }}">
+      <form method="POST" action="{{ route('admin.affiliate-banners.store') }}" enctype="multipart/form-data">
         @csrf
         @include('screens.admin.affiliate-banners._form')
         <div class="d-flex gap-2 mt-4">

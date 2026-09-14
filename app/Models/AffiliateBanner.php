@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class AffiliateBanner extends Model
 {
@@ -12,6 +13,7 @@ class AffiliateBanner extends Model
 
     protected $fillable = [
         'brand_name',
+        'brand_image',
         'title',
         'description',
         'cta_label',
@@ -34,7 +36,10 @@ class AffiliateBanner extends Model
     protected static function booted(): void
     {
         static::saved(fn () => static::clearCache());
-        static::deleted(fn () => static::clearCache());
+        static::deleted(function (self $banner) {
+            $banner->deleteStoredImage();
+            static::clearCache();
+        });
     }
 
     public static function clearCache(): void
@@ -56,5 +61,29 @@ class AffiliateBanner extends Model
         return static::cachedActive()
             ->filter(fn (self $banner) => in_array($placement, $banner->placements ?? [], true))
             ->values();
+    }
+
+    public function brandImageUrl(): ?string
+    {
+        if (! $this->brand_image) {
+            return null;
+        }
+
+        if (str_starts_with($this->brand_image, 'http://') || str_starts_with($this->brand_image, 'https://')) {
+            return $this->brand_image;
+        }
+
+        return asset('storage/'.$this->brand_image);
+    }
+
+    public function deleteStoredImage(): void
+    {
+        if (! $this->brand_image || ! str_starts_with($this->brand_image, 'affiliate-banners/')) {
+            return;
+        }
+
+        if (Storage::disk('public')->exists($this->brand_image)) {
+            Storage::disk('public')->delete($this->brand_image);
+        }
     }
 }
