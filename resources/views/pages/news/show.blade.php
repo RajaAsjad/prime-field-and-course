@@ -75,6 +75,7 @@
         @endif
       </div>
     </section>
+    @include('pages.partials.affiliate-banner', ['placement' => 'news.after_content', 'spacingClass' => 'betmgm-offer-mt'])
   </main>
 @endsection
 

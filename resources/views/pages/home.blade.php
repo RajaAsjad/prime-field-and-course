@@ -92,7 +92,7 @@
       </div>
     </section>
 
-    @include('pages.partials.affiliate-banner', ['placement' => 'after_strategy'])
+    @include('pages.partials.affiliate-banner', ['placement' => 'home.after_strategy'])
 
 
     <section id="promos" class="section-white">
@@ -163,7 +163,7 @@
       </div>
     </section>
 
-    @include('pages.partials.affiliate-banner', ['placement' => 'after_picks', 'spacingClass' => 'betmgm-offer-mt'])
+    @include('pages.partials.affiliate-banner', ['placement' => 'home.after_picks', 'spacingClass' => 'betmgm-offer-mt'])
 
     <section id="hot-props" class="section-white">
       <div class="wrap">
@@ -341,7 +341,7 @@
             </div>
           </div>
         </div>
-        @include('pages.partials.affiliate-banner', ['placement' => 'after_rankings', 'spacingClass' => 'betmgm-offer-mt'])
+        @include('pages.partials.affiliate-banner', ['placement' => 'home.after_rankings', 'spacingClass' => 'betmgm-offer-mt'])
         <div class="comp-grid rev" style="margin-top:22px;">
           <div class="comp-panel" style="grid-column:1 / -1;">
             <div class="comp-panel__head">
@@ -480,7 +480,7 @@
       </div>
     </section>
 
-    @include('pages.partials.affiliate-banner', ['placement' => 'after_odds'])
+    @include('pages.partials.affiliate-banner', ['placement' => 'home.after_odds'])
     <section id="rotoballer-news" class="section-green-pale">
       <div class="wrap">
         <div class="sec-head rev">
@@ -591,7 +591,7 @@
           </div>
         </div>
       </div>
-      @include('pages.partials.affiliate-banner', ['placement' => 'after_guides', 'spacingClass' => 'betmgm-offer-mt'])
+      @include('pages.partials.affiliate-banner', ['placement' => 'home.after_guides', 'spacingClass' => 'betmgm-offer-mt'])
     </section>
 
     
@@ -1355,155 +1355,6 @@
 
       #competition-feeds .comp-courses--grid {
         grid-template-columns: 1fr
-      }
-    }
-
-    .betmgm-offer {
-      padding: 8px 0 28px
-    }
-
-    .betmgm-banner__pixel {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      border: 0;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0)
-    }
-
-    .betmgm-banner {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 18px 20px 18px 22px;
-      background: #152816;
-      margin-top: 20px;
-      border-radius: 22px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .16)
-    }
-
-    .betmgm-banner__logo {
-      flex-shrink: 0;
-      padding: 8px 14px;
-      border: 1.5px solid #e8c05d;
-      border-radius: 8px;
-      color: #e8c15f;
-      font-weight: 700;
-      background-color: #0a140b;
-      font-size: .95rem;
-      letter-spacing: .01em;
-      line-height: 1.1
-    }
-
-    .betmgm-banner__copy {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 4px
-    }
-
-    .betmgm-banner__title {
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 700;
-      line-height: 1.3
-    }
-
-    .betmgm-banner__terms {
-      color: #f9cf7f;
-      font-size: .75rem;
-      font-weight: 400;
-      line-height: 1.35
-    }
-
-    .betmgm-banner__cta {
-      position: relative;
-      isolation: isolate;
-      overflow: hidden;
-      flex-shrink: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 13px 26px;
-      border-radius: 9999px;
-      background: linear-gradient(90deg, #ca8e13 0%, #ebc666 100%);
-      color: #1a1610;
-      font-weight: 700;
-      font-size: .95rem;
-      white-space: nowrap;
-      text-decoration: none;
-      box-shadow: 0 4px 20px rgba(200, 168, 75, .3);
-      transform: translateY(0);
-      transition: transform .28s var(--ease-expo), box-shadow .28s var(--ease-expo), filter .28s ease
-    }
-
-    .betmgm-banner__cta::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .5) 50%, transparent 65%);
-      transform: translateX(-130%);
-      pointer-events: none
-    }
-
-    .betmgm-banner__cta-label,
-    .betmgm-banner__cta-arrow {
-      position: relative;
-      z-index: 2
-    }
-
-    .betmgm-banner__cta-arrow {
-      display: inline-block;
-      transition: transform .28s var(--ease-expo)
-    }
-
-    .betmgm-banner__cta:hover {
-      transform: translateY(-3px) scale(1.04);
-      filter: brightness(1.08);
-      box-shadow: 0 12px 30px rgba(200, 168, 75, .55)
-    }
-
-    .betmgm-banner__cta:hover::before {
-      animation: betmgmShine .65s ease forwards
-    }
-
-    .betmgm-banner__cta:hover .betmgm-banner__cta-arrow {
-      transform: translateX(5px)
-    }
-
-    .betmgm-banner__cta:active {
-      transform: translateY(-1px) scale(1.02)
-    }
-
-    @keyframes betmgmShine {
-      to {
-        transform: translateX(130%)
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .betmgm-banner__cta,
-      .betmgm-banner__cta-arrow {
-        transition: none
-      }
-
-      .betmgm-banner__cta:hover::before {
-        animation: none
-      }
-    }
-
-    @media (max-width: 900px) {
-      .betmgm-banner {
-        flex-wrap: wrap;
-        padding: 16px
-      }
-
-      .betmgm-banner__cta {
-        width: 100%;
-        margin-top: 4px
       }
     }
   </style>

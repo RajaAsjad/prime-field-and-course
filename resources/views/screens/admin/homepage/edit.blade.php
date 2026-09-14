@@ -71,56 +71,10 @@
     </div></div>
 
     <div class="card mb-3">
-      <div class="card-header"><h5>Affiliate Offer Banner</h5></div>
-      <div class="card-body row g-3">
-        @php $banner = $h['affiliate_banner'] ?? []; @endphp
-        <div class="col-md-12">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="banner_enabled" name="affiliate_banner[enabled]" value="1" @checked(old('affiliate_banner.enabled', $banner['enabled'] ?? true))>
-            <label class="form-check-label" for="banner_enabled">Show this banner on the homepage</label>
-          </div>
-          <small class="text-muted">Uncheck to hide it everywhere. Use the boxes below to show or hide it on specific sections.</small>
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Brand name</label>
-          <input class="form-control" name="affiliate_banner[brand_name]" value="{{ old('affiliate_banner.brand_name', $banner['brand_name'] ?? '') }}" placeholder="BetMGM">
-        </div>
-        <div class="col-md-8">
-          <label class="form-label">Headline</label>
-          <input class="form-control" name="affiliate_banner[title]" value="{{ old('affiliate_banner.title', $banner['title'] ?? '') }}">
-        </div>
-        <div class="col-md-12">
-          <label class="form-label">Fine print</label>
-          <textarea class="form-control" name="affiliate_banner[description]" rows="2">{{ old('affiliate_banner.description', $banner['description'] ?? '') }}</textarea>
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Button label</label>
-          <input class="form-control" name="affiliate_banner[cta_label]" value="{{ old('affiliate_banner.cta_label', $banner['cta_label'] ?? 'Claim Offer') }}">
-        </div>
-        <div class="col-md-8">
-          <label class="form-label">Button URL</label>
-          <input class="form-control" name="affiliate_banner[cta_url]" value="{{ old('affiliate_banner.cta_url', $banner['cta_url'] ?? '') }}">
-        </div>
-        <div class="col-md-12">
-          <label class="form-label">Tracking pixel URL</label>
-          <input class="form-control" name="affiliate_banner[pixel_url]" value="{{ old('affiliate_banner.pixel_url', $banner['pixel_url'] ?? '') }}">
-        </div>
-        <div class="col-md-12">
-          <label class="form-label d-block">Show on these homepage sections</label>
-          @foreach (\App\Support\HomepageDefaults::BANNER_PLACEMENTS as $placement => $label)
-            <div class="form-check">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="banner_{{ $placement }}"
-                name="affiliate_banner[placements][{{ $placement }}]"
-                value="1"
-                @checked(old('affiliate_banner.placements.'.$placement, $banner['placements'][$placement] ?? true))
-              >
-              <label class="form-check-label" for="banner_{{ $placement }}">{{ $label }}</label>
-            </div>
-          @endforeach
-        </div>
+      <div class="card-header"><h5>Affiliate Offer Banners</h5></div>
+      <div class="card-body">
+        <p class="mb-2">Create multiple offer banners and choose which homepage sections or pages they appear on.</p>
+        <a href="{{ route('admin.affiliate-banners.index') }}" class="btn btn-primary btn-sm">Manage Offer Banners</a>
       </div>
     </div>
 

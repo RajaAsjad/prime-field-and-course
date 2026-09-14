@@ -144,6 +144,17 @@ class CmsModuleSeeder extends Seeder
             ]
         );
 
+        CmsModule::updateOrCreate(
+            ['route_name' => 'admin.affiliate-banners.index'],
+            [
+                'name' => 'Offer Banners',
+                'icon' => 'fa-solid fa-bullhorn',
+                'sort_order' => 5,
+                'status' => 'active',
+                'parent_id' => $websiteContent->id,
+            ]
+        );
+
         $allowed = [
             'admin.dashboard',
             'users.index',
@@ -157,6 +168,7 @@ class CmsModuleSeeder extends Seeder
             'admin.content-pages.index',
             'admin.navigation-links.index',
             'admin.faqs.index',
+            'admin.affiliate-banners.index',
         ];
 
         CmsModule::query()

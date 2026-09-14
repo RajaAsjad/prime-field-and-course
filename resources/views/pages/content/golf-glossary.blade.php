@@ -56,6 +56,7 @@
         @include('pages.content._related')
       </div>
     </section>
+    @include('pages.partials.affiliate-banner', ['placement' => $affiliateBannerPlacement, 'spacingClass' => 'betmgm-offer-mt'])
   </main>
 @endsection
 

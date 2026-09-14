@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AffiliateBannerController;
 use App\Http\Controllers\Admin\ContentPageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FaqController;
@@ -53,5 +54,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('faqs', FaqController::class)
         ->names('admin.faqs')
+        ->except(['show']);
+
+    Route::resource('affiliate-banners', AffiliateBannerController::class)
+        ->names('admin.affiliate-banners')
         ->except(['show']);
 });

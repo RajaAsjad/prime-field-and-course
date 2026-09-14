@@ -81,24 +81,9 @@ class HomepageController extends Controller
             $premium['form_title_after']
         );
 
-        $placements = [];
-        foreach (array_keys(HomepageDefaults::BANNER_PLACEMENTS) as $placement) {
-            $placements[$placement] = $request->boolean('affiliate_banner.placements.'.$placement);
-        }
-
         return [
             'hero' => $hero,
             'header_ctas' => $request->input('header_ctas', []),
-            'affiliate_banner' => [
-                'enabled' => $request->boolean('affiliate_banner.enabled'),
-                'brand_name' => $request->input('affiliate_banner.brand_name'),
-                'title' => $request->input('affiliate_banner.title'),
-                'description' => $request->input('affiliate_banner.description'),
-                'cta_label' => $request->input('affiliate_banner.cta_label'),
-                'cta_url' => $request->input('affiliate_banner.cta_url'),
-                'pixel_url' => $request->input('affiliate_banner.pixel_url'),
-                'placements' => $placements,
-            ],
             'sections' => $request->input('sections', []),
             'premium' => array_merge($premium, ['features' => $features]),
             'testimonials' => $testimonials,

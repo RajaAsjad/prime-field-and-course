@@ -26,6 +26,7 @@ class CmsModulePermissionsSeeder extends Seeder
                 'admin.content-pages.index' => ['is_view' => 1, 'is_add' => 1, 'is_update' => 1, 'is_delete' => 1],
                 'admin.navigation-links.index' => ['is_view' => 1, 'is_add' => 1, 'is_update' => 1, 'is_delete' => 1],
                 'admin.faqs.index' => ['is_view' => 1, 'is_add' => 1, 'is_update' => 1, 'is_delete' => 1],
+                'admin.affiliate-banners.index' => ['is_view' => 1, 'is_add' => 1, 'is_update' => 1, 'is_delete' => 1],
             ],
 
             'user' => [

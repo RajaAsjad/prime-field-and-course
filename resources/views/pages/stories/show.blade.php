@@ -46,6 +46,7 @@
         <a href="{{ route('home') }}#strategy" class="read-more tip-detail__back">&larr; Back to Tips</a>
       </div>
     </section>
+    @include('pages.partials.affiliate-banner', ['placement' => 'stories.after_content', 'spacingClass' => 'betmgm-offer-mt'])
   </main>
 @endsection
 

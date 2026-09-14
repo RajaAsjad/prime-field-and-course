@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContentPage;
+use App\Support\AffiliateBannerPlacements;
 use Illuminate\View\View;
 
 class PageController extends Controller
@@ -33,6 +34,7 @@ class PageController extends Controller
 
         return view($view, [
             'page' => $page,
+            'affiliateBannerPlacement' => AffiliateBannerPlacements::contentPageKey($contentPage->id),
             'relatedPages' => ContentPage::query()
                 ->published()
                 ->where('id', '!=', $contentPage->id)
