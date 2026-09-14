@@ -36,12 +36,12 @@
   <!-- End Google Tag Manager -->
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org/",
-    "@type": "WebSite",
+    "@@context": "https://schema.org/",
+    "@@type": "WebSite",
     "name": "Pinshot",
     "url": "https://pinshot.com/",
     "potentialAction": {
-      "@type": "SearchAction",
+      "@@type": "SearchAction",
       "target": "https://pinshot.com/{search_term_string}",
       "query-input": "required name=search_term_string"
     }
@@ -49,14 +49,14 @@
   </script>
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "Organization",
+    "@@context": "https://schema.org",
+    "@@type": "Organization",
     "name": "Pinshot",
     "alternateName": "Golf Betting Site",
     "url": "https://pinshot.com/",
     "logo": "https://pinshot.com/storage/site-settings/uQGJATtbzOXPikAHkimUTXmmp2Xq2qFTfDw8NO19.png",
     "contactPoint": {
-      "@type": "ContactPoint",
+      "@@type": "ContactPoint",
       "telephone": "(636) 579-0718",
       "contactType": "customer service",
       "areaServed": "US",
