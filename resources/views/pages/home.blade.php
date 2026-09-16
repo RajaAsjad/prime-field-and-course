@@ -92,6 +92,8 @@
       </div>
     </section>
 
+    @include('pages.partials.gallery-slider')
+
     @include('pages.partials.affiliate-banner', ['placement' => 'home.after_strategy'])
 
 
@@ -1366,6 +1368,7 @@
   <script src="/assets/js/hot-props.js?v={{ filemtime(public_path('assets/js/hot-props.js')) }}"></script>
   <script src="/assets/js/rotoballer-news.js?v={{ filemtime(public_path('assets/js/rotoballer-news.js')) }}"></script>
   <script src="/assets/js/flm-stories.js?v={{ filemtime(public_path('assets/js/flm-stories.js')) }}"></script>
+  <script src="/assets/js/gallery-slider.js?v={{ filemtime(public_path('assets/js/gallery-slider.js')) }}"></script>
 @endpush
 
 {{-- Main content end --}}

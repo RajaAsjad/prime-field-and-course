@@ -155,6 +155,17 @@ class CmsModuleSeeder extends Seeder
             ]
         );
 
+        CmsModule::updateOrCreate(
+            ['route_name' => 'admin.gallery-slides.index'],
+            [
+                'name' => 'Gallery Slider',
+                'icon' => 'fa-solid fa-images',
+                'sort_order' => 6,
+                'status' => 'active',
+                'parent_id' => $websiteContent->id,
+            ]
+        );
+
         $allowed = [
             'admin.dashboard',
             'users.index',
@@ -169,6 +180,7 @@ class CmsModuleSeeder extends Seeder
             'admin.navigation-links.index',
             'admin.faqs.index',
             'admin.affiliate-banners.index',
+            'admin.gallery-slides.index',
         ];
 
         CmsModule::query()

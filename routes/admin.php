@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AffiliateBannerController;
 use App\Http\Controllers\Admin\ContentPageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\GallerySlideController;
 use App\Http\Controllers\Admin\HomepageController;
 use App\Http\Controllers\Admin\NavigationLinkController;
 use App\Http\Controllers\Admin\PromoController;
@@ -58,5 +59,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('affiliate-banners', AffiliateBannerController::class)
         ->names('admin.affiliate-banners')
+        ->except(['show']);
+
+    Route::resource('gallery-slides', GallerySlideController::class)
+        ->names('admin.gallery-slides')
         ->except(['show']);
 });

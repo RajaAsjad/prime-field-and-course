@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Faq;
+use App\Models\GallerySlide;
 use App\Models\Promo;
 use App\Models\SiteSetting;
 use App\Services\FieldLevelMedia\FlmContentService;
@@ -42,6 +43,7 @@ class HomeController extends Controller
             'homepage' => $homepage,
             'promos' => Promo::query()->homepage()->get(),
             'faqs' => Faq::activeList(),
+            'gallerySlides' => GallerySlide::activeList(),
         ]);
     }
 
