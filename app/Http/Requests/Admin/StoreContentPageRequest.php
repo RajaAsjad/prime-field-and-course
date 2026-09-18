@@ -19,6 +19,7 @@ class StoreContentPageRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:content_pages,slug'],
             'subtitle' => ['nullable', 'string', 'max:255'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],
             'eyebrow' => ['nullable', 'string', 'max:255'],
             'intro' => ['nullable', 'string'],
@@ -63,6 +64,11 @@ class StoreContentPageRequest extends FormRequest
             'content.sections.*.paragraphs.*' => ['nullable', 'string'],
             'content.sections.*.list' => ['nullable', 'array'],
             'content.sections.*.list.*' => ['nullable', 'string'],
+
+            'content.cards' => ['exclude_unless:type,hub', 'nullable', 'array'],
+            'content.cards.*.title' => ['nullable', 'string', 'max:255'],
+            'content.cards.*.description' => ['nullable', 'string'],
+            'content.cards.*.url' => ['nullable', 'string', 'max:500'],
         ];
     }
 }

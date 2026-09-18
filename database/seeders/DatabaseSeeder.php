@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
             TipsCategorySeeder::class,
             TipSeeder::class,
             ContentPageSeeder::class,
+            GolfBettingHubSeeder::class,
+            BlogSeeder::class,
             NavigationLinkSeeder::class,
             FaqSeeder::class,
             PromoSeeder::class,

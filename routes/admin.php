@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AffiliateBannerController;
+use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ContentPageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FaqController;
@@ -63,5 +64,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('gallery-slides', GallerySlideController::class)
         ->names('admin.gallery-slides')
+        ->except(['show']);
+
+    Route::resource('blogs', BlogController::class)
+        ->names('admin.blogs')
         ->except(['show']);
 });

@@ -37,6 +37,7 @@
         </div>
     </div>
     @include('layouts.admin.partials.scripts')
+    @stack('scripts')
 </body>
 
 </html>

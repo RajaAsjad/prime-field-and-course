@@ -30,6 +30,8 @@ class NavigationLinkSeeder extends Seeder
             ['label' => 'How to Bet on Golf', 'url' => '/how-to-bet-on-golf', 'location' => 'footer_guides', 'sort_order' => 1],
             ['label' => 'Best Betting Apps', 'url' => '/best-golf-betting-apps', 'location' => 'footer_guides', 'sort_order' => 2],
             ['label' => 'Golf Glossary', 'url' => '/golf-glossary', 'location' => 'footer_guides', 'sort_order' => 3],
+            ['label' => 'Golf Betting Hub', 'url' => '/golf-betting-hub', 'location' => 'footer_guides', 'sort_order' => 4],
+            ['label' => 'Blog', 'url' => '/blog', 'location' => 'footer_guides', 'sort_order' => 5],
 
             ['label' => 'Terms & Conditions', 'url' => '#', 'location' => 'footer_legal', 'sort_order' => 1],
             ['label' => 'Privacy Policy', 'url' => '#', 'location' => 'footer_legal', 'sort_order' => 2],

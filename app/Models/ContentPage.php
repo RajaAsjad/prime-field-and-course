@@ -14,6 +14,7 @@ class ContentPage extends Model
         'glossary' => 'Glossary',
         'apps' => 'App Comparison',
         'guide' => 'Guide (with sections)',
+        'hub' => 'Betting Hub (cards)',
         'legal' => 'Legal / Simple Page',
         'generic' => 'Generic Page',
     ];
@@ -22,6 +23,7 @@ class ContentPage extends Model
         'slug',
         'title',
         'subtitle',
+        'meta_title',
         'meta_description',
         'eyebrow',
         'intro',
@@ -101,6 +103,7 @@ class ContentPage extends Model
             'slug' => $this->slug,
             'title' => $this->title,
             'subtitle' => $this->subtitle,
+            'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'eyebrow' => $this->eyebrow,
             'intro' => $this->intro,

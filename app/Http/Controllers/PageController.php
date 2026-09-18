@@ -17,6 +17,7 @@ class PageController extends Controller
             'glossary' => 'pages.content.golf-glossary',
             'apps' => 'pages.content.best-golf-betting-apps',
             'guide' => 'pages.content.how-to-bet-on-golf',
+            'hub' => 'pages.content.golf-betting-hub',
             'legal' => 'pages.content.generic',
             'generic' => 'pages.content.generic',
         ];
@@ -30,6 +31,8 @@ class PageController extends Controller
             $page['tips'] = $page['content']['tips'] ?? [];
         } elseif ($contentPage->type === 'guide') {
             $page['sections'] = $page['content']['sections'] ?? [];
+        } elseif ($contentPage->type === 'hub') {
+            $page['cards'] = $page['content']['cards'] ?? [];
         }
 
         return view($view, [

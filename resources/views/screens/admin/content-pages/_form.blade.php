@@ -6,6 +6,7 @@
   $apps = $content['apps'] ?? [];
   $tips = $content['tips'] ?? [];
   $sections = $content['sections'] ?? [];
+  $cards = $content['cards'] ?? [];
   if ($terms === []) {
       $terms = [[]];
   }
@@ -18,6 +19,9 @@
   if ($sections === []) {
       $sections = [[]];
   }
+  if ($cards === []) {
+      $cards = [[]];
+  }
 @endphp
 <style>
   .content-repeater-card { border: 1px solid #e2e8e4; box-shadow: none; }
@@ -28,7 +32,8 @@
     display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   [data-content-panel="apps"] > [data-repeater] > [data-repeater-items],
-  [data-content-panel="guide"] > [data-repeater] > [data-repeater-items] { counter-reset: app-rank; }
+  [data-content-panel="guide"] > [data-repeater] > [data-repeater-items],
+  [data-content-panel="hub"] > [data-repeater] > [data-repeater-items] { counter-reset: app-rank; }
   .content-rank::before {
     counter-increment: app-rank;
     content: counter(app-rank);
@@ -67,6 +72,10 @@
     <input type="text" class="form-control" id="subtitle" name="subtitle" value="{{ old('subtitle', $page->subtitle ?? '') }}">
   </div>
   <div class="col-md-12">
+    <label class="form-label" for="meta_title">SEO Meta Title</label>
+    <input type="text" class="form-control" id="meta_title" name="meta_title" value="{{ old('meta_title', $page->meta_title ?? '') }}">
+  </div>
+  <div class="col-md-12">
     <label class="form-label" for="meta_description">Meta Description</label>
     <textarea class="form-control" id="meta_description" name="meta_description" rows="2">{{ old('meta_description', $page->meta_description ?? '') }}</textarea>
   </div>
@@ -92,7 +101,7 @@
     <label class="form-label" for="intro">Intro</label>
     <textarea class="form-control" id="intro" name="intro" rows="3">{{ old('intro', $page->intro ?? '') }}</textarea>
   </div>
-  <div class="col-md-12" data-body-field @if (in_array($selectedType, ['glossary', 'apps', 'guide'], true)) hidden @endif>
+  <div class="col-md-12" data-body-field @if (in_array($selectedType, ['glossary', 'apps', 'guide', 'hub'], true)) hidden @endif>
     <label class="form-label" for="body">Body (for legal/simple pages)</label>
     <textarea class="form-control" id="body" name="body" rows="8">{{ old('body', $page->body ?? '') }}</textarea>
   </div>
@@ -166,6 +175,29 @@
       <button type="button" class="btn btn-outline-primary btn-sm" data-add-item>+ Add Section</button>
     </div>
   </div>
+
+  <div class="col-md-12" data-content-panel="hub" @if ($selectedType !== 'hub') hidden @endif>
+    <div class="mb-3">
+      <label class="form-label" for="hub_body">Footer Disclaimer</label>
+      <textarea class="form-control" id="hub_body" name="body" rows="2">{{ old('body', $page->body ?? '') }}</textarea>
+      <small class="text-muted">Shown under the hub cards (e.g. responsible gambling notice).</small>
+    </div>
+    <div class="mb-2">
+      <label class="form-label mb-0">Hub Cards</label>
+      <small class="text-muted d-block">Each card appears on the Golf Betting Hub page. Leave Link URL blank if the deep-dive page is not ready yet.</small>
+    </div>
+    <div data-repeater data-next-index="{{ count($cards) }}">
+      <div data-repeater-items>
+        @foreach ($cards as $i => $item)
+          @include('screens.admin.content-pages._hub-card', ['index' => $i, 'item' => $item])
+        @endforeach
+      </div>
+      <template data-repeater-template>
+        @include('screens.admin.content-pages._hub-card', ['index' => '__INDEX__', 'item' => []])
+      </template>
+      <button type="button" class="btn btn-outline-primary btn-sm" data-add-item>+ Add Card</button>
+    </div>
+  </div>
 </div>
 <script>
   (function () {
@@ -227,7 +259,7 @@
       });
       var bodyField = document.querySelector('[data-body-field]');
       if (bodyField) {
-        var hideBody = type === 'glossary' || type === 'apps' || type === 'guide';
+        var hideBody = type === 'glossary' || type === 'apps' || type === 'guide' || type === 'hub';
         bodyField.hidden = hideBody;
         bodyField.querySelectorAll('input, textarea, select').forEach(function (control) {
           control.disabled = hideBody;

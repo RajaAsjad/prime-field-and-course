@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Models\ContentPage;
 use App\Models\Faq;
 use App\Models\NavigationLink;
@@ -22,6 +23,7 @@ class DashboardController extends Controller
         $promoCount = Promo::query()->count();
         $pageCount = ContentPage::query()->count();
         $faqCount = Faq::query()->count();
+        $blogCount = Blog::query()->count();
         $navCount = NavigationLink::query()->count();
         $categoryCount = TipsCategory::query()->count();
 
@@ -46,6 +48,13 @@ class DashboardController extends Controller
                 'meta' => ContentPage::query()->where('is_published', true)->count().' live',
                 'icon' => 'fa-solid fa-file-lines',
                 'url' => route('admin.content-pages.index'),
+            ],
+            [
+                'label' => 'Blog Posts',
+                'value' => $blogCount,
+                'meta' => Blog::query()->where('status', true)->count().' published',
+                'icon' => 'fa-solid fa-newspaper',
+                'url' => route('admin.blogs.index'),
             ],
             [
                 'label' => 'FAQs',
@@ -90,16 +99,16 @@ class DashboardController extends Controller
                 'url' => route('admin.tips.create'),
             ],
             [
-                'label' => 'Content Pages',
-                'desc' => 'Glossary, apps, and guides',
-                'icon' => 'fa-solid fa-file-lines',
-                'url' => route('admin.content-pages.index'),
+                'label' => 'Write a Blog',
+                'desc' => 'New article or betting deep dive',
+                'icon' => 'fa-solid fa-newspaper',
+                'url' => route('admin.blogs.create'),
             ],
             [
-                'label' => 'FAQs',
-                'desc' => 'Answers shown on the homepage',
-                'icon' => 'fa-solid fa-circle-question',
-                'url' => route('admin.faqs.index'),
+                'label' => 'Content Pages',
+                'desc' => 'Glossary, apps, hub, and guides',
+                'icon' => 'fa-solid fa-file-lines',
+                'url' => route('admin.content-pages.index'),
             ],
             [
                 'label' => 'Site Settings',

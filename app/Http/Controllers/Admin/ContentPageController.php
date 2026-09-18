@@ -101,6 +101,7 @@ class ContentPageController extends Controller
                 'tips' => $this->normalizeTips($content['tips'] ?? []),
             ],
             'guide' => ['sections' => $this->normalizeSections($content['sections'] ?? [])],
+            'hub' => ['cards' => $this->normalizeHubCards($content['cards'] ?? [])],
             default => [],
         };
     }
@@ -206,6 +207,26 @@ class ContentPageController extends Controller
                 }
 
                 return $item;
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    private function normalizeHubCards(array $rows): array
+    {
+        return collect($rows)
+            ->map(function ($row) {
+                $row = is_array($row) ? $row : [];
+                $title = trim((string) ($row['title'] ?? ''));
+                $description = trim((string) ($row['description'] ?? ''));
+                $url = trim((string) ($row['url'] ?? ''));
+
+                if ($title === '' && $description === '') {
+                    return null;
+                }
+
+                return compact('title', 'description', 'url');
             })
             ->filter()
             ->values()

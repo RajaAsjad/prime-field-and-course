@@ -16,6 +16,7 @@ class AffiliateBannerPlacements
 
     public const DETAIL = [
         'tips.after_content' => 'All tip articles',
+        'blogs.after_content' => 'All blog articles',
         'stories.after_content' => 'All stories',
         'news.after_content' => 'All news articles',
     ];

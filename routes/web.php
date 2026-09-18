@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\FlmStoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
@@ -9,14 +10,26 @@ use App\Http\Controllers\TipController;
 use Illuminate\Support\Facades\Route;
 
 
+Route::get('/route-clear', function () {
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('config:cache');
+    $cache = 'Route cache cleared <br /> View cache cleared <br /> Cache cleared <br /> Config cleared <br /> Config cache cleared';
+    return $cache;
+});
 
 // web routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/golf-glossary', fn () => app(PageController::class)->show('golf-glossary'));
 Route::get('/best-golf-betting-apps', fn () => app(PageController::class)->show('best-golf-betting-apps'));
 Route::get('/how-to-bet-on-golf', fn () => app(PageController::class)->show('how-to-bet-on-golf'));
+Route::get('/golf-betting-hub', fn () => app(PageController::class)->show('golf-betting-hub'));
 Route::get('/page/{slug}', [PageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('pages.show');
 Route::get('/tips/{tip:slug}', [TipController::class, 'show'])->name('tips.show');
+Route::get('/blog', [BlogController::class, 'index'])->name('blogs.index');
+Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blogs.show');
 Route::get('/stories/{storyId}', [FlmStoryController::class, 'show'])->name('stories.show');
 Route::get('/news/{newsId}', [RotoballerNewsController::class, 'show'])->name('news.show');
 Route::get('/api/live-odds', [HomeController::class, 'liveOdds'])->name('api.live-odds');

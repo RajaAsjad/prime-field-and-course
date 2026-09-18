@@ -166,6 +166,17 @@ class CmsModuleSeeder extends Seeder
             ]
         );
 
+        CmsModule::updateOrCreate(
+            ['route_name' => 'admin.blogs.index'],
+            [
+                'name' => 'Blog Management',
+                'icon' => 'fa-solid fa-newspaper',
+                'sort_order' => 7,
+                'status' => 'active',
+                'parent_id' => 0,
+            ]
+        );
+
         $allowed = [
             'admin.dashboard',
             'users.index',
@@ -181,6 +192,7 @@ class CmsModuleSeeder extends Seeder
             'admin.faqs.index',
             'admin.affiliate-banners.index',
             'admin.gallery-slides.index',
+            'admin.blogs.index',
         ];
 
         CmsModule::query()
