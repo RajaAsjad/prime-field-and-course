@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $page['title'] . ' | ' . site_settings()->displaySiteName())
+@section('title', ($page['meta_title'] ?? $page['title']) . ' | ' . site_settings()->displaySiteName())
 @section('meta_description', $page['meta_description'])
 
 @section('content')

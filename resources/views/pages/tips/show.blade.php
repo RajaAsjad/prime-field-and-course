@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@section('title', $tip->seoTitle() . ' | ' . site_settings()->displaySiteName())
+@section('meta_description', $tip->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($tip->description ?? ''), 160))
+
 @section('content')
   <main id="main" class="tip-detail-page">
     <section class="section-white tip-detail">

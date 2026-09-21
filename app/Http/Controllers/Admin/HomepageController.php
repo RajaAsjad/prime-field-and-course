@@ -87,6 +87,10 @@ class HomepageController extends Controller
             'sections' => $request->input('sections', []),
             'premium' => array_merge($premium, ['features' => $features]),
             'testimonials' => $testimonials,
+            'seo' => [
+                'meta_title' => trim((string) $request->input('seo.meta_title', '')),
+                'meta_description' => trim((string) $request->input('seo.meta_description', '')),
+            ],
         ];
     }
 }

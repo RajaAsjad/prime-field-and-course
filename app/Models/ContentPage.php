@@ -94,7 +94,18 @@ class ContentPage extends Model
 
     public function publicUrl(): string
     {
-        return url('/'.$this->slug);
+        $dedicated = [
+            'golf-glossary',
+            'best-golf-betting-apps',
+            'how-to-bet-on-golf',
+            'golf-betting-hub',
+        ];
+
+        if (in_array($this->slug, $dedicated, true)) {
+            return url('/'.$this->slug);
+        }
+
+        return route('pages.show', $this->slug);
     }
 
     public function toPublicArray(): array

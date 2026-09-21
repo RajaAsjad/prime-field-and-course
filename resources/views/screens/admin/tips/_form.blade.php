@@ -32,6 +32,49 @@
     @enderror
   </div>
 
+  <div class="col-md-6">
+    <label class="form-label" for="slug">Slug</label>
+    <input
+      type="text"
+      class="form-control @error('slug') is-invalid @enderror"
+      id="slug"
+      name="slug"
+      value="{{ old('slug', isset($tip) ? $tip->slug : '') }}"
+      placeholder="auto-generated from title"
+    />
+    <small class="text-muted">Public URL: <code>/tips/your-slug</code></small>
+    @error('slug')
+      <div class="invalid-feedback d-block">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label" for="meta_title">SEO Meta Title</label>
+    <input
+      type="text"
+      class="form-control @error('meta_title') is-invalid @enderror"
+      id="meta_title"
+      name="meta_title"
+      value="{{ old('meta_title', isset($tip) ? $tip->meta_title : '') }}"
+    />
+    @error('meta_title')
+      <div class="invalid-feedback d-block">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-md-12">
+    <label class="form-label" for="meta_description">SEO Meta Description</label>
+    <textarea
+      class="form-control @error('meta_description') is-invalid @enderror"
+      id="meta_description"
+      name="meta_description"
+      rows="2"
+    >{{ old('meta_description', isset($tip) ? $tip->meta_description : '') }}</textarea>
+    @error('meta_description')
+      <div class="invalid-feedback d-block">{{ $message }}</div>
+    @enderror
+  </div>
+
   <div class="col-md-12">
     <label class="form-label" for="image">Image</label>
     @if (isset($tip) && $tip->exists && $tip->imageUrl())

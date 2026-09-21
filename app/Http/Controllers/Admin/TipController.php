@@ -10,6 +10,7 @@ use App\Models\TipsCategory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class TipController extends Controller
 {
@@ -42,9 +43,7 @@ class TipController extends Controller
 
     public function store(StoreTipRequest $request): RedirectResponse
     {
-        $data = $request->safe()->except('image');
-        $data['status'] = $request->boolean('status');
-
+        $data = $this->prepareData($request);
         $tip = new Tip($data);
 
         if ($request->hasFile('image')) {
@@ -67,10 +66,7 @@ class TipController extends Controller
 
     public function update(UpdateTipRequest $request, Tip $tip): RedirectResponse
     {
-        $data = $request->safe()->except('image');
-        $data['status'] = $request->boolean('status');
-
-        $tip->fill($data);
+        $tip->fill($this->prepareData($request));
 
         if ($request->hasFile('image')) {
             $tip->deleteStoredImage();
@@ -91,5 +87,19 @@ class TipController extends Controller
         return redirect()
             ->route('admin.tips.index')
             ->with('success', 'Tip deleted successfully.');
+    }
+
+    private function prepareData(StoreTipRequest|UpdateTipRequest $request): array
+    {
+        $data = $request->safe()->except('image');
+        $data['status'] = $request->boolean('status');
+
+        if (! empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['slug']);
+        } else {
+            unset($data['slug']);
+        }
+
+        return $data;
     }
 }

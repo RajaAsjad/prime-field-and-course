@@ -50,6 +50,8 @@ class UpdateHomepageRequest extends FormRequest
             'testimonials.*.quote' => ['nullable', 'string'],
             'testimonials.*.author' => ['nullable', 'string', 'max:255'],
             'testimonials.*.stars' => ['nullable', 'integer', 'min:1', 'max:5'],
+            'seo.meta_title' => ['nullable', 'string', 'max:255'],
+            'seo.meta_description' => ['nullable', 'string', 'max:500'],
         ];
     }
 }

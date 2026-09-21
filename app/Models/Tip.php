@@ -11,6 +11,8 @@ class Tip extends Model
     protected $fillable = [
         'slug',
         'title',
+        'meta_title',
+        'meta_description',
         'tips_category_id',
         'image',
         'description',
@@ -27,7 +29,7 @@ class Tip extends Model
     protected static function booted(): void
     {
         static::saving(function (Tip $tip) {
-            if ($tip->isDirty('title') || blank($tip->slug)) {
+            if (blank($tip->slug)) {
                 $tip->slug = static::generateUniqueSlug($tip->title, $tip->id);
             }
         });
@@ -88,6 +90,11 @@ class Tip extends Model
     public function statusLabel(): string
     {
         return $this->status ? 'Active' : 'Inactive';
+    }
+
+    public function seoTitle(): string
+    {
+        return $this->meta_title ?: $this->title;
     }
 
     public function tipsCategory()

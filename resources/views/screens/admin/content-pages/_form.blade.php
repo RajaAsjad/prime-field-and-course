@@ -62,6 +62,11 @@
     <label class="form-label" for="slug">Slug</label>
     <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug" name="slug" value="{{ old('slug', $page->slug ?? '') }}" placeholder="auto-generated from title">
     @error('slug')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+    @if (!empty($page->slug))
+      <small class="text-muted">Live URL: <a href="{{ $page->publicUrl() }}" target="_blank" rel="noopener">{{ $page->publicUrl() }}</a></small>
+    @else
+      <small class="text-muted">Changing the slug updates the page URL. Also update any Navigation Links that point to the old URL.</small>
+    @endif
   </div>
   <div class="col-md-6">
     <label class="form-label" for="footer_label">Footer Label</label>

@@ -19,6 +19,43 @@
 <div class="container-fluid">
   @include('screens.admin.partials.alerts')
   <form method="POST" action="{{ route('admin.homepage.update') }}" enctype="multipart/form-data">@csrf @method('PUT')
+    <div class="card mb-3">
+      <div class="card-header"><h5>SEO Settings</h5></div>
+      <div class="card-body row g-3">
+        <div class="col-md-12">
+          <label class="form-label">Homepage URL</label>
+          <input class="form-control" value="/" disabled>
+          <small class="text-muted">Homepage always lives at <code>/</code>. Slug cannot be changed for the home page.</small>
+        </div>
+        <div class="col-md-12">
+          <label class="form-label" for="seo_meta_title">SEO Meta Title</label>
+          <input
+            class="form-control @error('seo.meta_title') is-invalid @enderror"
+            id="seo_meta_title"
+            name="seo[meta_title]"
+            value="{{ old('seo.meta_title', $h['seo']['meta_title'] ?? '') }}"
+            placeholder="Shown in the browser tab and Google results"
+          >
+          @error('seo.meta_title')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+          @enderror
+        </div>
+        <div class="col-md-12">
+          <label class="form-label" for="seo_meta_description">SEO Meta Description</label>
+          <textarea
+            class="form-control @error('seo.meta_description') is-invalid @enderror"
+            id="seo_meta_description"
+            name="seo[meta_description]"
+            rows="2"
+            placeholder="Short summary for search engines"
+          >{{ old('seo.meta_description', $h['seo']['meta_description'] ?? '') }}</textarea>
+          @error('seo.meta_description')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+          @enderror
+        </div>
+      </div>
+    </div>
+
     <div class="card mb-3"><div class="card-header"><h5>Hero Section</h5></div><div class="card-body row g-3">
       <div class="col-md-4">
         <label class="form-label" for="headline_before">Headline</label>

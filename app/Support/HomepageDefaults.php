@@ -48,6 +48,10 @@ class HomepageDefaults
                 ['quote' => 'The DraftKings bonus alone paid for six months. Their odds table saves me hours weekly.', 'author' => 'Sarah K.', 'stars' => 5],
                 ['quote' => 'Finally a golf betting site that goes beyond basic picks. I\'ve recommended it to everyone.', 'author' => 'Derek W.', 'stars' => 5],
             ],
+            'seo' => [
+                'meta_title' => 'PinShot | Golf Betting Tips, Odds & Exclusive Bonuses',
+                'meta_description' => 'Golf betting tips, expert picks, exclusive sportsbook bonuses, live odds comparison.',
+            ],
         ];
     }
 

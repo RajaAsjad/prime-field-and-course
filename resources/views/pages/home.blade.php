@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@section('title', $homepage['seo']['meta_title'] ?? (site_settings()->displaySiteName() . ' & Promotions'))
+@section('meta_description', $homepage['seo']['meta_description'] ?? 'Golf betting tips, expert picks, exclusive sportsbook bonuses, live odds comparison.')
+
 @section('content')
 {{-- Main content start --}}
   <main id="main">
