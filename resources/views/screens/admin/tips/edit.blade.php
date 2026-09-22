@@ -1,6 +1,6 @@
 @extends('layouts.admin.master')
 
-@section('title', 'Edit Tip')
+@section('title', 'Edit: ' . ($tip->title ?: 'Tip'))
 
 @section('content')
   <style>
@@ -24,7 +24,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header pb-0">
-            <h5>Edit Tip</h5>
+            <h5>Edit: {{ $tip->title ?: 'Tip' }}</h5>
           </div>
           <div class="card-body">
             <form action="{{ route('admin.tips.update', $tip) }}" method="POST" enctype="multipart/form-data">

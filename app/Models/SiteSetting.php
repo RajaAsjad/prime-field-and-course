@@ -100,11 +100,23 @@ class SiteSetting extends Model
 
     public function homepage(): array
     {
-        $homepage = array_replace_recursive(
-            \App\Support\HomepageDefaults::all(),
-            $this->homepage_content ?? []
-        );
+        $stored = $this->homepage_content ?? [];
+        $defaults = \App\Support\HomepageDefaults::all();
 
+        // Prefer full default section when stored section is missing title_em
+        // (avoids duplicating old full titles like "Exclusive Sign-Up Bonuses").
+        foreach ($defaults['sections'] as $key => $defaultSection) {
+            $storedSection = $stored['sections'][$key] ?? null;
+            if (! is_array($storedSection)) {
+                continue;
+            }
+            if (! array_key_exists('title_em', $storedSection) && isset($defaultSection['title_em'])) {
+                $stored['sections'][$key]['title'] = $defaultSection['title'];
+                $stored['sections'][$key]['title_em'] = $defaultSection['title_em'];
+            }
+        }
+
+        $homepage = array_replace_recursive($defaults, $stored);
         $homepage['hero']['image_url'] = $this->heroImageUrl();
 
         return $homepage;

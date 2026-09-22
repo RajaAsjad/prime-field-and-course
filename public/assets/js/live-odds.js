@@ -100,9 +100,11 @@
     }
 
     const seconds = refreshSeconds || Math.round(refreshMs / 1000);
+    const baseDesc = descEl.getAttribute('data-base-desc')
+      || 'Best available odds across top sportsbooks. Green highlights best value.';
     descEl.textContent = isLive
-      ? `Best available odds across top sportsbooks. Green highlights best value. Live scores & odds refresh every ${seconds} seconds.`
-      : `Best available odds across top sportsbooks. Green highlights best value. Auto-refreshes every ${seconds} seconds.`;
+      ? `${baseDesc} Live scores & odds refresh every ${seconds} seconds.`
+      : `${baseDesc} Auto-refreshes every ${seconds} seconds.`;
   };
 
   const renderScoreCell = (player, isLive) => {

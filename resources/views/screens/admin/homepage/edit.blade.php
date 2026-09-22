@@ -1,5 +1,5 @@
 @extends('layouts.admin.master')
-@section('title', 'Homepage Settings')
+@section('title', 'Homepage')
 @section('content')
 @php
   $h = $homepage;
@@ -20,28 +20,24 @@
   @include('screens.admin.partials.alerts')
   <form method="POST" action="{{ route('admin.homepage.update') }}" enctype="multipart/form-data">@csrf @method('PUT')
     <div class="card mb-3">
-      <div class="card-header"><h5>SEO Settings</h5></div>
+      <div class="card-header"><h5>Page Title &amp; SEO</h5></div>
       <div class="card-body row g-3">
         <div class="col-md-12">
-          <label class="form-label">Homepage URL</label>
-          <input class="form-control" value="/" disabled>
-          <small class="text-muted">Homepage always lives at <code>/</code>. Slug cannot be changed for the home page.</small>
-        </div>
-        <div class="col-md-12">
-          <label class="form-label" for="seo_meta_title">SEO Meta Title</label>
+          <label class="form-label" for="seo_meta_title">Page Title</label>
           <input
             class="form-control @error('seo.meta_title') is-invalid @enderror"
             id="seo_meta_title"
             name="seo[meta_title]"
             value="{{ old('seo.meta_title', $h['seo']['meta_title'] ?? '') }}"
-            placeholder="Shown in the browser tab and Google results"
+            placeholder="e.g. Online Golf Betting | Picks & Live Odds | Pinshot"
           >
+          <small class="text-muted">Browser tab and Google results title for the homepage.</small>
           @error('seo.meta_title')
             <div class="invalid-feedback d-block">{{ $message }}</div>
           @enderror
         </div>
         <div class="col-md-12">
-          <label class="form-label" for="seo_meta_description">SEO Meta Description</label>
+          <label class="form-label" for="seo_meta_description">Meta Description</label>
           <textarea
             class="form-control @error('seo.meta_description') is-invalid @enderror"
             id="seo_meta_description"
@@ -115,11 +111,52 @@
       </div>
     </div>
 
-    <div class="card mb-3"><div class="card-header"><h5>Promos Section Headings</h5></div><div class="card-body row g-3">
-      <div class="col-md-4"><label class="form-label">Eyebrow</label><input class="form-control" name="sections[promos][eyebrow]" value="{{ old('sections.promos.eyebrow', $h['sections']['promos']['eyebrow'] ?? '') }}"></div>
-      <div class="col-md-4"><label class="form-label">Title</label><input class="form-control" name="sections[promos][title]" value="{{ old('sections.promos.title', $h['sections']['promos']['title'] ?? '') }}"></div>
-      <div class="col-md-12"><label class="form-label">Subtitle</label><textarea class="form-control" name="sections[promos][subtitle]" rows="2">{{ old('sections.promos.subtitle', $h['sections']['promos']['subtitle'] ?? '') }}</textarea></div>
-    </div></div>
+    @include('screens.admin.homepage._section-fields', [
+      'key' => 'strategy',
+      'label' => 'Strategy / Tips Section',
+      'note' => 'Story cards still load from Field Level Media.',
+    ])
+    @include('screens.admin.homepage._section-fields', [
+      'key' => 'promos',
+      'label' => 'Promos Section',
+      'note' => 'Promo cards are managed under Promos in the sidebar.',
+    ])
+    @include('screens.admin.homepage._section-fields', [
+      'key' => 'best_picks',
+      'label' => 'Best Picks Section',
+      'note' => 'Pick cards still load from SportsDataIO odds.',
+    ])
+    @include('screens.admin.homepage._section-fields', [
+      'key' => 'hot_props',
+      'label' => 'Hot Props Section',
+      'note' => 'Odds table still loads from SportsDataIO. Auto-refresh seconds are appended automatically.',
+    ])
+    @include('screens.admin.homepage._section-fields', [
+      'key' => 'competition_feeds',
+      'label' => 'Competition / Rankings Section',
+      'note' => 'Rankings, players, and schedule still load from SportsDataIO.',
+    ])
+    @include('screens.admin.homepage._section-fields', [
+      'key' => 'live_odds',
+      'label' => 'Live Odds Section',
+      'note' => 'Odds table still loads from SportsDataIO. Auto-refresh seconds are appended automatically.',
+    ])
+    @include('screens.admin.homepage._section-fields', [
+      'key' => 'rotoballer_news',
+      'label' => 'RotoBaller News Section',
+      'note' => 'News cards still load from RotoBaller. Auto-refresh seconds are appended automatically.',
+    ])
+    @include('screens.admin.homepage._section-fields', [
+      'key' => 'golf_betting',
+      'label' => 'Golf Betting Guides Section',
+      'showGuides' => true,
+      'showNewsletter' => true,
+    ])
+    @include('screens.admin.homepage._section-fields', [
+      'key' => 'tournaments',
+      'label' => 'Tournaments Section',
+      'note' => 'Tournament cards still load from SportsDataIO schedule.',
+    ])
 
     <div class="card mb-3"><div class="card-header"><h5>Premium / CTA Section</h5></div><div class="card-body row g-3">
       <div class="col-md-4">
@@ -156,8 +193,10 @@
     </div></div>
 
     <div class="card mb-3"><div class="card-header"><h5>FAQ Section Headings</h5></div><div class="card-body row g-3">
-      <div class="col-md-6"><label class="form-label">Eyebrow</label><input class="form-control" name="sections[faq][eyebrow]" value="{{ old('sections.faq.eyebrow', $h['sections']['faq']['eyebrow'] ?? '') }}"></div>
-      <div class="col-md-6"><label class="form-label">Title</label><input class="form-control" name="sections[faq][title]" value="{{ old('sections.faq.title', $h['sections']['faq']['title'] ?? '') }}"></div>
+      <div class="col-md-4"><label class="form-label">Eyebrow</label><input class="form-control" name="sections[faq][eyebrow]" value="{{ old('sections.faq.eyebrow', $h['sections']['faq']['eyebrow'] ?? '') }}"></div>
+      <div class="col-md-4"><label class="form-label">Title</label><input class="form-control" name="sections[faq][title]" value="{{ old('sections.faq.title', $h['sections']['faq']['title'] ?? '') }}"></div>
+      <div class="col-md-4"><label class="form-label">Title (italic / green)</label><input class="form-control" name="sections[faq][title_em]" value="{{ old('sections.faq.title_em', $h['sections']['faq']['title_em'] ?? '') }}"></div>
+      <div class="col-12"><small class="text-muted">FAQ answers are managed under Website Content → FAQs.</small></div>
     </div></div>
 
     <div class="card mb-3"><div class="card-header"><h5>Testimonials</h5></div><div class="card-body row g-3">

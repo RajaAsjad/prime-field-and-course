@@ -1,6 +1,6 @@
 <div class="row g-3">
   <div class="col-md-8">
-    <label class="form-label" for="title">Title <span class="text-danger">*</span></label>
+    <label class="form-label" for="title">Page Title <span class="text-danger">*</span></label>
     <input
       type="text"
       class="form-control @error('title') is-invalid @enderror"
@@ -9,6 +9,7 @@
       value="{{ old('title', isset($tip) ? $tip->title : '') }}"
       required
     />
+    <small class="text-muted">This tip&rsquo;s own title — shown as the main heading on the tip page.</small>
     @error('title')
       <div class="invalid-feedback d-block">{{ $message }}</div>
     @enderror
@@ -56,7 +57,9 @@
       id="meta_title"
       name="meta_title"
       value="{{ old('meta_title', isset($tip) ? $tip->meta_title : '') }}"
+      placeholder="Optional — defaults to Page Title if empty"
     />
+    <small class="text-muted">Browser tab / Google title. Leave blank to use Page Title.</small>
     @error('meta_title')
       <div class="invalid-feedback d-block">{{ $message }}</div>
     @enderror

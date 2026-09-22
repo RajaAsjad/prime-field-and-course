@@ -33,10 +33,18 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Expert
-            Knowledge</div>
-          <h2 class="h-section">Expert Strategy & <em>Tips</em></h2>
-          <p class="body-lg" id="flm-stories-desc">Latest golf coverage from Field Level Media — previews, recaps, and news.</p>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['strategy']['eyebrow'] ?? 'Expert Knowledge' }}</div>
+          <h2 class="h-section">
+            {{ $homepage['sections']['strategy']['title'] ?? 'Expert Strategy &' }}
+            @if (!empty($homepage['sections']['strategy']['title_em']))
+              <em>{{ $homepage['sections']['strategy']['title_em'] }}</em>
+            @endif
+          </h2>
+          <p
+            class="body-lg"
+            id="flm-stories-desc"
+            data-base-desc="{{ $homepage['sections']['strategy']['subtitle'] ?? 'Latest golf coverage from Field Level Media — previews, recaps, and news.' }}"
+          >{{ $homepage['sections']['strategy']['subtitle'] ?? 'Latest golf coverage from Field Level Media — previews, recaps, and news.' }}</p>
         </div>
         <div
           id="flm-stories-feed"
@@ -105,7 +113,12 @@
         <div class="sec-head rev">
           <div class="eyebrow"><span
               style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['promos']['eyebrow'] ?? 'Partner Offers' }}</div>
-          <h2 class="h-section">Exclusive <em>{{ $homepage['sections']['promos']['title'] ?? 'Sign-Up Bonuses' }}</em></h2>
+          <h2 class="h-section">
+            {{ $homepage['sections']['promos']['title'] ?? 'Exclusive' }}
+            @if (!empty($homepage['sections']['promos']['title_em']))
+              <em>{{ $homepage['sections']['promos']['title_em'] }}</em>
+            @endif
+          </h2>
           <p class="body-lg">{{ $homepage['sections']['promos']['subtitle'] ?? 'Verified offers updated weekly. All bonuses for new users only. Must be 21+.' }}</p>
         </div>
         <div class="promos-grid">
@@ -134,10 +147,14 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Weekly
-            Selections</div>
-          <h2 class="h-section">Top Picks <em>This Week</em></h2>
-          <p class="body-lg">Live SportsDataIO odds with confidence ratings for this week's top contenders.</p>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['best_picks']['eyebrow'] ?? 'Weekly Selections' }}</div>
+          <h2 class="h-section">
+            {{ $homepage['sections']['best_picks']['title'] ?? 'Top Picks' }}
+            @if (!empty($homepage['sections']['best_picks']['title_em']))
+              <em>{{ $homepage['sections']['best_picks']['title_em'] }}</em>
+            @endif
+          </h2>
+          <p class="body-lg">{{ $homepage['sections']['best_picks']['subtitle'] ?? "Live SportsDataIO odds with confidence ratings for this week's top contenders." }}</p>
         </div>
         <div class="picks-grid">
           @forelse ($topPicks ?? [] as $pick)
@@ -174,10 +191,22 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Odds
-            &amp; Sportsbooks</div>
-          <h2 class="h-section">This Week's <em>Hot Props</em></h2>
-          <p class="body-lg" id="hot-props-desc">Consensus and sportsbook prop odds via SportsDataIO Sportsbook Group. Auto-refreshes every {{ $propsRefreshSeconds ?? 120 }} seconds.</p>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['hot_props']['eyebrow'] ?? 'Odds & Sportsbooks' }}</div>
+          <h2 class="h-section">
+            {{ $homepage['sections']['hot_props']['title'] ?? "This Week's" }}
+            @if (!empty($homepage['sections']['hot_props']['title_em']))
+              <em>{{ $homepage['sections']['hot_props']['title_em'] }}</em>
+            @endif
+          </h2>
+          @php
+            $hotPropsSubtitle = $homepage['sections']['hot_props']['subtitle'] ?? 'Consensus and sportsbook prop odds via SportsDataIO Sportsbook Group.';
+            $hotPropsRefresh = (int) ($propsRefreshSeconds ?? 120);
+          @endphp
+          <p
+            class="body-lg"
+            id="hot-props-desc"
+            data-base-desc="{{ $hotPropsSubtitle }}"
+          >{{ $hotPropsSubtitle }} Auto-refreshes every {{ $hotPropsRefresh }} seconds.</p>
         </div>
         @if (!empty($hotProps['tournament']['name']))
           <p class="body-lg hot-props-tournament rev" id="hot-props-tournament">
@@ -239,11 +268,15 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Golf API
-            Feeds</div>
-          <h2 class="h-section">Competition &amp; <em>Event Data</em></h2>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['competition_feeds']['eyebrow'] ?? 'Golf API Feeds' }}</div>
+          <h2 class="h-section">
+            {{ $homepage['sections']['competition_feeds']['title'] ?? 'Competition &' }}
+            @if (!empty($homepage['sections']['competition_feeds']['title_em']))
+              <em>{{ $homepage['sections']['competition_feeds']['title_em'] }}</em>
+            @endif
+          </h2>
           <p class="body-lg">
-            Live SportsDataIO Golf feeds unlocked on your subscription — rankings, players, venues, schedule, stats, props &amp; news.
+            {{ $homepage['sections']['competition_feeds']['subtitle'] ?? 'Live SportsDataIO Golf feeds unlocked on your subscription — rankings, players, venues, schedule, stats, props & news.' }}
             @if (!empty($competitionFeeds['season']['description']))
               Season {{ $competitionFeeds['season']['description'] }}.
             @endif
@@ -410,10 +443,22 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Real-Time
-            Data</div>
-          <h2 class="h-section">Compare <em>Live Odds</em></h2>
-          <p class="body-lg" id="live-odds-desc">Best available odds across top sportsbooks. Green highlights best value. Auto-refreshes every {{ $oddsRefreshSeconds ?? 60 }} seconds.</p>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['live_odds']['eyebrow'] ?? 'Real-Time Data' }}</div>
+          <h2 class="h-section">
+            {{ $homepage['sections']['live_odds']['title'] ?? 'Compare' }}
+            @if (!empty($homepage['sections']['live_odds']['title_em']))
+              <em>{{ $homepage['sections']['live_odds']['title_em'] }}</em>
+            @endif
+          </h2>
+          @php
+            $liveOddsSubtitle = $homepage['sections']['live_odds']['subtitle'] ?? 'Best available odds across top sportsbooks. Green highlights best value.';
+            $liveOddsRefresh = (int) ($oddsRefreshSeconds ?? 60);
+          @endphp
+          <p
+            class="body-lg"
+            id="live-odds-desc"
+            data-base-desc="{{ $liveOddsSubtitle }}"
+          >{{ $liveOddsSubtitle }} Auto-refreshes every {{ $liveOddsRefresh }} seconds.</p>
         </div>
         @if (!empty($liveOdds['tournament']['name']))
           <div class="tournament-meta rev">
@@ -490,10 +535,22 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Player
-            News</div>
-          <h2 class="h-section">Rotoballer <em>News Feed</em></h2>
-          <p class="body-lg" id="rotoballer-news-desc">Latest PGA Tour player news and matchup outlooks from RotoBaller. Showing stories from the last 2 weeks. Auto-refreshes every {{ $newsRefreshSeconds ?? 300 }} seconds.</p>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['rotoballer_news']['eyebrow'] ?? 'Player News' }}</div>
+          <h2 class="h-section">
+            {{ $homepage['sections']['rotoballer_news']['title'] ?? 'Rotoballer' }}
+            @if (!empty($homepage['sections']['rotoballer_news']['title_em']))
+              <em>{{ $homepage['sections']['rotoballer_news']['title_em'] }}</em>
+            @endif
+          </h2>
+          @php
+            $rotoSubtitle = $homepage['sections']['rotoballer_news']['subtitle'] ?? 'Latest PGA Tour player news and matchup outlooks from RotoBaller. Showing stories from the last 2 weeks.';
+            $rotoRefresh = (int) ($newsRefreshSeconds ?? 300);
+          @endphp
+          <p
+            class="body-lg"
+            id="rotoballer-news-desc"
+            data-base-desc="{{ $rotoSubtitle }}"
+          >{{ $rotoSubtitle }} Auto-refreshes every {{ $rotoRefresh }} seconds.</p>
         </div>
         <div
           class="rev"
@@ -551,47 +608,36 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Education
-            Hub</div>
-          <h2 class="h-section">Learn & Bet <em>Smarter</em></h2>
-          <p class="body-lg">Guides, tactics, and video breakdowns to sharpen your game.</p>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['golf_betting']['eyebrow'] ?? 'Education Hub' }}</div>
+          <h2 class="h-section">
+            {{ $homepage['sections']['golf_betting']['title'] ?? 'Learn & Bet' }}
+            @if (!empty($homepage['sections']['golf_betting']['title_em']))
+              <em>{{ $homepage['sections']['golf_betting']['title_em'] }}</em>
+            @endif
+          </h2>
+          <p class="body-lg">{{ $homepage['sections']['golf_betting']['subtitle'] ?? 'Guides, tactics, and video breakdowns to sharpen your game.' }}</p>
         </div>
         <div class="split-2">
-          <div class="guide-rows rev"><a href="#golf-betting" class="guide-row">
-            <div class="guide-icon">📖</div>
-              <div>
-                <div class="guide-title">Complete Beginner's Guide</div>
-                <div class="guide-meta">Beginner &middot; 15 min</div>
-              </div>
-            </a><a href="#golf-betting" class="guide-row">
-              <div class="guide-icon">🎯</div>
-              <div>
-                <div class="guide-title">Types of Golf Bets Explained</div>
-                <div class="guide-meta">Beginner &middot; 8 min</div>
-              </div>
-            </a><a href="#golf-betting" class="guide-row">
-            <div class="guide-icon">📊</div>
-              <div>
-                <div class="guide-title">Line Shopping: Find Best Odds</div>
-                <div class="guide-meta">Advanced &middot; 10 min</div>
-              </div>
-            </a><a href="#golf-betting" class="guide-row">
-            <div class="guide-icon">⚡</div>
-              <div>
-                <div class="guide-title">Live In-Play Betting Strategy</div>
-                <div class="guide-meta">Advanced &middot; 12 min</div>
-              </div>
-            </a></div>
+          <div class="guide-rows rev">
+            @foreach (($homepage['sections']['golf_betting']['guides'] ?? []) as $guide)
+              <a href="{{ $guide['url'] ?? '#golf-betting' }}" class="guide-row">
+                <div class="guide-icon">{{ $guide['icon'] ?? '📖' }}</div>
+                <div>
+                  <div class="guide-title">{{ $guide['title'] ?? '' }}</div>
+                  <div class="guide-meta">{{ $guide['meta'] ?? '' }}</div>
+                </div>
+              </a>
+            @endforeach
+          </div>
           <div class="news-card rev rev-d2">
             <div class="eyebrow"><span
-                style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Free
-              Newsletter</div>
-            <h3 class="news-h">Unlock Insider Tips</h3>
-            <p class="news-sub">Weekly expert picks every Tuesday. Free forever.</p>
+                style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['golf_betting']['newsletter_eyebrow'] ?? 'Free Newsletter' }}</div>
+            <h3 class="news-h">{{ $homepage['sections']['golf_betting']['newsletter_title'] ?? 'Unlock Insider Tips' }}</h3>
+            <p class="news-sub">{{ $homepage['sections']['golf_betting']['newsletter_subtitle'] ?? 'Weekly expert picks every Tuesday. Free forever.' }}</p>
             <form action="#" method="post">
               <div class="form-grp"><label class="form-lbl" for="n-email">Email Address</label><input class="form-inp"
                   type="email" id="n-email" name="email" placeholder="your@email.com" required /></div><button
-                type="submit" class="btn btn-gold form-btn">Subscribe &mdash; It's Free</button>
+                type="submit" class="btn btn-gold form-btn">{{ $homepage['sections']['golf_betting']['newsletter_button'] ?? "Subscribe — It's Free" }}</button>
             </form>
           </div>
         </div>
@@ -605,10 +651,14 @@
       <div class="wrap">
         <div class="sec-head rev">
           <div class="eyebrow"><span
-              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>Live
-            Schedule</div>
-          <h2 class="h-section">Tournament Updates & <em>Major Events</em></h2>
-          <p class="body-lg">Current and upcoming PGA Tour events from SportsDataIO Schedules feed.</p>
+              style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['tournaments']['eyebrow'] ?? 'Live Schedule' }}</div>
+          <h2 class="h-section">
+            {{ $homepage['sections']['tournaments']['title'] ?? 'Tournament Updates &' }}
+            @if (!empty($homepage['sections']['tournaments']['title_em']))
+              <em>{{ $homepage['sections']['tournaments']['title_em'] }}</em>
+            @endif
+          </h2>
+          <p class="body-lg">{{ $homepage['sections']['tournaments']['subtitle'] ?? 'Current and upcoming PGA Tour events from SportsDataIO Schedules feed.' }}</p>
         </div>
         <div class="carousel-outer rev">
           <div class="carousel-inner" id="c-inner">
@@ -713,7 +763,12 @@
         <div class="sec-head rev">
           <div class="eyebrow"><span
               style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['faq']['eyebrow'] ?? 'Got Questions?' }}</div>
-          <h2 class="h-section">Frequently Asked <em>{{ $homepage['sections']['faq']['title'] ?? 'Questions' }}</em></h2>
+          <h2 class="h-section">
+            {{ $homepage['sections']['faq']['title'] ?? 'Frequently Asked' }}
+            @if (!empty($homepage['sections']['faq']['title_em']))
+              <em>{{ $homepage['sections']['faq']['title_em'] }}</em>
+            @endif
+          </h2>
         </div>
         <div class="faq-wrap rev" role="list">
           @foreach ($faqs as $faq)

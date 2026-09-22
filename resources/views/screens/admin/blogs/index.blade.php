@@ -69,7 +69,7 @@
                 <thead>
                   <tr>
                     <th><span class="c-o-light f-w-600">Image</span></th>
-                    <th><span class="c-o-light f-w-600">Title</span></th>
+                    <th><span class="c-o-light f-w-600">Page Title</span></th>
                     <th><span class="c-o-light f-w-600">Slug</span></th>
                     <th><span class="c-o-light f-w-600">Status</span></th>
                     <th><span class="c-o-light f-w-600">Published</span></th>

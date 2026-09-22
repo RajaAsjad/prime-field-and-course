@@ -15,7 +15,7 @@
       </form>
       <div class="table-responsive">
         <table class="table">
-          <thead><tr><th>Title</th><th>Slug</th><th>Type</th><th>Status</th><th>Footer</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Page Title</th><th>Slug</th><th>Type</th><th>Status</th><th>Footer</th><th>Actions</th></tr></thead>
           <tbody>
             @forelse ($pages as $page)
               <tr>

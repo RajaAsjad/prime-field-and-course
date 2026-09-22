@@ -151,7 +151,9 @@
     }
 
     if (descEl && payload?.refresh_seconds) {
-      descEl.textContent = `Latest golf coverage from Field Level Media — previews, recaps, and news. Showing ${items.length} stories. Auto-refreshes every ${payload.refresh_seconds} seconds.`;
+      const baseDesc = descEl.getAttribute('data-base-desc')
+        || 'Latest golf coverage from Field Level Media — previews, recaps, and news.';
+      descEl.textContent = `${baseDesc} Showing ${items.length} stories. Auto-refreshes every ${payload.refresh_seconds} seconds.`;
     }
   };
 

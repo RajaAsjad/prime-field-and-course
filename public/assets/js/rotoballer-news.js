@@ -190,8 +190,10 @@
       return;
     }
 
-    const countText = count ? ` Showing ${count} PGA stories from the last 2 weeks.` : '';
-    descEl.textContent = `Latest PGA Tour player news and matchup outlooks from RotoBaller.${countText} Auto-refreshes every ${seconds} seconds.`;
+    const baseDesc = descEl.getAttribute('data-base-desc')
+      || 'Latest PGA Tour player news and matchup outlooks from RotoBaller. Showing stories from the last 2 weeks.';
+    const countText = count ? ` Showing ${count} stories.` : '';
+    descEl.textContent = `${baseDesc}${countText} Auto-refreshes every ${seconds} seconds.`;
   };
 
   const fetchNews = async () => {

@@ -1,7 +1,6 @@
 @extends('layouts.admin.master')
 
-@section('title', 'Edit Blog')
-
+@section('title', 'Edit: ' . ($blog->title ?: 'Blog'))
 @section('content')
   <style>
     .blog-image-preview { max-height: 120px; width: auto; }
@@ -24,7 +23,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header pb-0">
-            <h5>Edit Blog Post</h5>
+            <h5>Edit: {{ $blog->title ?: 'Blog Post' }}</h5>
           </div>
           <div class="card-body">
             <form action="{{ route('admin.blogs.update', $blog) }}" method="POST" enctype="multipart/form-data">

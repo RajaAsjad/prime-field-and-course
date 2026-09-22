@@ -243,7 +243,9 @@
       return;
     }
 
-    descEl.textContent = `Consensus and sportsbook prop odds via SportsDataIO Sportsbook Group. Auto-refreshes every ${seconds} seconds.`;
+    const baseDesc = descEl.getAttribute('data-base-desc')
+      || 'Consensus and sportsbook prop odds via SportsDataIO Sportsbook Group.';
+    descEl.textContent = `${baseDesc} Auto-refreshes every ${seconds} seconds.`;
   };
 
   const applyPayload = (payload) => {

@@ -45,8 +45,9 @@
 </style>
 <div class="row g-3">
   <div class="col-md-8">
-    <label class="form-label" for="title">Title <span class="text-danger">*</span></label>
+    <label class="form-label" for="title">Page Title <span class="text-danger">*</span></label>
     <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title', $page->title ?? '') }}" required>
+    <small class="text-muted">This page&rsquo;s own title — shown as the main heading on the site.</small>
     @error('title')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
   </div>
   <div class="col-md-4">
@@ -78,7 +79,8 @@
   </div>
   <div class="col-md-12">
     <label class="form-label" for="meta_title">SEO Meta Title</label>
-    <input type="text" class="form-control" id="meta_title" name="meta_title" value="{{ old('meta_title', $page->meta_title ?? '') }}">
+    <input type="text" class="form-control" id="meta_title" name="meta_title" value="{{ old('meta_title', $page->meta_title ?? '') }}" placeholder="Optional — defaults to Page Title if empty">
+    <small class="text-muted">Browser tab / Google title. Leave blank to use Page Title.</small>
   </div>
   <div class="col-md-12">
     <label class="form-label" for="meta_description">Meta Description</label>

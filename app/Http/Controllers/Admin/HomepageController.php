@@ -81,10 +81,28 @@ class HomepageController extends Controller
             $premium['form_title_after']
         );
 
+        $sections = $request->input('sections', []);
+        if (isset($sections['golf_betting']['guides']) && is_array($sections['golf_betting']['guides'])) {
+            $sections['golf_betting']['guides'] = collect($sections['golf_betting']['guides'])
+                ->map(function ($guide) {
+                    $guide = is_array($guide) ? $guide : [];
+
+                    return [
+                        'icon' => trim((string) ($guide['icon'] ?? '')),
+                        'title' => trim((string) ($guide['title'] ?? '')),
+                        'meta' => trim((string) ($guide['meta'] ?? '')),
+                        'url' => trim((string) ($guide['url'] ?? '')),
+                    ];
+                })
+                ->filter(fn ($guide) => $guide['title'] !== '')
+                ->values()
+                ->all();
+        }
+
         return [
             'hero' => $hero,
             'header_ctas' => $request->input('header_ctas', []),
-            'sections' => $request->input('sections', []),
+            'sections' => $sections,
             'premium' => array_merge($premium, ['features' => $features]),
             'testimonials' => $testimonials,
             'seo' => [
