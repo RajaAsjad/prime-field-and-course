@@ -48,7 +48,7 @@
 
         @if ($blogs->hasPages())
           <div class="blogs-pagination">
-            {{ $blogs->links() }}
+            {{ $blogs->links('pagination.blogs') }}
           </div>
         @endif
       </div>
@@ -143,7 +143,77 @@
     }
 
     .blogs-pagination {
-      margin-top: 32px;
+      margin-top: 36px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .blogs-pagination nav {
+      width: 100%;
+    }
+
+    .blogs-pagination .pagination {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .blogs-pagination .page-item {
+      margin: 0;
+    }
+
+    .blogs-pagination .page-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 40px;
+      padding: 0 12px;
+      border: 1.5px solid var(--bdr);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--g-700);
+      font-size: .9rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(13, 30, 16, .04);
+      transition: background .15s ease, border-color .15s ease, color .15s ease;
+    }
+
+    .blogs-pagination .page-link:hover {
+      border-color: #b7d4be;
+      color: var(--g-700);
+      background: #f3faf5;
+    }
+
+    .blogs-pagination .page-item.active .page-link {
+      background: var(--g-600, #1a5c28);
+      border-color: var(--g-600, #1a5c28);
+      color: #fff;
+    }
+
+    .blogs-pagination .page-item.disabled .page-link {
+      opacity: .45;
+      pointer-events: none;
+      background: #f7faf8;
+    }
+
+    .blogs-pagination__info {
+      width: 100%;
+      text-align: center;
+      margin: 0 0 14px;
+      color: var(--tx-m);
+      font-size: .85rem;
+    }
+
+    .blogs-pagination__info strong {
+      color: var(--g-700);
+      font-weight: 800;
     }
 
     @media (max-width: 980px) {

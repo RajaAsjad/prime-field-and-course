@@ -87,8 +87,11 @@
           <p class="foot-col-title">Newsletter</p>
           <p style="font-size:.82rem;color:rgba(255,255,255,.4);line-height:1.62;margin-bottom:14px">Top 5 picks every
             Tuesday, free forever.</p>
-          <form action="#" method="post">
-            <div style="display:flex;gap:7px"><input type="email" placeholder="your@email.com"
+          <form action="{{ route('forms.lead') }}" method="post">
+            @csrf
+            <input type="hidden" name="form_type" value="newsletter">
+            <input type="hidden" name="form_source" value="footer">
+            <div style="display:flex;gap:7px"><input type="email" name="email" value="{{ old('form_source') === 'footer' ? old('email') : '' }}" placeholder="your@email.com"
                 style="flex:1;height:42px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:0 13px;font-size:.84rem;color:#fff;font-family:inherit"
                 required /><button type="submit"
                 style="height:42px;padding:0 16px;background:var(--au-500);color:#0d1e10;font-weight:800;font-size:.78rem;border-radius:10px;font-family:inherit;flex-shrink:0">Join</button>

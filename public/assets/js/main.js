@@ -75,16 +75,30 @@
       });
     });
 
-    /* Forms */
+    /* Forms — show loader on submit; skip fake # actions */
     document.querySelectorAll('form').forEach(form => {
       form.addEventListener('submit', e => {
-        e.preventDefault();
+        const action = (form.getAttribute('action') || '').trim();
         const btn = form.querySelector('button[type="submit"]');
-        if (!btn) return;
-        const orig = btn.innerHTML;
-        btn.innerHTML = 'âœ“ Check your inbox!';
+
+        if (!action || action === '#' || action.startsWith('javascript:')) {
+          e.preventDefault();
+          if (!btn) return;
+          const orig = btn.innerHTML;
+          btn.textContent = 'Check your inbox!';
+          btn.disabled = true;
+          setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; form.reset() }, 3500);
+          return;
+        }
+
+        if (!btn || btn.classList.contains('is-loading')) {
+          e.preventDefault();
+          return;
+        }
+
+        btn.classList.add('is-loading');
         btn.disabled = true;
-        setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; form.reset() }, 3500);
+        btn.setAttribute('aria-busy', 'true');
       });
     });
 

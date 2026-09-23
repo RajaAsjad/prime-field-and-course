@@ -634,9 +634,12 @@
                 style="width:6px;height:6px;border-radius:50%;background:var(--au-500);display:inline-block;"></span>{{ $homepage['sections']['golf_betting']['newsletter_eyebrow'] ?? 'Free Newsletter' }}</div>
             <h3 class="news-h">{{ $homepage['sections']['golf_betting']['newsletter_title'] ?? 'Unlock Insider Tips' }}</h3>
             <p class="news-sub">{{ $homepage['sections']['golf_betting']['newsletter_subtitle'] ?? 'Weekly expert picks every Tuesday. Free forever.' }}</p>
-            <form action="#" method="post">
+            <form action="{{ route('forms.lead') }}" method="post">
+              @csrf
+              <input type="hidden" name="form_type" value="newsletter">
+              <input type="hidden" name="form_source" value="newsletter">
               <div class="form-grp"><label class="form-lbl" for="n-email">Email Address</label><input class="form-inp"
-                  type="email" id="n-email" name="email" placeholder="your@email.com" required /></div><button
+                  type="email" id="n-email" name="email" value="{{ old('form_source') === 'newsletter' ? old('email') : '' }}" placeholder="your@email.com" required /></div><button
                 type="submit" class="btn btn-gold form-btn">{{ $homepage['sections']['golf_betting']['newsletter_button'] ?? "Subscribe — It's Free" }}</button>
             </form>
           </div>
@@ -727,7 +730,12 @@
             <div class="cta-feats">
               @foreach ($homepage['premium']['features'] ?? [] as $feature)
                 @if ($feature)
-                  <div class="cta-feat"><span class="cta-feat-check">✅</span>{{ $feature }}</div>
+                  <div class="cta-feat">
+                    <span class="cta-feat-check" aria-hidden="true">
+                      <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 8.2l3.1 3.1 6.5-6.6"/></svg>
+                    </span>
+                    {{ $feature }}
+                  </div>
                 @endif
               @endforeach
             </div>
@@ -736,10 +744,13 @@
             <div class="cta-form-card">
               <h3 class="cta-form-h">{!! $homepage['premium']['form_title_html'] ?? 'Start Your <span class="gold">Free Trial</span>' !!}</h3>
               <p class="cta-form-note">{{ $homepage['premium']['form_note'] ?? '' }}</p>
-              <form action="#" method="post">
+              <form action="{{ route('forms.lead') }}" method="post">
+                @csrf
+                <input type="hidden" name="form_type" value="premium">
+                <input type="hidden" name="form_source" value="premium">
                 <div class="form-grp">
                   <label class="form-lbl cta-form-lbl" for="p-email">Email</label>
-                  <input class="form-inp dark-inp" type="email" id="p-email" name="email" placeholder="your@email.com" required />
+                  <input class="form-inp dark-inp" type="email" id="p-email" name="email" value="{{ old('form_source') === 'premium' ? old('email') : '' }}" placeholder="your@email.com" required />
                 </div>
                 <button type="submit" class="btn btn-gold form-btn" style="width:100%;">Subscribe — 7 Days Free</button>
               </form>
@@ -749,7 +760,11 @@
         <div class="testi-grid">
           @foreach ($homepage['testimonials'] ?? [] as $index => $testimonial)
             <div class="testi-card rev rev-d{{ ($index % 3) + 1 }}">
-              <div class="testi-stars">{{ str_repeat('⭐', (int) ($testimonial['stars'] ?? 5)) }}</div>
+              <div class="testi-stars" aria-label="{{ (int) ($testimonial['stars'] ?? 5) }} out of 5 stars">
+                @for ($s = 0; $s < (int) ($testimonial['stars'] ?? 5); $s++)
+                  <span class="testi-star" aria-hidden="true">★</span>
+                @endfor
+              </div>
               <p class="testi-q">"{{ $testimonial['quote'] ?? '' }}"</p>
               <div class="testi-auth"><div><div class="testi-name">{{ $testimonial['author'] ?? '' }}</div></div></div>
             </div>

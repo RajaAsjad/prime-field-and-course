@@ -83,7 +83,35 @@
   @include('partials.footer')
 
   {{-- Global scripts --}}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="/assets/js/main.js"></script>
+  @if (session('form_success') || session('form_error'))
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        @if (session('form_success'))
+          Swal.fire({
+            icon: 'success',
+            title: 'Submitted!',
+            text: @json(session('form_success')),
+            confirmButtonColor: '#c9a84c',
+            timer: 3500,
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
+        @else
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: @json(session('form_error')),
+            confirmButtonColor: '#c9a84c',
+            timer: 4000,
+            timerProgressBar: true,
+            showConfirmButton: true
+          });
+        @endif
+      });
+    </script>
+  @endif
   @stack('scripts')
 </body>
 

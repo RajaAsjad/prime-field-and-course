@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\FlmStoryController;
+use App\Http\Controllers\FormLeadController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
@@ -37,6 +38,7 @@ Route::get('/api/hot-props', [HomeController::class, 'hotProps'])->name('api.hot
 Route::get('/api/competition-feeds', [HomeController::class, 'competitionFeeds'])->name('api.competition-feeds');
 Route::get('/api/rotoballer-news', [HomeController::class, 'rotoballerNews'])->name('api.rotoballer-news');
 Route::get('/api/flm-stories', [HomeController::class, 'flmStories'])->name('api.flm-stories');
+Route::post('/forms/lead', [FormLeadController::class, 'store'])->name('forms.lead');
 
 
 
